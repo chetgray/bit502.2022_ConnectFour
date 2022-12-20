@@ -5,6 +5,8 @@ VisualStudioVersion = 17.4.33110.190
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConnectFour.App", "ConnectFour.App\ConnectFour.App.csproj", "{5360DAE6-C557-4FC5-99A4-4C4B441ED9C3}"
 EndProject
+Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "ConnectFour.Database", "ConnectFour.Database\ConnectFour.Database.sqlproj", "{922C818B-0E29-44DE-A0B2-47D90A1A9DAC}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,12 @@ Global
 		{5360DAE6-C557-4FC5-99A4-4C4B441ED9C3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5360DAE6-C557-4FC5-99A4-4C4B441ED9C3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5360DAE6-C557-4FC5-99A4-4C4B441ED9C3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{922C818B-0E29-44DE-A0B2-47D90A1A9DAC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{922C818B-0E29-44DE-A0B2-47D90A1A9DAC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{922C818B-0E29-44DE-A0B2-47D90A1A9DAC}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{922C818B-0E29-44DE-A0B2-47D90A1A9DAC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{922C818B-0E29-44DE-A0B2-47D90A1A9DAC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{922C818B-0E29-44DE-A0B2-47D90A1A9DAC}.Release|Any CPU.Deploy.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
