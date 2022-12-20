@@ -2,7 +2,7 @@
 (
 	[Id] INT NOT NULL PRIMARY KEY IDENTITY, 
     [RoomId] INT NULL, 
-    [Time] DATETIME2 NULL, 
+    [Time] DATETIME2(0) NULL, 
     [Num] INT NULL, 
     [RowNum] INT NULL, 
     [ColNum] INT NULL
