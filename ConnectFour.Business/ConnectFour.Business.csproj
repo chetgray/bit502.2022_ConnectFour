@@ -47,5 +47,11 @@
     <Folder Include="BLLs\" />
     <Folder Include="Models\" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\ConnectFour.Data\ConnectFour.Data.csproj">
+      <Project>{ac1b2de2-b5a0-4b06-93fc-01c7d5a76fa9}</Project>
+      <Name>ConnectFour.Data</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
