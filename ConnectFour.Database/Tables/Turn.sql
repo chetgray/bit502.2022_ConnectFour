@@ -6,7 +6,7 @@
     [Num] INT NULL, 
     [RowNum] INT NULL, 
     [ColNum] INT NULL
-    CONSTRAINT UC_OneTurnPerRoom UNIQUE (RoomId, Num)
-    CONSTRAINT UC_RoomAndMoves UNIQUE (RoomId, RowNum, ColNum)
+    CONSTRAINT UC_OneTurnNumAndRoomId UNIQUE (RoomId, Num)
+    CONSTRAINT UC_RoomAndVectors UNIQUE (RoomId, RowNum, ColNum)
     FOREIGN KEY (RoomId) REFERENCES Room(Id)
 )
