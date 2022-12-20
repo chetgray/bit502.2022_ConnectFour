@@ -5,6 +5,8 @@ VisualStudioVersion = 17.4.33110.190
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConnectFour.App", "ConnectFour.App\ConnectFour.App.csproj", "{5360DAE6-C557-4FC5-99A4-4C4B441ED9C3}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConnectFour.Business", "ConnectFour.Business\ConnectFour.Business.csproj", "{A5AD7A8E-AB00-48CA-9172-B11A55761E80}"
+EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConnectFour.Data", "ConnectFour.Data\ConnectFour.Data.csproj", "{AC1B2DE2-B5A0-4B06-93FC-01C7D5A76FA9}"
 EndProject
 Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "ConnectFour.Database", "ConnectFour.Database\ConnectFour.Database.sqlproj", "{922C818B-0E29-44DE-A0B2-47D90A1A9DAC}"
@@ -19,6 +21,10 @@ Global
 		{5360DAE6-C557-4FC5-99A4-4C4B441ED9C3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5360DAE6-C557-4FC5-99A4-4C4B441ED9C3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5360DAE6-C557-4FC5-99A4-4C4B441ED9C3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A5AD7A8E-AB00-48CA-9172-B11A55761E80}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A5AD7A8E-AB00-48CA-9172-B11A55761E80}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A5AD7A8E-AB00-48CA-9172-B11A55761E80}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A5AD7A8E-AB00-48CA-9172-B11A55761E80}.Release|Any CPU.Build.0 = Release|Any CPU
 		{AC1B2DE2-B5A0-4B06-93FC-01C7D5A76FA9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{AC1B2DE2-B5A0-4B06-93FC-01C7D5A76FA9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AC1B2DE2-B5A0-4B06-93FC-01C7D5A76FA9}.Release|Any CPU.ActiveCfg = Release|Any CPU
