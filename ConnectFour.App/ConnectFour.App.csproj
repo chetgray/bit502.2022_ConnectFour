@@ -49,5 +49,11 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\ConnectFour.Business\ConnectFour.Business.csproj">
+      <Project>{a5ad7a8e-ab00-48ca-9172-b11a55761e80}</Project>
+      <Name>ConnectFour.Business</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
