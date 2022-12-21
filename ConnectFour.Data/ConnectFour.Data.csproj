@@ -41,6 +41,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DALs\DAL.cs" />
+    <Compile Include="DALs\IDAL.cs" />
     <Compile Include="DTOs\PlayerDTO.cs" />
     <Compile Include="DTOs\RoomDTO.cs" />
     <Compile Include="DTOs\TurnDTO.cs" />
@@ -50,8 +52,6 @@
     <Compile Include="Repositories\RoomRepository.cs" />
     <Compile Include="Repositories\TurnRepository.cs" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="DALs\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
