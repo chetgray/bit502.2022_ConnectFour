@@ -4,17 +4,16 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{5360DAE6-C557-4FC5-99A4-4C4B441ED9C3}</ProjectGuid>
-    <OutputType>Exe</OutputType>
-    <RootNamespace>ConnectFour.App</RootNamespace>
-    <AssemblyName>ConnectFour.App</AssemblyName>
+    <ProjectGuid>{A5AD7A8E-AB00-48CA-9172-B11A55761E80}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>ConnectFour.Business</RootNamespace>
+    <AssemblyName>ConnectFour.Business</AssemblyName>
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <Deterministic>true</Deterministic>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
@@ -24,7 +23,6 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
@@ -43,16 +41,20 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Program.cs" />
+    <Compile Include="BLLs\RoomBLL.cs" />
+    <Compile Include="Models\Interfaces\IPlayerModel.cs" />
+    <Compile Include="Models\Interfaces\IRoomModel.cs" />
+    <Compile Include="Models\Interfaces\ITurnModel.cs" />
+    <Compile Include="Models\PlayerModel.cs" />
+    <Compile Include="Models\RoomModel.cs" />
+    <Compile Include="Models\TurnModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
-    <None Include="App.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\ConnectFour.Business\ConnectFour.Business.csproj">
-      <Project>{a5ad7a8e-ab00-48ca-9172-b11a55761e80}</Project>
-      <Name>ConnectFour.Business</Name>
+    <ProjectReference Include="..\ConnectFour.Data\ConnectFour.Data.csproj">
+      <Project>{ac1b2de2-b5a0-4b06-93fc-01c7d5a76fa9}</Project>
+      <Name>ConnectFour.Data</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
