@@ -41,6 +41,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BLLs\RoomBLL.cs" />
     <Compile Include="Models\Interfaces\IPlayerModel.cs" />
     <Compile Include="Models\Interfaces\IRoomModel.cs" />
     <Compile Include="Models\Interfaces\ITurnModel.cs" />
@@ -49,9 +50,7 @@
     <Compile Include="Models\TurnModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="BLLs\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <ProjectReference Include="..\ConnectFour.Data\ConnectFour.Data.csproj">
       <Project>{ac1b2de2-b5a0-4b06-93fc-01c7d5a76fa9}</Project>
