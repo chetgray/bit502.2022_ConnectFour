@@ -23,27 +23,23 @@ namespace ConnectFour.Data.DALs
             DataTable dataTable = new DataTable();
 
             using (SqlConnection connection = new SqlConnection(_connectionString))
+            using (
+                SqlCommand command = new SqlCommand(storedProcedureName, connection)
+                {
+                    CommandType = CommandType.StoredProcedure
+                }
+            )
+            using (SqlDataAdapter adapter = new SqlDataAdapter(command))
             {
                 connection.Open();
-                using (
-                    SqlCommand command = new SqlCommand(storedProcedureName, connection)
-                    {
-                        CommandType = CommandType.StoredProcedure
-                    }
-                )
+                foreach (KeyValuePair<string, object> parameter in parameters)
                 {
-                    foreach (KeyValuePair<string, object> parameter in parameters)
-                    {
-                        command.Parameters.AddWithValue(parameter.Key, parameter.Value);
-                    }
-                    using (SqlDataAdapter adapter = new SqlDataAdapter(command))
-                    {
-                        // Get the last DataTable in the result DataSet
-                        DataSet dataSet = new DataSet();
-                        adapter.Fill(dataSet);
-                        dataTable = dataSet.Tables[dataSet.Tables.Count - 1];
-                    }
+                    command.Parameters.AddWithValue(parameter.Key, parameter.Value);
                 }
+                // Get the last DataTable in the result DataSet
+                DataSet dataSet = new DataSet();
+                adapter.Fill(dataSet);
+                dataTable = dataSet.Tables[dataSet.Tables.Count - 1];
             }
 
             return dataTable;
