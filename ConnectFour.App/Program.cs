@@ -12,11 +12,12 @@ namespace ConnectFour.App
                 bool isChoosing = true;
                 while (isChoosing)
                 {
+                    WriteConnect4Title("         ");
                     Console.WriteLine("What would you like to do?\n" +
-                        "[1] - New Single-Player Game\n" +
-                        "[2] - New Multi-Player Game\n" +
-                        "[3] - Join Multi-Player Game\n" +
-                        "[4] - View Game Results");
+                    "[1] - New Single-Player Game\n" +
+                    "[2] - New Multi-Player Game\n" +
+                    "[3] - Join Multi-Player Game\n" +
+                    "[4] - View Game Results\n");
                     Console.Write("--> ");
                     string userResponse = Console.ReadLine();
                     isChoosing = false;
@@ -40,8 +41,12 @@ namespace ConnectFour.App
                             isChoosing = true;
                             break;
                     }
+                    Console.Clear();
                 }
-                Console.WriteLine("Would you like to [1] Return to the Main Menu or [2] Quit?");
+                WriteConnect4Title("         ");
+                Console.WriteLine("What would you like to do?\n" +
+                "[1] Return to the Main Menu\n" +
+                "[2] Quit");
                 Console.Write("--> ");
                 string continueProgram = Console.ReadLine();
                 if (continueProgram == "2")
@@ -49,6 +54,33 @@ namespace ConnectFour.App
                     isRunning = false;
                 }
             }
+        }
+        private static void WriteConnect4Title(string spacing)
+        {
+            Console.Write(spacing);
+            WriteInDarkRed("C");
+            WriteInDarkYellow("O");
+            WriteInDarkCyan("NNE");
+            WriteInDarkRed("C");
+            WriteInDarkCyan("T4\n\n");
+        }
+        private static void WriteInDarkYellow(string text)
+        {
+            Console.ForegroundColor = ConsoleColor.DarkYellow;
+            Console.Write(text);
+            Console.ResetColor();
+        }
+        private static void WriteInDarkRed(string text)
+        {
+            Console.ForegroundColor = ConsoleColor.DarkRed;
+            Console.Write(text);
+            Console.ResetColor();
+        }
+        private static void WriteInDarkCyan(string text)
+        {
+            Console.ForegroundColor = ConsoleColor.DarkCyan;
+            Console.Write(text);
+            Console.ResetColor();
         }
     }
 }
