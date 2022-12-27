@@ -1,4 +1,8 @@
-﻿using System;
+﻿using ConnectFour.Business.Models;
+using ConnectFour.Business.Models.Interfaces;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace ConnectFour.App
 {
@@ -6,136 +10,132 @@ namespace ConnectFour.App
     {
         private static void Main()
         {
-            DisplayBoard();
+            IRoomModel testRoom = new RoomModel
+            {
+                Id = 100,
+                CurrentTurnNum = 4,
+                Players = new List<IPlayerModel>
+                {
+                    new PlayerModel { Id = 1, Name = "Aaa", Symbol = "A", Color = ConsoleColor.Red },
+                    new PlayerModel { Id = 2, Name = "Bbb", Symbol = "B", Color = ConsoleColor.Yellow }
+                },
+                Turns = new List<ITurnModel>
+                {
+                    new TurnModel { Id = 1, ColNum = 1, RowNum = 6, Num = 1 },
+                    new TurnModel { Id = 2, ColNum = 2, RowNum = 6, Num = 2 },
+                    new TurnModel { Id = 3, ColNum = 1, RowNum = 5, Num = 3 }
+                }
+            };
+
+            DisplayBoard(testRoom);
 
             Console.ReadKey();
         }
 
-        private static void DisplayBoard()
+        private static void DisplayBoard(IRoomModel room)
         {
-            Console.OutputEncoding = System.Text.Encoding.UTF8;
+            string p1 = $"░ {room.Players[0].Symbol} ░";
+            string p2 = $"░ {room.Players[1].Symbol} ░";
 
-            /* TBA:
-             * Get player names from Player model
-             * Grab the initial with substring(1), ToUpper()
-             * Compare—if they're the same, use 1 and 2
-             * Otherwise insert into respective player markers
-             * Let's do this via methods in the player model?
-             */
-            string p1 = $"░ A ░";
-            string p2 = $"░ B ░";
-
-            string[,] space = new string[6, 7];
-
-            for (int i = 0; i < space.GetLength(0); i++)
+            if (p1 == p2)
             {
-                for (int j = 0; j < space.GetLength(1); j++)
+                p1 = "░ 1 ░";
+                p2 = "░ 2 ░";
+            }
+
+            for (int i = 0; i < room.Board.GetLength(0); i++)
+            {
+                for (int j = 0; j < room.Board.GetLength(1); j++)
                 {
-                    space[i, j] = "     ";
+                    room.Board[i, j] = "     ";
                 }
             }
 
-            //Test moves for visualization
-            space[5, 0] = p1;
-            space[5, 1] = p2;
-            space[5, 2] = p1;
-            space[4, 0] = p2;
-            space[4, 2] = p1;
-            space[4, 1] = p2;
-            space[3, 2] = p1;
-            space[2, 2] = p2;
-
-            SetToBoardColor();
-            Console.WriteLine("\n       ╔═════╦═════╦═════╦═════╦═════╦═════╦═════╗");
-
-            for (int i = 0; i < space.GetLength(0); i++)
+            for (int i = 0; i < room.Turns.Count; i++)
             {
-                Console.ResetColor();
-                switch (i)
+                if (room.Turns[i].Num % 2 == 0)
                 {
-                    case 0:
-                        Console.Write("    \u2086  ");
-                        break;
-
-                    case 1:
-                        Console.Write("    \u2085  ");
-                        break;
-
-                    case 2:
-                        Console.Write("    \u2084  ");
-                        break;
-
-                    case 3:
-                        Console.Write("    \u2083  ");
-                        break;
-
-                    case 4:
-                        Console.Write("    \u2082  ");
-                        break;
-
-                    case 5:
-                        Console.Write("    \u2081  ");
-                        break;
-
-                    default:
-                        break;
+                    room.Board[room.Turns[i].RowNum - 1, room.Turns[i].ColNum - 1] = p2;
                 }
-                SetToBoardColor();
+                else if (room.Turns[i].Num % 2 != 0)
+                {
+                    room.Board[room.Turns[i].RowNum - 1, room.Turns[i].ColNum - 1] = p1;
+                }
+            }
 
-                for (int j = 0; j < space.GetLength(1); j++)
+            Console.ForegroundColor = ConsoleColor.DarkBlue;
+            Console.WriteLine("\n    ╔═════╦═════╦═════╦═════╦═════╦═════╦═════╗");
+
+            for (int i = 0; i < room.Board.GetLength(0); i++)
+            {
+                Console.Write("    ");
+                for (int j = 0; j < room.Board.GetLength(1); j++)
                 {
                     Console.Write("║");
-                    Console.ResetColor();
-                    if (space[i, j] == p1)
+                    if (room.Board[i, j] == p1)
                     {
-                        SetToP1Color();
-                        Console.Write(space[i, j]);
+                        Console.ForegroundColor = room.Players[0].Color;
+                        Console.Write(room.Board[i, j]);
                     }
-                    else if (space[i, j] == p2)
+                    else if (room.Board[i, j] == p2)
                     {
-                        SetToP2Color();
-                        Console.Write(space[i, j]);
+                        Console.ForegroundColor = room.Players[1].Color;
+                        Console.Write(room.Board[i, j]);
                     }
                     else
                     {
-                        Console.Write(space[i, j]);
+                        Console.Write(room.Board[i, j]);
                     }
-                    SetToBoardColor();
+                    Console.ForegroundColor = ConsoleColor.DarkBlue;
                 }
                 Console.Write("║");
                 Console.ResetColor();
-
                 switch (i)
                 {
                     case 1:
-                        Console.Write("    Room ID: 1");
+                        Console.Write($"    Room ID: {room.Id}");
                         break;
 
                     case 2:
-                        Console.Write("    Player 1: ");
-                        WriteP1Name();
+                        Console.Write($"    Player 1: ");
+                        Console.ForegroundColor = room.Players[0].Color;
+                        Console.Write(room.Players[0].Name);
                         Console.ResetColor();
                         break;
 
                     case 3:
-                        Console.Write("    Player 2: ");
-                        WriteP2Name();
+                        Console.Write($"    Player 1: ");
+                        Console.ForegroundColor = room.Players[1].Color;
+                        Console.Write(room.Players[1].Name);
                         Console.ResetColor();
                         break;
 
                     case 4:
-                        //Will determine what the last move was and output visual/board coordinates
-                        Console.Write("    Last play: 3, 4");
+                        Console.Write($"    Last play: ");
+                        if (room.Turns.Count != 0)
+                        {
+                            Console.Write(room.Turns.Last().ColNum);
+                        }
+                        else
+                        {
+                            Console.Write("N/A");
+                        }
                         break;
 
                     case 5:
                         Console.Write("    Current turn: ");
 
-                        //Will determine whose turn it currently is and output correct color/name
-                        SetToP1Color();
-                        Console.Write("Aaaaa");
-
-                        SetToBoardColor();
+                        if (room.CurrentTurnNum % 2 == 0)
+                        {
+                            Console.ForegroundColor = room.Players[1].Color;
+                            Console.Write(room.Players[1].Name);
+                        }
+                        else
+                        {
+                            Console.ForegroundColor = room.Players[0].Color;
+                            Console.Write(room.Players[0].Name);
+                        }
+                        Console.ForegroundColor = ConsoleColor.DarkBlue;
                         break;
 
                     default:
@@ -144,45 +144,14 @@ namespace ConnectFour.App
 
                 if (i != 5)
                 {
-                    SetToBoardColor();
-                    Console.WriteLine("\n       ╠═════╬═════╬═════╬═════╬═════╬═════╬═════╣");
+                    Console.ForegroundColor = ConsoleColor.DarkBlue;
+                    Console.WriteLine("\n    ╠═════╬═════╬═════╬═════╬═════╬═════╬═════╣");
                 }
             }
 
-            Console.WriteLine("\n       ╚═════╩═════╩═════╩═════╩═════╩═════╩═════╝");
+            Console.WriteLine("\n    ╚═════╩═════╩═════╩═════╩═════╩═════╩═════╝");
             Console.ResetColor();
-            Console.WriteLine("          \u2081     \u2082     \u2083     \u2084     \u2085     \u2086     \u2087");
-        }
-
-        private static void SetToBoardColor()
-        {
-            Console.ForegroundColor = ConsoleColor.DarkBlue;
-        }
-
-        /* TBA:
-         * Would also prefer to do these through the model
-         * e.g. p1.SetColor(), p2.WriteName(), etc. */
-
-        private static void SetToP1Color()
-        {
-            Console.ForegroundColor = ConsoleColor.Red;
-        }
-
-        private static void SetToP2Color()
-        {
-            Console.ForegroundColor = ConsoleColor.Yellow;
-        }
-
-        private static void WriteP1Name()
-        {
-            SetToP1Color();
-            Console.Write("Aaaaa");
-        }
-
-        private static void WriteP2Name()
-        {
-            SetToP2Color();
-            Console.Write("Bbbbb");
+            Console.WriteLine("       1     2     3     4     5     6     7");
         }
     }
 }
