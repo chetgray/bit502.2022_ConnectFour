@@ -42,7 +42,7 @@ namespace ConnectFour.App
                             isRunning = false;
                             break;
                         default:
-                            Console.WriteLine("Invalid response please choose 1, 2, 3, or 4");
+                            Console.WriteLine("Invalid response please choose 1, 2, 3, 4, or 5");
                             Console.Write("--> ");
                             isChoosing = true;
                             break;
