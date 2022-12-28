@@ -12,5 +12,7 @@ namespace ConnectFour.Business.Models.Interfaces
 
         List<IPlayerModel> Players { get; }
         List<ITurnModel> Turns { get; }
+
+        string[,] Board { get; set; }
     }
 }
