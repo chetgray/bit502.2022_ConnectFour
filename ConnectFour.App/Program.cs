@@ -13,7 +13,7 @@ namespace ConnectFour.App
                 bool isQuitting = false;
                 while (isChoosing)
                 {
-                    WriteConnect4Title("         ");
+                    WriteTitle("         ");
                     Console.WriteLine("What would you like to do?\n" +
                     "[1] - New Single-Player Game\n" +
                     "[2] - New Multi-Player Game\n" +
@@ -50,7 +50,7 @@ namespace ConnectFour.App
                     Console.Clear();
                     if (isQuitting == false)
                     {
-                        WriteConnect4Title("         ");
+                        WriteTitle("         ");
                         Console.WriteLine("What would you like to do?\n" +
                         "[1] Return to the Main Menu\n" +
                         "[2] Quit");
@@ -65,7 +65,7 @@ namespace ConnectFour.App
                 }
             }
         }
-        private static void WriteConnect4Title(string spacing)
+        private static void WriteTitle(string spacing)
         {
             Console.Write(spacing);
             WriteInColor("C", ConsoleColor.DarkRed);
