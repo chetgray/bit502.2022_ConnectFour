@@ -10,6 +10,7 @@ namespace ConnectFour.App
             while (isRunning)
             {
                 bool isChoosing = true;
+                bool isQuitting = false;
                 while (isChoosing)
                 {
                     WriteConnect4Title("         ");
@@ -17,7 +18,8 @@ namespace ConnectFour.App
                     "[1] - New Single-Player Game\n" +
                     "[2] - New Multi-Player Game\n" +
                     "[3] - Join Multi-Player Game\n" +
-                    "[4] - View Game Results\n");
+                    "[4] - View Game Results\n" +
+                    "[5] - Quit\n");
                     Console.Write("--> ");
                     string userResponse = Console.ReadLine();
                     isChoosing = false;
@@ -35,6 +37,10 @@ namespace ConnectFour.App
                         case "4":
                             //View Game Results
                             break;
+                        case "5":
+                            isQuitting = true;
+                            isRunning = false;
+                            break;
                         default:
                             Console.WriteLine("Invalid response please choose 1, 2, 3, or 4");
                             Console.Write("--> ");
@@ -42,17 +48,22 @@ namespace ConnectFour.App
                             break;
                     }
                     Console.Clear();
+                    if (isQuitting == false)
+                    {
+                        WriteConnect4Title("         ");
+                        Console.WriteLine("What would you like to do?\n" +
+                        "[1] Return to the Main Menu\n" +
+                        "[2] Quit");
+                        Console.Write("--> ");
+                        string continueProgram = Console.ReadLine();
+                        if (continueProgram == "2")
+                        {
+                            isRunning = false;
+                        }
+                        Console.Clear();
+                    }
                 }
-                WriteConnect4Title("         ");
-                Console.WriteLine("What would you like to do?\n" +
-                "[1] Return to the Main Menu\n" +
-                "[2] Quit");
-                Console.Write("--> ");
-                string continueProgram = Console.ReadLine();
-                if (continueProgram == "2")
-                {
-                    isRunning = false;
-                }
+
             }
         }
         private static void WriteConnect4Title(string spacing)
