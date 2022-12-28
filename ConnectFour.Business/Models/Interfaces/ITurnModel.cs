@@ -8,5 +8,6 @@ namespace ConnectFour.Business.Models.Interfaces
         DateTime Time { get; set; }
         int RowNum { get; set; }
         int ColNum { get; set; }
+        int Num { get; set; }
     }
 }
