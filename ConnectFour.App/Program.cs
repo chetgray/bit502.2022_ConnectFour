@@ -63,35 +63,22 @@ namespace ConnectFour.App
                         Console.Clear();
                     }
                 }
-
             }
         }
         private static void WriteConnect4Title(string spacing)
         {
             Console.Write(spacing);
-            WriteInDarkRed("C");
-            WriteInDarkYellow("O");
-            WriteInDarkCyan("NNE");
-            WriteInDarkRed("C");
-            WriteInDarkCyan("T4\n\n");
-        }
-        private static void WriteInDarkYellow(string text)
-        {
-            Console.ForegroundColor = ConsoleColor.DarkYellow;
-            Console.Write(text);
+            WriteInColor("C", ConsoleColor.DarkRed);
+            WriteInColor("O", ConsoleColor.DarkYellow);
+            WriteInColor("NNE", ConsoleColor.DarkCyan);
+            WriteInColor("C", ConsoleColor.DarkRed);
+            WriteInColor("T4\n\n", ConsoleColor.DarkCyan);
             Console.ResetColor();
         }
-        private static void WriteInDarkRed(string text)
+        private static void WriteInColor(string text, ConsoleColor color)
         {
-            Console.ForegroundColor = ConsoleColor.DarkRed;
+            Console.ForegroundColor = color;
             Console.Write(text);
-            Console.ResetColor();
-        }
-        private static void WriteInDarkCyan(string text)
-        {
-            Console.ForegroundColor = ConsoleColor.DarkCyan;
-            Console.Write(text);
-            Console.ResetColor();
         }
     }
 }
