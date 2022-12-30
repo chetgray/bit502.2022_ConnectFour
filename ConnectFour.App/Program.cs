@@ -1,8 +1,10 @@
-﻿using ConnectFour.Business.Models;
+﻿using ConnectFour.Business.BLLs;
+using ConnectFour.Business.Models;
 using ConnectFour.Business.Models.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 
 namespace ConnectFour.App
 {
@@ -10,28 +12,45 @@ namespace ConnectFour.App
     {
         private static void Main()
         {
-            IRoomModel testRoom = new RoomModel
-            {
-                Id = 100,
-                CurrentTurnNum = 4,
-                Players = new List<IPlayerModel>
-                {
-                    new PlayerModel { Id = 1, Name = "Aaa", Symbol = "A", Color = ConsoleColor.Red },
-                    new PlayerModel { Id = 2, Name = "Bbb", Symbol = "B", Color = ConsoleColor.Yellow }
-                },
-                Turns = new List<ITurnModel>
-                {
-                    new TurnModel { Id = 1, ColNum = 1, RowNum = 6, Num = 1 },
-                    new TurnModel { Id = 2, ColNum = 2, RowNum = 6, Num = 2 },
-                    new TurnModel { Id = 3, ColNum = 1, RowNum = 5, Num = 3 }
-                }
-            };
-
-            DisplayBoard(testRoom);
+            DisplayResults(RoomBLL.GetAllFinished());
 
             Console.ReadKey();
         }
+        private static void DisplayResults(List<ResultModel> results)
+        {
+            int characterCounter = 0;
+            foreach (ResultModel result in results)
+            {
+                for (int i = 0; i < result.Players.Count; i++)
+                {
+                   int playerNameLength = result.Players[i].Name.Length;
+                   if (playerNameLength > characterCounter)
+                   {
+                       characterCounter = playerNameLength;
+                   }
+                }
+            }
 
+            StringBuilder sb = new StringBuilder();
+            for (int i = 0; i < characterCounter; i++)
+            {
+                sb.Append(" ");
+            }
+            string characterExtender = sb.ToString();
+            Console.WriteLine("     Room   Started   Duration      Player 1 "+ characterExtender + "  Player 2  "+ characterExtender +"  Winner "+ characterExtender +"# of");
+            Console.WriteLine("       #      At                      Name     "+ characterExtender + "  Name    "+ characterExtender +"         "+ characterExtender +"Moves");
+            sb.Clear();
+            for (int i = 0; i < characterCounter; i++)
+            {
+                sb.Append("═");
+            }
+            characterExtender = sb.ToString();
+            Console.WriteLine("    ╔═════╦═════════╦══════════╦═══════════"+ characterExtender + "╦══════════"+ characterExtender + "╦═════════"+ characterExtender + "╦═══════╗");
+
+            Console.WriteLine("    ╠═════╬═════════╬══════════╬═══════════"+ characterExtender + "╬══════════"+ characterExtender + "╬═════════"+ characterExtender + "╬═══════╣");
+
+            Console.WriteLine("    ╚═════╩═════════╩══════════╩═══════════"+ characterExtender + "╩══════════"+ characterExtender + "╩═════════"+ characterExtender + "╩═══════╝");
+        }
         private static void DisplayBoard(IRoomModel room)
         {
             string p1 = $"░ {room.Players[0].Symbol} ░";
