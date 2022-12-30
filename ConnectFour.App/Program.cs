@@ -1,8 +1,9 @@
-﻿using ConnectFour.Business.Models;
-using ConnectFour.Business.Models.Interfaces;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+
+using ConnectFour.Business.Models;
+using ConnectFour.Business.Models.Interfaces;
 
 namespace ConnectFour.App
 {
@@ -34,63 +35,64 @@ namespace ConnectFour.App
 
         private static void DisplayBoard(IRoomModel room)
         {
-            string p1 = $"░ {room.Players[0].Symbol} ░";
-            string p2 = $"░ {room.Players[1].Symbol} ░";
+            string noPiece = "     ";
+            string p1Piece = $"░ {room.Players[0].Symbol} ░";
+            string p2Piece = $"░ {room.Players[1].Symbol} ░";
 
-            if (p1 == p2)
+            if (p1Piece == p2Piece)
             {
-                p1 = "░ 1 ░";
-                p2 = "░ 2 ░";
+                p1Piece = "░ 1 ░";
+                p2Piece = "░ 2 ░";
             }
 
-            for (int i = 0; i < room.Board.GetLength(0); i++)
+            for (int r = 0; r < room.Board.GetLength(0); r++)
             {
-                for (int j = 0; j < room.Board.GetLength(1); j++)
+                for (int c = 0; c < room.Board.GetLength(1); c++)
                 {
-                    room.Board[i, j] = "     ";
+                    room.Board[r, c] = 0;
                 }
             }
 
-            for (int i = 0; i < room.Turns.Count; i++)
+            for (int t = 0; t < room.Turns.Count; t++)
             {
-                if (room.Turns[i].Num % 2 == 0)
+                if (room.Turns[t].Num % 2 == 0)
                 {
-                    room.Board[room.Turns[i].RowNum - 1, room.Turns[i].ColNum - 1] = p2;
+                    room.Board[room.Turns[t].RowNum - 1, room.Turns[t].ColNum - 1] = 2;
                 }
-                else if (room.Turns[i].Num % 2 != 0)
+                else if (room.Turns[t].Num % 2 != 0)
                 {
-                    room.Board[room.Turns[i].RowNum - 1, room.Turns[i].ColNum - 1] = p1;
+                    room.Board[room.Turns[t].RowNum - 1, room.Turns[t].ColNum - 1] = 1;
                 }
             }
 
             Console.ForegroundColor = ConsoleColor.DarkBlue;
             Console.WriteLine("\n    ╔═════╦═════╦═════╦═════╦═════╦═════╦═════╗");
 
-            for (int i = 0; i < room.Board.GetLength(0); i++)
+            for (int r = 0; r < room.Board.GetLength(0); r++)
             {
                 Console.Write("    ");
-                for (int j = 0; j < room.Board.GetLength(1); j++)
+                for (int c = 0; c < room.Board.GetLength(1); c++)
                 {
                     Console.Write("║");
-                    if (room.Board[i, j] == p1)
+                    if (room.Board[r, c] == 1)
                     {
                         Console.ForegroundColor = room.Players[0].Color;
-                        Console.Write(room.Board[i, j]);
+                        Console.Write(p1Piece);
                     }
-                    else if (room.Board[i, j] == p2)
+                    else if (room.Board[r, c] == 2)
                     {
                         Console.ForegroundColor = room.Players[1].Color;
-                        Console.Write(room.Board[i, j]);
+                        Console.Write(p2Piece);
                     }
                     else
                     {
-                        Console.Write(room.Board[i, j]);
+                        Console.Write(noPiece);
                     }
                     Console.ForegroundColor = ConsoleColor.DarkBlue;
                 }
                 Console.Write("║");
                 Console.ResetColor();
-                switch (i)
+                switch (r)
                 {
                     case 1:
                         Console.Write($"    Room ID: {room.Id}");
@@ -142,7 +144,7 @@ namespace ConnectFour.App
                         break;
                 }
 
-                if (i != 5)
+                if (r != 5)
                 {
                     Console.ForegroundColor = ConsoleColor.DarkBlue;
                     Console.WriteLine("\n    ╠═════╬═════╬═════╬═════╬═════╬═════╬═════╣");

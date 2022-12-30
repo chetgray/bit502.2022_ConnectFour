@@ -15,6 +15,6 @@ namespace ConnectFour.Business.Models
         public List<IPlayerModel> Players { get; set; } = new List<IPlayerModel>();
         public List<ITurnModel> Turns { get; set; } = new List<ITurnModel>();
 
-        public string[,] Board { get; set; } = new string[6, 7];
+        public int[,] Board { get; set; } = new int[6, 7];
     }
 }

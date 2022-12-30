@@ -13,6 +13,12 @@ namespace ConnectFour.Business.Models.Interfaces
         List<IPlayerModel> Players { get; }
         List<ITurnModel> Turns { get; }
 
-        string[,] Board { get; set; }
+        /// <summary>
+        /// Gets or sets the representation of the board grid's current state.
+        /// </summary>
+        /// <value>
+        /// A two-dimensional array representing the pieces in each cell.
+        /// </value>
+        int[,] Board { get; set; }
     }
 }
