@@ -7,12 +7,12 @@ namespace ConnectFour.Business.BLLs
 {
     public class RoomBLL
     {
-        private static PlayerDTO ConvertToDto(IPlayerModel playerModel)
+        private static RoomDTO ConvertToDto(IRoomModel model)
         {
             throw new NotImplementedException();
         }
 
-        private static IPlayerModel ConvertToModel(PlayerDTO dto)
+        private static IRoomModel ConvertToModel(RoomDTO dto)
         {
             throw new NotImplementedException();
         }
