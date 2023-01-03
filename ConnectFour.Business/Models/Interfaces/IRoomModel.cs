@@ -20,5 +20,14 @@ namespace ConnectFour.Business.Models.Interfaces
         /// A two-dimensional array representing the pieces in each cell.
         /// </value>
         int[,] Board { get; set; }
+
+        /// <summary>
+        /// Checks if the given <paramref name="turn"/> will result in a win.
+        /// </summary>
+        /// <returns>
+        /// <see langword="true"/> if the <paramref name="turn"/> will result in a win, otherwise <see langword="false"/>.
+        /// </returns>
+        /// <param name="turn">The <see cref="ITurnModel"/> to check.</param>
+        bool CheckForWin(ITurnModel turn);
     }
 }
