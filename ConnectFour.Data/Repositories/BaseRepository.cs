@@ -1,4 +1,5 @@
-﻿using System.Configuration;
+﻿using System;
+using System.Configuration;
 
 using ConnectFour.Data.DALs;
 
@@ -26,7 +27,7 @@ namespace ConnectFour.Data.Repositories
         /// <param name="dal">The <see cref="IDAL"/> to use as the backend.</param>
         public BaseRepository(IDAL dal)
         {
-            _dal = dal;
+            _dal = dal ?? throw new ArgumentNullException(nameof(dal));
         }
     }
 }

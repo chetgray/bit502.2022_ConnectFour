@@ -28,7 +28,8 @@ namespace ConnectFour.Business.BLLs
         /// <param name="repository">The <see cref="IRoomRepository"/> to use as the backend.</param>
         public RoomBLL(IRoomRepository repository)
         {
-            _repository = repository;
+            _repository =
+                repository ?? throw new ArgumentNullException(nameof(repository));
         }
 
         private static RoomDTO ConvertToDto(IRoomModel model)
