@@ -63,5 +63,6 @@
     <Build Include="Tables\Player.sql" />
     <Build Include="Tables\Room.sql" />
     <Build Include="Tables\Turn.sql" />
+    <Build Include="StoredProcedures\spA_Room_GetAllFinished.sql" />
   </ItemGroup>
 </Project>
