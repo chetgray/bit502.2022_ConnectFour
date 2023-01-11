@@ -12,6 +12,79 @@ namespace ConnectFour.App
     {
         private static void Main()
         {
+            bool isRunning = true;
+            while (isRunning)
+            {
+                bool isChoosing = true;
+                bool isQuitting = false;
+                while (isChoosing)
+                {
+                    WriteTitle();
+                    Console.WriteLine("What would you like to do?\n" +
+                    "[1] - New Single-Player Game\n" +
+                    "[2] - New Multi-Player Game\n" +
+                    "[3] - Join Multi-Player Game\n" +
+                    "[4] - View Game Results\n" +
+                    "[5] - Quit\n");
+                    Console.Write("--> ");
+                    string userResponse = Console.ReadLine();
+                    isChoosing = false;
+                    switch (userResponse)
+                    {
+                        case "1":
+                            //New Single-Player Game
+                            break;
+                        case "2":
+                            //New Multi-Player Game
+                            break;
+                        case "3":
+                            //Join Multi-Player Game
+                            break;
+                        case "4":
+                            //View Game Results
+                            break;
+                        case "5":
+                            isQuitting = true;
+                            isRunning = false;
+                            break;
+                        default:
+                            Console.Clear();
+                            Console.WriteLine("Invalid response please choose 1, 2, 3, 4, or 5");
+                            isChoosing = true;
+                            break;
+                    }
+                }
+                Console.Clear();
+                if (isQuitting == false)
+                {
+                    WriteTitle();
+                    Console.WriteLine("What would you like to do?\n" +
+                    "[1] Return to the Main Menu\n" +
+                    "[2] Quit");
+                    Console.Write("--> ");
+                    string continueProgram = Console.ReadLine();
+                    if (continueProgram == "2")
+                    {
+                        isRunning = false;
+                    }
+                    Console.Clear();
+                }
+            }
+
+            IRoomModel testRoom = new RoomModel
+            {
+                Id = 100,
+                CurrentTurnNum = 4,
+                Players = new List<IPlayerModel>
+                {
+                    new PlayerModel { Id = 1, Name = "Aaa", Symbol = "A", Color = ConsoleColor.Red },
+                    new PlayerModel { Id = 2, Name = "Bbb", Symbol = "B", Color = ConsoleColor.Yellow }
+                },
+                Turns = new List<ITurnModel>
+                {
+                    new TurnModel { Id = 1, ColNum = 1, RowNum = 6, Num = 1 },
+                    new TurnModel { Id = 2, ColNum = 2, RowNum = 6, Num = 2 },
+                    new TurnModel { Id = 3, ColNum = 1, RowNum = 5, Num = 3 }
             DisplayResults(RoomBLL.GetAllFinished());
             Console.ReadKey();
         }
@@ -311,6 +384,23 @@ namespace ConnectFour.App
             Console.WriteLine("\n    ╚═════╩═════╩═════╩═════╩═════╩═════╩═════╝");
             Console.ResetColor();
             Console.WriteLine("       1     2     3     4     5     6     7");
+        }
+
+        private static void WriteTitle()
+        {
+            Console.Write("         ");
+            WriteInColor("C", ConsoleColor.DarkRed);
+            WriteInColor("O", ConsoleColor.DarkYellow);
+            WriteInColor("NNE", ConsoleColor.DarkCyan);
+            WriteInColor("C", ConsoleColor.DarkRed);
+            WriteInColor("T4\n\n", ConsoleColor.DarkCyan);
+            Console.ResetColor();
+        }
+
+        private static void WriteInColor(string text, ConsoleColor color)
+        {
+            Console.ForegroundColor = color;
+            Console.Write(text);
         }
     }
 }
