@@ -41,7 +41,9 @@ namespace ConnectFour.App
                             //Join Multi-Player Game
                             break;
                         case "4":
-                            //View Game Results
+                            Console.Clear();
+                            DisplayResults(RoomBLL.GetAllFinished());
+                            Console.ReadKey();
                             break;
                         case "5":
                             isQuitting = true;
@@ -85,11 +87,21 @@ namespace ConnectFour.App
                     new TurnModel { Id = 1, ColNum = 1, RowNum = 6, Num = 1 },
                     new TurnModel { Id = 2, ColNum = 2, RowNum = 6, Num = 2 },
                     new TurnModel { Id = 3, ColNum = 1, RowNum = 5, Num = 3 }
-            DisplayResults(RoomBLL.GetAllFinished());
+                }
+            };
+
+            DisplayBoard(testRoom);
+
             Console.ReadKey();
         }
+
         private static void DisplayResults(List<IResultModel> results)
         {
+            if(results.Count == 0)
+            {
+                Console.WriteLine("No game results");
+                return;
+            }
             string[,] ResultTable = new string[results.Count + 1,7];
             ResultTable[0, 0] = "Room ID";
             ResultTable[0, 1] = "Started At";
@@ -117,7 +129,7 @@ namespace ConnectFour.App
                     winnerName = "NULL";
                 }
                 ResultTable[i, 0] = results[i - 1].RoomId.ToString();
-                ResultTable[i, 1] = results[i - 1].CreationTime.ToString();
+                ResultTable[i, 1] = results[i - 1].CreationTime.ToString("MM/dd/yyyy hh:mm tt");
                 ResultTable[i, 2] = GetGameDuration(results[i-1].LastTurn.Time - results[i-1].CreationTime);
                 ResultTable[i, 3] = results[i - 1].Players[0].Name;
                 ResultTable[i, 4] = results[i - 1].Players[1].Name;
