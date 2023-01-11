@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
-
+using System.Linq;
 using ConnectFour.Data.DTOs;
 
 namespace ConnectFour.Data.Repositories
@@ -10,98 +10,40 @@ namespace ConnectFour.Data.Repositories
     {
         public List<ResultDTO> GetAllFinished()
         {
-            ResultDTO resultDTO = new ResultDTO();
-            resultDTO.CreationTime = DateTime.Now;
-            resultDTO.CurrentTurnNum = 11;
-            resultDTO.Players = new List<PlayerDTO>
+            Dictionary<string, object> parameters = new Dictionary<string, object>();
+            DataTable dataTable = _dal.ExecuteStoredProcedure("dbo.spA_Room_GetAllFinished", parameters);
+
+            Dictionary<int, ResultDTO> resultDTODictionary = new Dictionary<int, ResultDTO>();
+            for (int i = 0; i < dataTable.Rows.Count; i++)
             {
-                new PlayerDTO
+                DataRow row = dataTable.Rows[i];
+                int roomId = (int)row["RoomId"];
+                if (resultDTODictionary.ContainsKey(roomId))
                 {
-                    Id = 1,
-                    Name = "John",
-                    Num = 1,
-                    RoomId = 1
-                },
-                new PlayerDTO
-                {
-                    Id = 2,
-                    Name = "Bob",
-                    Num = 2,
-                    RoomId = 1
+                    resultDTODictionary[roomId].Players.Add(PlayerRepository.ConvertToDto(row));
+                    resultDTODictionary[roomId].Players.Sort((x, y) => x.Num.CompareTo(y.Num));
                 }
-            };
-            resultDTO.ResultCode = 1;
-            resultDTO.RoomId = 1;
-            resultDTO.Turns = new List<TurnDTO>
+                else
+                {
+                    resultDTODictionary.Add(roomId, new ResultDTO());
+                    resultDTODictionary[roomId].RoomId = roomId;
+                    resultDTODictionary[roomId].CreationTime = (DateTime)row["CreationTime"];
+                    resultDTODictionary[roomId].ResultCode = (int)row["ResultCode"];
+                    resultDTODictionary[roomId].LastTurn = TurnRepository.ConvertToDto(row);
+                    resultDTODictionary[roomId].Players.Add(PlayerRepository.ConvertToDto(row));
+                }
+            }
+
+            foreach (KeyValuePair<int, ResultDTO> item in resultDTODictionary)
             {
-                new TurnDTO
-                {
-                    Id = 1,
-                    Time = DateTime.Now,
-                    RowNum = 1,
-                    ColNum = 1,
-                    RoomId = 1,
-                    Num = 1
-                },
-                new TurnDTO
-                {
-                    Id = 2,
-                    Time = DateTime.Now,
-                    RowNum = 1,
-                    ColNum = 1,
-                    RoomId = 1,
-                    Num = 2
-                },
-                new TurnDTO
-                {
-                    Id = 3,
-                    Time = DateTime.Now,
-                    RowNum = 1,
-                    ColNum = 1,
-                    RoomId = 1,
-                    Num = 3
-                },
-                new TurnDTO
-                {
-                    Id = 4,
-                    Time = DateTime.Now,
-                    RowNum = 1,
-                    ColNum = 1,
-                    RoomId = 1,
-                    Num = 4
-                },
-                new TurnDTO
-                {
-                    Id=5,
-                    Time = DateTime.Now,
-                    RowNum = 1,
-                    ColNum = 1,
-                    RoomId = 1,
-                    Num = 5
-                },
-                new TurnDTO
-                {
-                    Id = 6,
-                    Time = DateTime.Now,
-                    RowNum = 1,
-                    ColNum = 1,
-                    RoomId = 1,
-                    Num = 6
-                },
-                new TurnDTO
-                {
-                    Id = 7,
-                    Time = DateTime.Now,
-                    RowNum = 1,
-                    ColNum = 1,
-                    RoomId = 1,
-                    Num = 7
-                }
-            };
-            List<ResultDTO> resultDTOS = new List<ResultDTO>();
-            resultDTOS.Add(resultDTO);
+                item.Value.Players.Sort((x, y) => x.Num.CompareTo(y.Num));
+            }
+
+            List<ResultDTO> resultDTOS = resultDTODictionary.Values.ToList();
+
             return resultDTOS;
         }
+        
         private static RoomDTO ConvertToDto(DataRow row)
         {
             throw new NotImplementedException();

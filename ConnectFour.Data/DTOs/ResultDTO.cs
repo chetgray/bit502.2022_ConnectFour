@@ -8,11 +8,10 @@ namespace ConnectFour.Data.DTOs
 {
     public class ResultDTO
     {
-        public DateTime CreationTime { get; set; }
-        public int? CurrentTurnNum { get; set; }
-        public List<PlayerDTO> Players { get; set; }
-        public int? ResultCode { get; set; }
         public int? RoomId { get; set; }
-        public List<TurnDTO> Turns { get; set; }
+        public DateTime CreationTime { get; set; }
+        public List<PlayerDTO> Players { get; set; } = new List<PlayerDTO>();
+        public int? ResultCode { get; set; }
+        public TurnDTO LastTurn { get; set; } = new TurnDTO();
     }
 }
