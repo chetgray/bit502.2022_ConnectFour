@@ -10,9 +10,9 @@ namespace ConnectFour.Business.BLLs
 {
     public class RoomBLL
     {
-        public static List<ResultModel> GetAllFinished()
+        public static List<IResultModel> GetAllFinished()
         {
-            List<ResultModel> resultModels = new List<ResultModel>();
+            List<IResultModel> resultModels = new List<IResultModel>();
             RoomRepository roomRepository = new RoomRepository();
             List<ResultDTO> resultDTOs = roomRepository.GetAllFinished();
             for (int i = 0; i < resultDTOs.Count; i++)
@@ -34,7 +34,6 @@ namespace ConnectFour.Business.BLLs
         {
             ResultModel resultModel = new ResultModel();
             resultModel.CreationTime = dto.CreationTime;
-            resultModel.CurrentTurnNum = dto.CurrentTurnNum;
             List<IPlayerModel> players = new List<IPlayerModel>();
             for (int i = 0; i < dto.Players.Count; i++)
             {
@@ -46,18 +45,13 @@ namespace ConnectFour.Business.BLLs
             resultModel.Players = players;
             resultModel.ResultCode = dto.ResultCode;
             resultModel.RoomId = dto.RoomId;
-            List<ITurnModel> turns = new List<ITurnModel>();
-            for (int i = 0; i < dto.Turns.Count; i++)
-            {
-                ITurnModel turnModel = new TurnModel();
-                turnModel.Id = dto.Turns[i].Id;
-                turnModel.ColNum = dto.Turns[i].ColNum;
-                turnModel.RowNum = dto.Turns[i].RowNum;
-                turnModel.Num = dto.Turns[i].Num;
-                turnModel.Time = dto.Turns[i].Time;
-                turns.Add(turnModel);
-            }
-            resultModel.Turns = turns;
+            TurnModel turnModel = new TurnModel();
+            turnModel.Id = dto.LastTurn.Id;
+            turnModel.ColNum = dto.LastTurn.ColNum;
+            turnModel.RowNum = dto.LastTurn.RowNum;
+            turnModel.Num = dto.LastTurn.Num;
+            turnModel.Time = dto.LastTurn.Time;
+            resultModel.LastTurn = turnModel;
             return resultModel;
         }
     }
