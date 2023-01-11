@@ -11,10 +11,8 @@ namespace ConnectFour.Business.Models
     {
         public int? RoomId { get; set; }
         public DateTime CreationTime { get; set; } = DateTime.Now;
-
         public List<IPlayerModel> Players { get; set; } = new List<IPlayerModel>();
         public int? ResultCode { get; set; }
-        public List<ITurnModel> Turns { get; set; } = new List<ITurnModel>();
-        public int? CurrentTurnNum { get; set; }
+        public ITurnModel LastTurn { get; set; }
     }
 }
