@@ -43,6 +43,7 @@ namespace ConnectFour.App
                         case "4":
                             Console.Clear();
                             DisplayResults(RoomBLL.GetAllFinished());
+                            Console.WriteLine("Press any key to continue...");
                             Console.ReadKey();
                             break;
                         case "5":
