@@ -25,18 +25,18 @@ namespace ConnectFour.Data.Repositories
                 }
                 else
                 {
-                    resultDTODictionary.Add(roomId, new ResultDTO());
-                    resultDTODictionary[roomId].RoomId = roomId;
-                    resultDTODictionary[roomId].CreationTime = (DateTime)row["CreationTime"];
-                    resultDTODictionary[roomId].ResultCode = (int)row["ResultCode"];
-                    resultDTODictionary[roomId].LastTurn = TurnRepository.ConvertToDto(row);
-                    resultDTODictionary[roomId].Players.Add(PlayerRepository.ConvertToDto(row));
+                    resultDTODictionary.Add(roomId, new ResultDTO
+                    {
+                        RoomId = roomId,
+                        CreationTime = (DateTime)row["CreationTime"],
+                        ResultCode = (int)row["ResultCode"],
+                        LastTurn = TurnRepository.ConvertToDto(row),
+                        Players = new List<PlayerDTO>
+                        {
+                            PlayerRepository.ConvertToDto(row)
+                        }
+                    });
                 }
-            }
-
-            foreach (KeyValuePair<int, ResultDTO> item in resultDTODictionary)
-            {
-                item.Value.Players.Sort((x, y) => x.Num.CompareTo(y.Num));
             }
 
             List<ResultDTO> resultDTOS = resultDTODictionary.Values.ToList();
