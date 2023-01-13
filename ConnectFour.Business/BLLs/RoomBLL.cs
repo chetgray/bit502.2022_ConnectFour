@@ -26,9 +26,22 @@ namespace ConnectFour.Business.BLLs
             throw new NotImplementedException();
         }
 
-        private static IPlayerModel ConvertToModel(PlayerDTO dto)
+        private static IPlayerModel ConvertPlayerDTOToModel(PlayerDTO dto)
         {
-            throw new NotImplementedException();
+            PlayerModel pM = new PlayerModel();
+            pM.Id = dto.Id;
+            pM.Name = dto.Name;
+            return pM;
+        }
+        private static ITurnModel ConvertTurnDTOToModel(TurnDTO dto)
+        {
+            TurnModel turnModel = new TurnModel();
+            turnModel.Id = dto.Id;
+            turnModel.ColNum = dto.ColNum;
+            turnModel.RowNum = dto.RowNum;
+            turnModel.Num = dto.Num;
+            turnModel.Time = dto.Time;
+            return turnModel;
         }
         private static ResultModel ConvertToResultModel(ResultDTO dto)
         {
@@ -37,21 +50,12 @@ namespace ConnectFour.Business.BLLs
             List<IPlayerModel> players = new List<IPlayerModel>();
             for (int i = 0; i < dto.Players.Count; i++)
             {
-                IPlayerModel playerModel = new PlayerModel();
-                playerModel.Id = dto.Players[i].Id;
-                playerModel.Name = dto.Players[i].Name;
-                players.Add(playerModel);
+                players.Add(ConvertPlayerDTOToModel(dto.Players[i]));
             }
             resultModel.Players = players;
             resultModel.ResultCode = dto.ResultCode;
             resultModel.RoomId = dto.RoomId;
-            TurnModel turnModel = new TurnModel();
-            turnModel.Id = dto.LastTurn.Id;
-            turnModel.ColNum = dto.LastTurn.ColNum;
-            turnModel.RowNum = dto.LastTurn.RowNum;
-            turnModel.Num = dto.LastTurn.Num;
-            turnModel.Time = dto.LastTurn.Time;
-            resultModel.LastTurn = turnModel;
+            resultModel.LastTurn = ConvertTurnDTOToModel(dto.LastTurn);
             return resultModel;
         }
     }
