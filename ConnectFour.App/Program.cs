@@ -1,4 +1,5 @@
-﻿using ConnectFour.Business.Models;
+﻿using ConnectFour.Business.BLLs;
+using ConnectFour.Business.Models;
 using ConnectFour.Business.Models.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -8,6 +9,7 @@ namespace ConnectFour.App
 {
     internal static class Program
     {
+        static IPlayerModel localPlayer = new PlayerModel();
         private static void Main()
         {
             bool isRunning = true;
@@ -36,7 +38,7 @@ namespace ConnectFour.App
                             //New Multi-Player Game
                             break;
                         case "3":
-                            //Join Multi-Player Game
+                            JoinMultiPlayerGame();
                             break;
                         case "4":
                             //View Game Results
@@ -90,7 +92,39 @@ namespace ConnectFour.App
 
             Console.ReadKey();
         }
-
+        private static void JoinMultiPlayerGame()
+        {            
+            if (localPlayer.Name == string.Empty)
+            {
+                Console.Clear();
+                Console.WriteLine("What is your name?");
+                localPlayer.Name = Console.ReadLine();
+            }
+            Console.Clear();
+            Console.WriteLine("What is the Room Id you would like to join?");
+            int roomId = int.Parse(Console.ReadLine());
+            RoomBLL rBLL = new RoomBLL();
+            IRoomModel roomModel = rBLL.GetRoomOccupancy(roomId);
+            Console.Clear();
+            if(roomModel.Id == null)
+            {
+                Console.WriteLine("Room Id does not match any open rooms.\nPress any key to continue...");
+                Console.ReadKey();
+                return;
+            }
+            if (roomModel.Vacancy)
+            {
+                PlayerBLL pBLL = new PlayerBLL();
+                localPlayer = pBLL.AddPlayerToRoom(localPlayer, roomModel);
+                Console.Write($"Successfully joined room agaisnt {roomModel.Players[0].Name}\nPress any key to continue...");
+                Console.ReadKey();
+            }
+            else
+            {
+                Console.WriteLine("That room is full!\nPress any key to continue...");
+                Console.ReadKey();
+            }
+        }
         private static void DisplayBoard(IRoomModel room)
         {
             string p1 = $"░ {room.Players[0].Symbol} ░";
