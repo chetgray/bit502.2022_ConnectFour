@@ -97,24 +97,33 @@ namespace ConnectFour.App
             if (localPlayer.Name == string.Empty)
             {
                 Console.Clear();
-                Console.WriteLine("What is your name?");
+                WriteTitle();
+                Console.Write("What is your name?\n--> ");
                 localPlayer.Name = Console.ReadLine();
             }
             bool isChoosing = true;
             while (isChoosing)
             {
                 Console.Clear();
-                Console.WriteLine("What is the Room Id you would like to join?");
-                int roomId = int.Parse(Console.ReadLine());
-                RoomBLL rBLL = new RoomBLL();
-                IRoomModel roomModel = rBLL.GetRoomOccupancy(roomId);
-                if (roomModel.Id == null)
+                WriteTitle();
+                Console.Write("What is the Room Id you would like to join?\n--> ");
+                bool successfullInput = int.TryParse(Console.ReadLine(), out int roomId);
+                IRoomModel roomModel = new RoomModel();
+                if (successfullInput)
                 {
+                    RoomBLL rBLL = new RoomBLL();
+                    roomModel = rBLL.GetRoomOccupancy(roomId);
+                }
+                Console.Clear();
+                if (roomModel.Id == null || !successfullInput)
+                {
+                    WriteTitle();
                     Console.WriteLine("Room Id does not match any open rooms.\nPress any key to continue...\nTo quit trying to join a room press the escape(Esc) key.");
                     isChoosing = !IsPressingEscapeKey();
                 }
                 else if (roomModel.Vacancy)
                 {
+                    WriteTitle();
                     PlayerBLL pBLL = new PlayerBLL();
                     localPlayer = pBLL.AddPlayerToRoom(localPlayer, roomModel);
                     Console.Write($"Successfully joined room agaisnt {roomModel.Players[0].Name}\nPress any key to continue...");
@@ -124,6 +133,7 @@ namespace ConnectFour.App
                 }
                 else
                 {
+                    WriteTitle();
                     Console.WriteLine("That room is full!\nPress any key to continue...\nTo quit trying to join a room press the escape(Esc) key.");
                     isChoosing = !IsPressingEscapeKey();
                 }
