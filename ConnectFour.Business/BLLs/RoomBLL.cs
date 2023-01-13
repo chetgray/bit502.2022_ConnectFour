@@ -15,18 +15,18 @@ namespace ConnectFour.Business.BLLs
             return room;
         }
 
-        private static PlayerModel ConvertPlayerDTOToModel(PlayerDTO dto)
+        private static PlayerDTO ConvertToDto(IPlayerModel playerModel)
+        {
+            throw new NotImplementedException();
+        }
+
+        private static IPlayerModel ConvertPlayerDTOToModel(PlayerDTO dto)
         {
             PlayerModel pM = new PlayerModel();
             pM.Id = dto.Id;
             pM.Name = dto.Name;
             pM.Num = dto.Num;
             return pM;
-        }
-
-        private static IPlayerModel ConvertToModel(PlayerDTO dto)
-        {
-            throw new NotImplementedException();
         }
         private static RoomModel ConvertRoomDTOToModel(RoomDTO roomDTO)
         {

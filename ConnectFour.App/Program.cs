@@ -100,30 +100,43 @@ namespace ConnectFour.App
                 Console.WriteLine("What is your name?");
                 localPlayer.Name = Console.ReadLine();
             }
-            Console.Clear();
-            Console.WriteLine("What is the Room Id you would like to join?");
-            int roomId = int.Parse(Console.ReadLine());
-            RoomBLL rBLL = new RoomBLL();
-            IRoomModel roomModel = rBLL.GetRoomOccupancy(roomId);
-            Console.Clear();
-            if(roomModel.Id == null)
+            bool isChoosing = true;
+            while (isChoosing)
             {
-                Console.WriteLine("Room Id does not match any open rooms.\nPress any key to continue...");
-                Console.ReadKey();
-                return;
+                Console.Clear();
+                Console.WriteLine("What is the Room Id you would like to join?");
+                int roomId = int.Parse(Console.ReadLine());
+                RoomBLL rBLL = new RoomBLL();
+                IRoomModel roomModel = rBLL.GetRoomOccupancy(roomId);
+                if (roomModel.Id == null)
+                {
+                    Console.WriteLine("Room Id does not match any open rooms.\nPress any key to continue...\nTo quit trying to join a room press the escape(Esc) key.");
+                    isChoosing = !IsPressingEscapeKey();
+                }
+                else if (roomModel.Vacancy)
+                {
+                    PlayerBLL pBLL = new PlayerBLL();
+                    localPlayer = pBLL.AddPlayerToRoom(localPlayer, roomModel);
+                    Console.Write($"Successfully joined room agaisnt {roomModel.Players[0].Name}\nPress any key to continue...");
+                    Console.ReadKey();
+                    isChoosing = false;
+                    //Call gameplay loop
+                }
+                else
+                {
+                    Console.WriteLine("That room is full!\nPress any key to continue...\nTo quit trying to join a room press the escape(Esc) key.");
+                    isChoosing = !IsPressingEscapeKey();
+                }
             }
-            if (roomModel.Vacancy)
+        }
+
+        private static bool IsPressingEscapeKey()
+        {
+            if (Console.ReadKey().Key == ConsoleKey.Escape)
             {
-                PlayerBLL pBLL = new PlayerBLL();
-                localPlayer = pBLL.AddPlayerToRoom(localPlayer, roomModel);
-                Console.Write($"Successfully joined room agaisnt {roomModel.Players[0].Name}\nPress any key to continue...");
-                Console.ReadKey();
+                return true;
             }
-            else
-            {
-                Console.WriteLine("That room is full!\nPress any key to continue...");
-                Console.ReadKey();
-            }
+            return false;
         }
         private static void DisplayBoard(IRoomModel room)
         {
