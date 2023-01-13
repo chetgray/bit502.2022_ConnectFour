@@ -14,5 +14,6 @@ namespace ConnectFour.Business.Models.Interfaces
         List<ITurnModel> Turns { get; }
 
         string[,] Board { get; set; }
+        bool Vacancy { get; set; }
     }
 }

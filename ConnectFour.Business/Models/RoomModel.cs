@@ -16,5 +16,6 @@ namespace ConnectFour.Business.Models
         public List<ITurnModel> Turns { get; set; } = new List<ITurnModel>();
 
         public string[,] Board { get; set; } = new string[6, 7];
+        public bool Vacancy { get; set; }
     }
 }
