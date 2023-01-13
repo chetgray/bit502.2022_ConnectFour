@@ -12,9 +12,9 @@ namespace ConnectFour.Data.Repositories
             TurnDTO dto = new TurnDTO
             {
                 Id = (int)row["TurnId"],
-                Time = (DateTime)row["Time"],
-                RowNum = (int)row["RowNum"],
-                ColNum = (int)row["ColNum"],
+                Time = (DateTime)row["TurnTime"],
+                RowNum = (int)row["TurnRowNum"],
+                ColNum = (int)row["TurnColNum"],
                 RoomId = (int)row["TurnRoomId"],
                 Num = (int)row["TurnNum"]
             };

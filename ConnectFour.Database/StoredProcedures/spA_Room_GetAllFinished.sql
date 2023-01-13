@@ -1,16 +1,16 @@
 ﻿CREATE PROCEDURE [dbo].[spA_Room_GetAllFinished]
 AS
 	SELECT	Room.Id				AS RoomId,
-			Room.CreationTime,
-			Room.ResultCode,
+			Room.CreationTime	AS RoomCreationTime,
+			Room.ResultCode		AS RoomResultCode,
 			Player.Id			AS PlayerId,
-			Player.[Name],
+			Player.[Name]		AS PlayerName,
 			Player.RoomId		AS PlayerRoomId,
 			Player.Num			AS PlayerNum,
 			Turn.Id				AS TurnId,
-			Turn.[Time],
-			Turn.RowNum,
-			Turn.ColNum,
+			Turn.[Time]			AS TurnTime,
+			Turn.RowNum			AS TurnRowNum,
+			Turn.ColNum			AS TurnColNum,
 			Turn.RoomId			AS TurnRoomId,
 			Turn.Num			AS TurnNum
 	FROM	Room

@@ -12,7 +12,7 @@ namespace ConnectFour.Data.Repositories
             PlayerDTO dto = new PlayerDTO
             {
                 Id = (int)row["PlayerId"],
-                Name = (string)row["Name"],
+                Name = (string)row["PlayerName"],
                 RoomId = (int)row["PlayerRoomId"],
                 Num = (int)row["PlayerRoomId"]
             };

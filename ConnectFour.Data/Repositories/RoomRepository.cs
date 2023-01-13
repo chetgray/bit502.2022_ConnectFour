@@ -28,8 +28,8 @@ namespace ConnectFour.Data.Repositories
                     resultDTODictionary.Add(roomId, new ResultDTO
                     {
                         RoomId = roomId,
-                        CreationTime = (DateTime)row["CreationTime"],
-                        ResultCode = (int)row["ResultCode"],
+                        CreationTime = (DateTime)row["RoomCreationTime"],
+                        ResultCode = (int)row["RoomResultCode"],
                         LastTurn = TurnRepository.ConvertToDto(row),
                         Players = new List<PlayerDTO>
                         {
