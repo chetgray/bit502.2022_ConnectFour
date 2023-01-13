@@ -159,7 +159,7 @@ namespace ConnectFour.App
 
             for (int i = 0; i < rows; i++)
             {
-                if(i == 0)
+                if(i == 1)
                 {
                     sb.Append(" ╔═");
                     for (int j = 0; j < widths.Count(); j++)
@@ -176,7 +176,7 @@ namespace ConnectFour.App
                     }
                     Console.WriteLine(sb.ToString());
                 }
-                else
+                else if( i > 1)
                 {
                     sb.Clear();
                     sb.Append(" ╠═");
@@ -196,9 +196,10 @@ namespace ConnectFour.App
                 }  
                 
                 sb.Clear();
+                string border = (i > 0) ? border = " ║ " : border = "   ";
                 for (int j = 0; j < columns; j++)
                 {
-                    sb.Append(" ║ ");
+                    sb.Append(border);
                     int columnWidth = widths[j];
                     int stringLength = ResultTable[i, j].Length;
                     int spacingBeforeAndAfter = columnWidth - stringLength;
@@ -216,9 +217,9 @@ namespace ConnectFour.App
                         sb.Append(' ', spacingBeforeAndAfter / 2);                        
                     }                    
                 }
-
-                sb.Append(" ║");
+                sb.Append(border);
                 Console.WriteLine(sb.ToString());
+                sb.Clear();
             }
             sb.Clear();
             sb.Append(" ╚═");
