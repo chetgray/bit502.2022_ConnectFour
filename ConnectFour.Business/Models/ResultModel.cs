@@ -10,9 +10,11 @@ namespace ConnectFour.Business.Models
     public class ResultModel : IResultModel
     {
         public int? RoomId { get; set; }
-        public DateTime CreationTime { get; set; } = DateTime.Now;
-        public List<IPlayerModel> Players { get; set; } = new List<IPlayerModel>();
+        public DateTime CreationTime { get; set; }
+        public string Duration { get; set; }
+        public string[] Players { get; set; }
         public int? ResultCode { get; set; }
-        public ITurnModel LastTurn { get; set; }
+        public string WinnerName { get; set; }
+        public string LastTurnNum { get; set; }
     }
 }

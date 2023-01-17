@@ -6,10 +6,12 @@ namespace ConnectFour.Business.Models.Interfaces
 {
     public interface IResultModel
     {
-        DateTime CreationTime { get; set; }
-        List<IPlayerModel> Players { get; set; }
-        int? ResultCode { get; set; }
         int? RoomId { get; set; }
-        ITurnModel LastTurn { get; set; }
+        DateTime CreationTime { get; set; }
+        string Duration { get; set; }
+        string[] Players { get; set; }
+        int? ResultCode { get; set; }
+        string WinnerName { get; set; }
+        string LastTurnNum { get; set; }
     }
 }
