@@ -7,16 +7,9 @@ namespace ConnectFour.Data.Repositories
 {
     public class PlayerRepository : BaseRepository
     {
-        internal static PlayerDTO ConvertToDto(DataRow row)
+        private static PlayerDTO ConvertToDto(DataRow row)
         {
-            PlayerDTO dto = new PlayerDTO
-            {
-                Id = (int)row["PlayerId"],
-                Name = (string)row["PlayerName"],
-                RoomId = (int)row["PlayerRoomId"],
-                Num = (int)row["PlayerRoomId"]
-            };
-            return dto;
+            throw new NotImplementedException();
         }
     }
 }
