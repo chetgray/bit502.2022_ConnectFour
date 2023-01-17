@@ -42,7 +42,8 @@ namespace ConnectFour.App
                             break;
                         case "4":
                             Console.Clear();
-                            DisplayResults(RoomBLL.GetAllFinished());
+                            RoomBLL rBLL = new RoomBLL();
+                            DisplayResults(rBLL.GetAllFinished());
                             Console.WriteLine("Press any key to continue...");
                             Console.ReadKey();
                             break;
@@ -98,12 +99,12 @@ namespace ConnectFour.App
 
         private static void DisplayResults(List<IResultModel> results)
         {
-            if(results.Count == 0)
+            if (results.Count == 0)
             {
                 Console.WriteLine("No game results");
                 return;
             }
-            string[,] ResultTable = new string[results.Count + 1,7];
+            string[,] ResultTable = new string[results.Count + 1, 7];
             ResultTable[0, 0] = "Room ID";
             ResultTable[0, 1] = "Started At";
             ResultTable[0, 2] = "Duration";
@@ -116,28 +117,15 @@ namespace ConnectFour.App
             for (int i = 1; i <= amountOfResults; i++)
             {
                 int resultCode = (int)results[i - 1].ResultCode;
-                string winnerName = string.Empty;
-                if (resultCode > 0 && resultCode < 3)
-                {
-                    winnerName = $"{results[i - 1].Players[resultCode - 1].Name}";
-                }
-                else if(resultCode == 0)
-                {
-                    winnerName = "DRAW";
-                }
-                else
-                {
-                    winnerName = "NULL";
-                }
                 ResultTable[i, 0] = results[i - 1].RoomId.ToString();
                 ResultTable[i, 1] = results[i - 1].CreationTime.ToString("MM/dd/yyyy hh:mm tt");
-                ResultTable[i, 2] = GetGameDuration(results[i-1].LastTurn.Time - results[i-1].CreationTime);
-                ResultTable[i, 3] = results[i - 1].Players[0].Name;
-                ResultTable[i, 4] = results[i - 1].Players[1].Name;
-                ResultTable[i, 5] = winnerName;
-                ResultTable[i, 6] = results[i - 1].LastTurn.Num.ToString();
+                ResultTable[i, 2] = results[i - 1].Duration;
+                ResultTable[i, 3] = results[i - 1].Players[0];
+                ResultTable[i, 4] = results[i - 1].Players[1];
+                ResultTable[i, 5] = results[i - 1].WinnerName;
+                ResultTable[i, 6] = results[i - 1].LastTurnNum;
             }
-            
+
             int rows = ResultTable.GetLength(0);
             int columns = ResultTable.GetLength(1);
             int[] widths = new int[columns];
@@ -159,7 +147,7 @@ namespace ConnectFour.App
 
             for (int i = 0; i < rows; i++)
             {
-                if(i == 1)
+                if (i == 1)
                 {
                     sb.Append(" ╔═");
                     for (int j = 0; j < widths.Count(); j++)
@@ -176,7 +164,7 @@ namespace ConnectFour.App
                     }
                     Console.WriteLine(sb.ToString());
                 }
-                else if( i > 1)
+                else if (i > 1)
                 {
                     sb.Clear();
                     sb.Append(" ╠═");
@@ -193,8 +181,8 @@ namespace ConnectFour.App
                         }
                     }
                     Console.WriteLine(sb.ToString());
-                }  
-                
+                }
+
                 sb.Clear();
                 string border = (i > 0) ? border = " ║ " : border = "   ";
                 for (int j = 0; j < columns; j++)
@@ -203,7 +191,7 @@ namespace ConnectFour.App
                     int columnWidth = widths[j];
                     int stringLength = ResultTable[i, j].Length;
                     int spacingBeforeAndAfter = columnWidth - stringLength;
-                    if(spacingBeforeAndAfter % 2 == 0)
+                    if (spacingBeforeAndAfter % 2 == 0)
                     {
                         sb.Append(' ', spacingBeforeAndAfter / 2);
                         sb.Append(ResultTable[i, j]);
@@ -214,8 +202,8 @@ namespace ConnectFour.App
                         sb.Append(" ");
                         sb.Append(' ', spacingBeforeAndAfter / 2);
                         sb.Append(ResultTable[i, j]);
-                        sb.Append(' ', spacingBeforeAndAfter / 2);                        
-                    }                    
+                        sb.Append(' ', spacingBeforeAndAfter / 2);
+                    }
                 }
                 sb.Append(border);
                 Console.WriteLine(sb.ToString());
@@ -236,46 +224,6 @@ namespace ConnectFour.App
                 }
             }
             Console.WriteLine(sb.ToString());
-        }
-
-        private static string GetGameDuration(TimeSpan duration)
-        { 
-            int days = (int)duration.TotalDays;
-            int hours = (int)duration.TotalHours;
-            int minutes = (int)duration.TotalMinutes;
-            if (days >= 1)
-            {
-                if (days > 1)
-                {
-                    return $"{days} Days";
-                }
-                else
-                {
-                    return $"{days} Day";
-                }
-            }
-            else if (hours >= 1)
-            {
-                if (hours > 1)
-                {
-                    return $"{hours} Hours";
-                }
-                else
-                {
-                    return $"{hours} Hour";
-                }
-            }
-            else
-            {
-                if (minutes > 1)
-                {
-                    return $"{minutes} Minutes";
-                }
-                else
-                {
-                    return $"{minutes} Minute";
-                }
-            }
         }
 
         private static void DisplayBoard(IRoomModel room)

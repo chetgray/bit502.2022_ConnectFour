@@ -1,15 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
+
 using ConnectFour.Business.Models;
 using ConnectFour.Business.Models.Interfaces;
 using ConnectFour.Data.DTOs;
 using ConnectFour.Data.Repositories;
 
+
 namespace ConnectFour.Business.BLLs
 {
     public class RoomBLL
     {
-        public static List<IResultModel> GetAllFinished()
+        public List<IResultModel> GetAllFinished()
         {
             List<IResultModel> resultModels = new List<IResultModel>();
             RoomRepository roomRepository = new RoomRepository();
@@ -20,42 +22,90 @@ namespace ConnectFour.Business.BLLs
             }
             return resultModels;
         }
-        private static PlayerDTO ConvertToDto(IPlayerModel playerModel)
+
+        private ResultModel ConvertToResultModel(ResultDTO dto)
+        {
+            ResultModel resultModel = new ResultModel();
+            resultModel.RoomId = dto.RoomId;
+            resultModel.CreationTime = dto.CreationTime;
+            resultModel.Duration = GetGameDuration(dto.LastTurnTime - resultModel.CreationTime);
+            string[] playerNames = new string[dto.Players.Count];
+            foreach (KeyValuePair<int, string> player in dto.Players)
+            {
+                playerNames[player.Key - 1] = player.Value;
+            }
+            resultModel.Players = playerNames;
+            resultModel.ResultCode = dto.ResultCode;
+            resultModel.WinnerName = DetermineWinner(dto.ResultCode, dto.Players);
+            resultModel.LastTurnNum = dto.LastTurnNum.ToString();
+            return resultModel;
+        }
+
+        private static string GetGameDuration(TimeSpan duration)
+        {
+            int days = (int)duration.TotalDays;
+            int hours = (int)duration.TotalHours;
+            int minutes = (int)duration.TotalMinutes;
+            if (days >= 1)
+            {
+                if (days > 1)
+                {
+                    return $"{days} Days";
+                }
+                else
+                {
+                    return $"{days} Day";
+                }
+            }
+            else if (hours >= 1)
+            {
+                if (hours > 1)
+                {
+                    return $"{hours} Hours";
+                }
+                else
+                {
+                    return $"{hours} Hour";
+                }
+            }
+            else
+            {
+                if (minutes > 1)
+                {
+                    return $"{minutes} Minutes";
+                }
+                else
+                {
+                    return $"{minutes} Minute";
+                }
+            }
+        }
+
+        private static string DetermineWinner(int? resultCode, Dictionary<int, string> players)
+        {
+            string winnerName = string.Empty;
+            if (resultCode > 0 && resultCode < 3)
+            {
+                winnerName = $"{players[(int)resultCode]}";
+            }
+            else if (resultCode == 0)
+            {
+                winnerName = "DRAW";
+            }
+            else
+            {
+                winnerName = "NULL";
+            }
+            return winnerName;
+        }
+        private static RoomDTO ConvertToDto(IRoomModel model)
         {
             throw new NotImplementedException();
         }
 
-        private static IPlayerModel ConvertPlayerDTOToModel(PlayerDTO dto)
+        private static IRoomModel ConvertToModel(RoomDTO dto)
         {
-            PlayerModel pM = new PlayerModel();
-            pM.Id = dto.Id;
-            pM.Name = dto.Name;
-            return pM;
-        }
-        private static ITurnModel ConvertTurnDTOToModel(TurnDTO dto)
-        {
-            TurnModel turnModel = new TurnModel();
-            turnModel.Id = dto.Id;
-            turnModel.ColNum = dto.ColNum;
-            turnModel.RowNum = dto.RowNum;
-            turnModel.Num = dto.Num;
-            turnModel.Time = dto.Time;
-            return turnModel;
-        }
-        private static ResultModel ConvertToResultModel(ResultDTO dto)
-        {
-            ResultModel resultModel = new ResultModel();
-            resultModel.CreationTime = dto.CreationTime;
-            List<IPlayerModel> players = new List<IPlayerModel>();
-            for (int i = 0; i < dto.Players.Count; i++)
-            {
-                players.Add(ConvertPlayerDTOToModel(dto.Players[i]));
-            }
-            resultModel.Players = players;
-            resultModel.ResultCode = dto.ResultCode;
-            resultModel.RoomId = dto.RoomId;
-            resultModel.LastTurn = ConvertTurnDTOToModel(dto.LastTurn);
-            return resultModel;
+            throw new NotImplementedException();
         }
     }
 }
