@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 
 namespace ConnectFour.App
 {
@@ -12,12 +13,14 @@ namespace ConnectFour.App
     {
         private static IPlayerModel localPlayer = new PlayerModel();
 
+        private static bool isChoosing = true;
+
         private static void Main()
         {
             bool isRunning = true;
             while (isRunning)
             {
-                bool isChoosing = true;
+                //bool isChoosing = true;
                 bool isQuitting = false;
                 while (isChoosing)
                 {
@@ -123,10 +126,23 @@ namespace ConnectFour.App
             RoomModel newRoom = new RoomModel();
             newRoom.Players.Add(localPlayer);
 
-            Console.WriteLine("Room ID: 1");
+            Console.WriteLine("Room ID: " + newRoom.Id);
             Console.WriteLine("\nWaiting for opponent...");
             Console.WriteLine("\nPress escape to return to the main menu.");
-            Console.ReadKey();
+
+            if (Console.ReadKey().Key == ConsoleKey.Escape)
+            {
+                newRoom.ResultCode = -1;
+                Console.Clear();
+                WriteTitle();
+                Console.WriteLine("The room has been closed. Returning to the main menu.");
+                Thread.Sleep(2000);
+                isChoosing = true;
+                Console.Clear();
+            }
+
+            /* Poll DB every few seconds to check if the room is full.
+             * If so, prompt the player to press a key to continue to the gameplay loop. */
         }
 
         private static void DisplayResults(List<IResultModel> results)
