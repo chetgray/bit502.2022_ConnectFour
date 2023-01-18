@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-
+using System.Security.Principal;
 using ConnectFour.Business.Models;
 using ConnectFour.Business.Models.Interfaces;
 using ConnectFour.Data.DTOs;
@@ -33,6 +33,10 @@ namespace ConnectFour.Business.BLLs
             foreach (KeyValuePair<int, string> player in dto.Players)
             {
                 playerNames[player.Key - 1] = player.Value;
+                if (player.Value.Length > 15)
+                {
+                    playerNames[player.Key - 1] = $"{player.Value.Substring(0,15)}...";
+                }
             }
             resultModel.Players = playerNames;
             resultModel.ResultCode = dto.ResultCode;
@@ -87,6 +91,10 @@ namespace ConnectFour.Business.BLLs
             if (resultCode > 0 && resultCode < 3)
             {
                 winnerName = $"{players[(int)resultCode]}";
+                if(winnerName.Length > 15)
+                {
+                    winnerName = $"{winnerName.Substring(0, 15)}...";
+                }
             }
             else if (resultCode == 0)
             {
