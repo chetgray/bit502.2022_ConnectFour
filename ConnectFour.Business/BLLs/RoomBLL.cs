@@ -8,36 +8,38 @@ namespace ConnectFour.Business.BLLs
 {
     public class RoomBLL
     {
+        public IPlayerModel AddPlayerToRoom(IPlayerModel playerModel, IRoomModel roomModel)
+        {
+            int playerNum = (roomModel.Players[0].Num == 1) ? 2 : 1;
+            playerModel.Num = playerNum;
+            PlayerRepository pRepo = new PlayerRepository();
+            PlayerBLL pBLL = new PlayerBLL();
+            PlayerDTO playerDTO = pBLL.ConvertToDto(playerModel);
+            playerDTO.RoomId = roomModel.Id;
+            playerDTO = pRepo.AddPlayerToRoom(playerDTO);
+            return pBLL.ConvertToModel(playerDTO);
+        }
         public IRoomModel GetRoomOccupancy(int roomId)
         {
             RoomRepository roomRepo = new RoomRepository();
-            IRoomModel room = ConvertRoomDTOToModel(roomRepo.GetRoomOccupancy(roomId));
+            IRoomModel room = ConvertToModel(roomRepo.GetRoomOccupancy(roomId));
             return room;
         }
-
-        private static PlayerDTO ConvertToDto(IPlayerModel playerModel)
+        private RoomDTO ConvertToDto(IRoomModel model)
         {
             throw new NotImplementedException();
         }
-
-        private static IPlayerModel ConvertPlayerDTOToModel(PlayerDTO dto)
-        {
-            PlayerModel pM = new PlayerModel();
-            pM.Id = dto.Id;
-            pM.Name = dto.Name;
-            pM.Num = dto.Num;
-            return pM;
-        }
-        private static RoomModel ConvertRoomDTOToModel(RoomDTO roomDTO)
+        private IRoomModel ConvertToModel(RoomDTO dto)
         {
             RoomModel rM = new RoomModel();
-            rM.Id = roomDTO.Id;
-            rM.CreationTime = roomDTO.CreationTime;
-            rM.CurrentTurnNum = roomDTO.CurrentTurnNumber;
-            rM.ResultCode = roomDTO.ResultCode;
-            foreach (PlayerDTO pDTO in roomDTO.Players)
+            rM.Id = dto.Id;
+            rM.CreationTime = dto.CreationTime;
+            rM.CurrentTurnNum = dto.CurrentTurnNumber;
+            rM.ResultCode = dto.ResultCode;
+            PlayerBLL pBLL = new PlayerBLL();
+            foreach (PlayerDTO pDTO in dto.Players)
             {
-                rM.Players.Add(ConvertPlayerDTOToModel(pDTO));
+                rM.Players.Add(pBLL.ConvertToModel(pDTO));
             }
             rM.Vacancy = (rM.Players.Count < 2) ? true : false;            
             return rM;

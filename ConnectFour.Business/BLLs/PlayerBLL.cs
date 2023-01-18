@@ -12,17 +12,7 @@ namespace ConnectFour.Business.BLLs
 {
     public class PlayerBLL
     {
-        public IPlayerModel AddPlayerToRoom(IPlayerModel playerModel, IRoomModel roomModel)
-        {
-            int playerNum = (roomModel.Players[0].Num == 1) ? 2 : 1;
-            playerModel.Num = playerNum;
-            PlayerRepository pRepo = new PlayerRepository();
-            PlayerDTO playerDTO = ConvertToDto(playerModel);
-            playerDTO.RoomId = roomModel.Id;
-            playerDTO = pRepo.AddPlayerToRoom(playerDTO);
-            return ConvertToModel(playerDTO);
-        }
-        private static PlayerDTO ConvertToDto(IPlayerModel playerModel)
+        internal PlayerDTO ConvertToDto(IPlayerModel playerModel)
         {
             PlayerDTO pDTO = new PlayerDTO();
             pDTO.Id = playerModel.Id;
@@ -31,7 +21,7 @@ namespace ConnectFour.Business.BLLs
             return pDTO;
         }
 
-        private static IPlayerModel ConvertToModel(PlayerDTO dto)
+        internal IPlayerModel ConvertToModel(PlayerDTO dto)
         {
             PlayerModel pM = new PlayerModel();
             pM.Id = dto.Id;

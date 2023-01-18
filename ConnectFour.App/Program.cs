@@ -109,9 +109,9 @@ namespace ConnectFour.App
                 Console.Write("What is the Room Id you would like to join?\n--> ");
                 bool successfullInput = int.TryParse(Console.ReadLine(), out int roomId);
                 IRoomModel roomModel = new RoomModel();
+                RoomBLL rBLL = new RoomBLL();
                 if (successfullInput)
-                {
-                    RoomBLL rBLL = new RoomBLL();
+                {                    
                     roomModel = rBLL.GetRoomOccupancy(roomId);
                 }
                 Console.Clear();
@@ -124,8 +124,7 @@ namespace ConnectFour.App
                 else if (roomModel.Vacancy)
                 {
                     WriteTitle();
-                    PlayerBLL pBLL = new PlayerBLL();
-                    localPlayer = pBLL.AddPlayerToRoom(localPlayer, roomModel);
+                    localPlayer = rBLL.AddPlayerToRoom(localPlayer, roomModel);
                     Console.Write($"Successfully joined room agaisnt {roomModel.Players[0].Name}\nPress any key to continue...");
                     Console.ReadKey();
                     isChoosing = false;
