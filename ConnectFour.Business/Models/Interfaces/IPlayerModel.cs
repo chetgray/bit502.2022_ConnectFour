@@ -8,5 +8,6 @@ namespace ConnectFour.Business.Models.Interfaces
         string Name { get; set; }
         string Symbol { get; set; }
         ConsoleColor Color { get; set; }
+        int Num { get; set; }
     }
 }

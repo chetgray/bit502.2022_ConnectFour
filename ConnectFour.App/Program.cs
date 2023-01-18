@@ -10,6 +10,8 @@ namespace ConnectFour.App
 {
     internal static class Program
     {
+        private static IPlayerModel localPlayer = new PlayerModel();
+
         private static void Main()
         {
             bool isRunning = true;
@@ -34,12 +36,15 @@ namespace ConnectFour.App
                         case "1":
                             //New Single-Player Game
                             break;
+
                         case "2":
-                            //New Multi-Player Game
+                            HostNewGame();
                             break;
+
                         case "3":
                             //Join Multi-Player Game
                             break;
+
                         case "4":
                             Console.Clear();
                             RoomBLL rBLL = new RoomBLL();
@@ -47,10 +52,12 @@ namespace ConnectFour.App
                             Console.WriteLine("Press any key to continue...");
                             Console.ReadKey();
                             break;
+
                         case "5":
                             isQuitting = true;
                             isRunning = false;
                             break;
+
                         default:
                             Console.Clear();
                             Console.WriteLine("Invalid response please choose 1, 2, 3, 4, or 5");
@@ -94,6 +101,31 @@ namespace ConnectFour.App
 
             DisplayBoard(testRoom);
 
+            Console.ReadKey();
+        }
+
+        private static void HostNewGame()
+        {
+            Console.Clear();
+            WriteTitle();
+
+            if (localPlayer.Name == string.Empty)
+            {
+                Console.Write("What is your name?\n--> ");
+                localPlayer.Name = Console.ReadLine();
+                Console.Clear();
+                WriteTitle();
+            }
+
+            Random random = new Random();
+            localPlayer.Num = random.Next(1, 3);
+
+            RoomModel newRoom = new RoomModel();
+            newRoom.Players.Add(localPlayer);
+
+            Console.WriteLine("Room ID: 1");
+            Console.WriteLine("\nWaiting for opponent...");
+            Console.WriteLine("\nPress escape to return to the main menu.");
             Console.ReadKey();
         }
 
