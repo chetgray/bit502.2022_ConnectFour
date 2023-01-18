@@ -1,16 +1,16 @@
 ﻿CREATE PROCEDURE [dbo].[spA_Player_AddPlayerToRoom]
 	@RoomId int,
 	@PlayerNum int,
-	@Name nvarchar(4000)
+	@PlayerName nvarchar(4000)
 AS
 	DECLARE @PlayerId int
 
 	INSERT INTO Player ([Name], Num, RoomId)
-	VALUES (@Name, @PlayerNum, @RoomId)
+	VALUES (@PlayerName, @PlayerNum, @RoomId)
 	SET @PlayerId = SCOPE_IDENTITY()
 
 	SELECT	Player.Id		AS PlayerId,
-			Player.[Name],
+			Player.[Name]   AS PlayerName,
 			Player.Num		AS PlayerNum,
 			Player.RoomID	AS PlayerRoomId
 

@@ -15,17 +15,18 @@ namespace ConnectFour.Data.Repositories
             DataTable dataTable = _dal.ExecuteStoredProcedure("dbo.spA_Room_GetRoomOccupancy", paramDictionary);
             return ConvertToDto(dataTable);
         }
-        private static RoomDTO ConvertToDto(DataTable dataTable)
+        private RoomDTO ConvertToDto(DataTable dataTable)
         {
             RoomDTO roomDTO = new RoomDTO();
             for (int i = 0; i < dataTable.Rows.Count; i++)
             { 
                 roomDTO.Id = (int?)(dataTable.Rows[i]["RoomId"]);
-                roomDTO.CreationTime = (DateTime)dataTable.Rows[i]["CreationTime"];
-                roomDTO.CurrentTurnNumber = (int?)dataTable.Rows[i]["CurrentTurnNum"];
-                bool resultCodeSuccess = int.TryParse(dataTable.Rows[i]["ResultCode"].ToString(), out int result);
+                roomDTO.CreationTime = (DateTime)dataTable.Rows[i]["RoomCreationTime"];
+                roomDTO.CurrentTurnNumber = (int?)dataTable.Rows[i]["RoomCurrentTurnNum"];
+                bool resultCodeSuccess = int.TryParse(dataTable.Rows[i]["RoomResultCode"].ToString(), out int result);
                 roomDTO.ResultCode = (resultCodeSuccess) ? roomDTO.ResultCode = result : roomDTO.ResultCode = null;
-                roomDTO.Players.Add(PlayerRepository.ConvertToDto(dataTable.Rows[i]));
+                PlayerRepository pRepo = new PlayerRepository();
+                roomDTO.Players.Add(pRepo.ConvertToDto(dataTable.Rows[i]));
             }
             return roomDTO;
         }
