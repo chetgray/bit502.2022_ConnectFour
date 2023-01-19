@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading;
+using Timer = System.Timers.Timer;
 
 namespace ConnectFour.App
 {
@@ -126,7 +127,10 @@ namespace ConnectFour.App
             RoomModel newRoom = new RoomModel();
             newRoom.Players.Add(localPlayer);
 
-            Console.WriteLine("Room ID: " + newRoom.Id);
+            //Setting room ID for demo
+            newRoom.Id = 100;
+
+            Console.WriteLine($"       Room ID: {newRoom.Id}");
             Console.WriteLine("\nWaiting for opponent...");
             Console.WriteLine("\nPress escape to return to the main menu.");
 
