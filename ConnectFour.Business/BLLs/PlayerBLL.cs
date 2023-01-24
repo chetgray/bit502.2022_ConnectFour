@@ -27,6 +27,8 @@ namespace ConnectFour.Business.BLLs
             pM.Id = dto.Id;
             pM.Name = dto.Name;
             pM.Num = dto.Num;
+            pM.Symbol = dto.Name.Substring(0, 1).ToUpper();
+            pM.Color = (pM.Num == 1) ? ConsoleColor.Red : ConsoleColor.Yellow;
             return pM;
         }
     }
