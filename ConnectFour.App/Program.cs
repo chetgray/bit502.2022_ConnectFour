@@ -9,7 +9,8 @@ namespace ConnectFour.App
 {
     internal static class Program
     {
-        static IPlayerModel localPlayer = new PlayerModel();
+        private static IPlayerModel localPlayer = new PlayerModel();
+        private static IRoomModel localRoom = new RoomModel();
         private static void Main()
         {
             bool isRunning = true;
@@ -124,7 +125,9 @@ namespace ConnectFour.App
                 else if (roomModel.Vacancy)
                 {
                     WriteTitle();
+                    localRoom = roomModel;
                     localPlayer = rBLL.AddPlayerToRoom(localPlayer, roomModel);
+                    localRoom.Players.Add(localPlayer);
                     Console.Write($"Successfully joined room agaisnt {roomModel.Players[0].Name}\nPress any key to continue...");
                     Console.ReadKey();
                     isChoosing = false;
