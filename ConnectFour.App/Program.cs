@@ -6,7 +6,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading;
-using Timer = System.Timers.Timer;
 
 namespace ConnectFour.App
 {
@@ -110,6 +109,8 @@ namespace ConnectFour.App
 
         private static void HostNewGame()
         {
+            bool isWaiting = true;
+
             Console.Clear();
             WriteTitle();
 
@@ -134,19 +135,43 @@ namespace ConnectFour.App
             Console.WriteLine("\nWaiting for opponent...");
             Console.WriteLine("\nPress escape to return to the main menu.");
 
-            if (Console.ReadKey().Key == ConsoleKey.Escape)
+            while (isWaiting)
             {
-                newRoom.ResultCode = -1;
-                Console.Clear();
-                WriteTitle();
-                Console.WriteLine("The room has been closed. Returning to the main menu.");
                 Thread.Sleep(2000);
-                isChoosing = true;
-                Console.Clear();
-            }
 
-            /* Poll DB every few seconds to check if the room is full.
-             * If so, prompt the player to press a key to continue to the gameplay loop. */
+                if (newRoom.Players.Count() == 2)
+                {
+                    isWaiting = false;
+                    Console.Clear();
+                    WriteTitle();
+                    Console.WriteLine($"       Room ID: {newRoom.Id}");
+                    Console.WriteLine($"\n{newRoom.Players[1].Name} has joined!");
+                    Console.WriteLine("\nPress any key to continue to the game.");
+                    Console.ReadKey();
+
+                    //Sending to main menu until gameplay loop has been implemented
+                    Console.Clear();
+                    isChoosing = true;
+                }
+
+                if (Console.KeyAvailable == true)
+                {
+                    if (Console.ReadKey().Key == ConsoleKey.Escape)
+                    {
+                        newRoom.ResultCode = -1;
+                        Console.Clear();
+                        WriteTitle();
+                        Console.WriteLine("The room has been closed. Returning to the main menu.");
+                        Thread.Sleep(2000);
+                        Console.Clear();
+                        isChoosing = true;
+                        isWaiting = false;
+                    }
+                }
+
+                //Adding second "player" to room to demo oppononent joining
+                newRoom.Players.Add(localPlayer);
+            }
         }
 
         private static void DisplayResults(List<IResultModel> results)
