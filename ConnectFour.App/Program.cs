@@ -28,7 +28,6 @@ namespace ConnectFour.App
                     "[5] - Quit\n");
                     Console.Write("--> ");
                     string userResponse = Console.ReadLine();
-                    isChoosing = false;
                     switch (userResponse)
                     {
                         case "1":
@@ -41,11 +40,8 @@ namespace ConnectFour.App
                             //Join Multi-Player Game
                             break;
                         case "4":
-                            Console.Clear();
                             RoomBLL rBLL = new RoomBLL();
                             DisplayResults(rBLL.GetAllFinished());
-                            Console.WriteLine("Press any key to continue...");
-                            Console.ReadKey();
                             break;
                         case "5":
                             isQuitting = true;
@@ -99,6 +95,7 @@ namespace ConnectFour.App
 
         private static void DisplayResults(List<IResultModel> results)
         {
+            Console.Clear();
             if (results.Count == 0)
             {
                 Console.WriteLine("No game results");
@@ -224,6 +221,9 @@ namespace ConnectFour.App
                 }
             }
             Console.WriteLine(sb.ToString());
+            Console.WriteLine("Press any key to return to main menu...");
+            Console.ReadKey();
+            Console.Clear();
         }
 
         private static void DisplayBoard(IRoomModel room)
