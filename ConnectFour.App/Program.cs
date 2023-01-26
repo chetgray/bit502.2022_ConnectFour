@@ -10,12 +10,12 @@ namespace ConnectFour.App
 {
     internal static class Program
     {
+        private static bool isChoosing = true;
         private static void Main()
         {
             bool isRunning = true;
             while (isRunning)
             {
-                bool isChoosing = true;
                 bool isQuitting = false;
                 while (isChoosing)
                 {
@@ -41,11 +41,8 @@ namespace ConnectFour.App
                             //Join Multi-Player Game
                             break;
                         case "4":
-                            Console.Clear();
                             RoomBLL rBLL = new RoomBLL();
                             DisplayResults(rBLL.GetAllFinished());
-                            Console.WriteLine("Press any key to continue...");
-                            Console.ReadKey();
                             break;
                         case "5":
                             isQuitting = true;
@@ -99,6 +96,7 @@ namespace ConnectFour.App
 
         private static void DisplayResults(List<IResultModel> results)
         {
+            Console.Clear();
             if (results.Count == 0)
             {
                 Console.WriteLine("No game results");
@@ -224,6 +222,10 @@ namespace ConnectFour.App
                 }
             }
             Console.WriteLine(sb.ToString());
+            Console.WriteLine("Press any key to return to the main menu...");
+            Console.ReadKey();
+            isChoosing = true;
+            Console.Clear();
         }
 
         private static void DisplayBoard(IRoomModel room)
