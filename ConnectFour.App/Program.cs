@@ -13,14 +13,12 @@ namespace ConnectFour.App
     {
         private static IPlayerModel localPlayer = new PlayerModel();
 
-        private static bool isChoosing = true;
-
         private static void Main()
         {
             bool isRunning = true;
             while (isRunning)
             {
-                //bool isChoosing = true;
+                bool isChoosing = true;
                 bool isQuitting = false;
                 while (isChoosing)
                 {
@@ -33,7 +31,6 @@ namespace ConnectFour.App
                     "[5] - Quit\n");
                     Console.Write("--> ");
                     string userResponse = Console.ReadLine();
-                    isChoosing = false;
                     switch (userResponse)
                     {
                         case "1":
@@ -64,7 +61,6 @@ namespace ConnectFour.App
                         default:
                             Console.Clear();
                             Console.WriteLine("Invalid response please choose 1, 2, 3, 4, or 5");
-                            isChoosing = true;
                             break;
                     }
                 }
@@ -151,7 +147,6 @@ namespace ConnectFour.App
 
                     //Sending to main menu until gameplay loop has been implemented
                     Console.Clear();
-                    isChoosing = true;
                 }
 
                 if (Console.KeyAvailable == true)
@@ -164,7 +159,6 @@ namespace ConnectFour.App
                         Console.WriteLine("The room has been closed. Returning to the main menu.");
                         Thread.Sleep(2000);
                         Console.Clear();
-                        isChoosing = true;
                         isWaiting = false;
                     }
                 }
