@@ -15,7 +15,7 @@ namespace ConnectFour.Data.Repositories
         /// <inheritdoc/>
         public PlayerRepository(IDAL dal) : base(dal) { }
 
-        private static PlayerDTO ConvertToDto(DataRow row)
+        internal PlayerDTO ConvertToDto(DataRow row)
         {
             throw new NotImplementedException();
         }

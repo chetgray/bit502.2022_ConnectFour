@@ -32,12 +32,12 @@ namespace ConnectFour.Business.BLLs
                 repository ?? throw new ArgumentNullException(nameof(repository));
         }
 
-        private static RoomDTO ConvertToDto(IRoomModel model)
+        internal RoomDTO ConvertToDto(IRoomModel model)
         {
             throw new NotImplementedException();
         }
 
-        private static IRoomModel ConvertToModel(RoomDTO dto)
+        internal IRoomModel ConvertToModel(RoomDTO dto)
         {
             throw new NotImplementedException();
         }

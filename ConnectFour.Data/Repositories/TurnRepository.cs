@@ -15,7 +15,7 @@ namespace ConnectFour.Data.Repositories
         /// <inheritdoc/>
         public TurnRepository(IDAL dal) : base(dal) { }
 
-        private static TurnDTO ConvertToDto(DataRow row)
+        internal TurnDTO ConvertToDto(DataRow row)
         {
             throw new NotImplementedException();
         }

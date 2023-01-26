@@ -15,7 +15,7 @@ namespace ConnectFour.Data.Repositories
         /// <inheritdoc/>
         public RoomRepository(IDAL dal) : base(dal) { }
 
-        private static RoomDTO ConvertToDto(DataRow row)
+        internal RoomDTO ConvertToDto(DataRow row)
         {
             throw new NotImplementedException();
         }
