@@ -71,7 +71,6 @@ namespace ConnectFour.App
             DisplayBoard(testRoom);
 
             Console.ReadKey();
-            Console.Clear();
         }
 
         private static void DisplayResults(List<IResultModel> results)
