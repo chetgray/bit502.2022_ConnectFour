@@ -102,8 +102,8 @@ namespace ConnectFour.App
                 Console.Write("What is your name?\n--> ");
                 localPlayer.Name = Console.ReadLine();
             }
-            bool isChoosing = true;
-            while (isChoosing)
+            bool isJoining = true;
+            while (isJoining)
             {
                 Console.Clear();
                 WriteTitle();
@@ -120,7 +120,7 @@ namespace ConnectFour.App
                 {
                     WriteTitle();
                     Console.WriteLine("Room Id does not match any open rooms.\nPress any key to continue...\nTo quit trying to join a room press the escape(Esc) key.");
-                    isChoosing = !IsPressingEscapeKey();
+                    isJoining = !IsPressingEscapeKey();
                 }
                 else if (roomModel.Vacancy)
                 {
@@ -130,14 +130,20 @@ namespace ConnectFour.App
                     localRoom.Players.Add(localPlayer);
                     Console.Write($"Successfully joined room agaisnt {roomModel.Players[0].Name}\nPress any key to continue...");
                     Console.ReadKey();
-                    isChoosing = false;
+                    isJoining = false;
                     //Call gameplay loop
+                }
+                else if (!roomModel.Vacancy)
+                {
+                    WriteTitle();
+                    Console.WriteLine("That room is full!\nPress any key to continue...\nTo quit trying to join a room press the escape(Esc) key.");
+                    isJoining = !IsPressingEscapeKey();
                 }
                 else
                 {
                     WriteTitle();
-                    Console.WriteLine("That room is full!\nPress any key to continue...\nTo quit trying to join a room press the escape(Esc) key.");
-                    isChoosing = !IsPressingEscapeKey();
+                    Console.WriteLine("Something went wrong!\nPress any key to continue...\nTo quit trying to join a room press the escape(Esc) key.");
+                    isJoining = !IsPressingEscapeKey();
                 }
             }
         }
