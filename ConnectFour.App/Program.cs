@@ -42,8 +42,8 @@ namespace ConnectFour.App
                         break;
                     default:
                         Console.Clear();
-                        Console.WriteLine("Invalid response please choose 1, 2, 3, 4, or 5");
-                        isChoosing = true;
+                        Console.WriteLine("Invalid response please choose 1, 2, 3, 4, or 5\nPress any key to go back to the main menu");
+                        Console.ReadKey();
                         break;
                 }
             }
