@@ -18,16 +18,30 @@ namespace ConnectFour.Data.Repositories
         private RoomDTO ConvertToDto(DataTable dataTable)
         {
             RoomDTO roomDTO = new RoomDTO();
-            for (int i = 0; i < dataTable.Rows.Count; i++)
-            { 
-                roomDTO.Id = (int?)(dataTable.Rows[i]["RoomId"]);
-                roomDTO.CreationTime = (DateTime)dataTable.Rows[i]["RoomCreationTime"];
-                roomDTO.CurrentTurnNumber = (int?)dataTable.Rows[i]["RoomCurrentTurnNum"];
-                bool resultCodeSuccess = int.TryParse(dataTable.Rows[i]["RoomResultCode"].ToString(), out int result);
-                roomDTO.ResultCode = (resultCodeSuccess) ? roomDTO.ResultCode = result : roomDTO.ResultCode = null;
-                PlayerRepository pRepo = new PlayerRepository();
-                roomDTO.Players.Add(pRepo.ConvertToDto(dataTable.Rows[i]));
+            if(dataTable.Rows.Count == 0)
+            {
+                return roomDTO;
             }
+            PlayerRepository pRepo = new PlayerRepository();
+
+            roomDTO.Id = (int?)(dataTable.Rows[0]["RoomId"]);
+            roomDTO.CreationTime = (DateTime)dataTable.Rows[0]["RoomCreationTime"];
+            roomDTO.CurrentTurnNumber = (int?)dataTable.Rows[0]["RoomCurrentTurnNum"];
+
+            if (DBNull.Value.Equals(dataTable.Rows[0]["RoomResultCode"]))
+            {
+                roomDTO.ResultCode = null;
+            }
+            else
+            {
+                roomDTO.ResultCode = (int)dataTable.Rows[0]["RoomResultCode"];
+            }
+
+            for (int i = 0; i < dataTable.Rows.Count; i++)
+            {
+                roomDTO.Players.Add(pRepo.ConvertToDto(dataTable.Rows[i]));
+            }        
+            
             return roomDTO;
         }
     }

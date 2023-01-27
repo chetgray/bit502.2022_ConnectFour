@@ -8,16 +8,18 @@ namespace ConnectFour.Business.BLLs
 {
     public class RoomBLL
     {
-        public IPlayerModel AddPlayerToRoom(IPlayerModel playerModel, IRoomModel roomModel)
+        public IRoomModel AddPlayerToRoom(string playerName, IRoomModel roomModel)
         {
             int playerNum = (roomModel.Players[0].Num == 1) ? 2 : 1;
-            playerModel.Num = playerNum;
-            PlayerRepository pRepo = new PlayerRepository();
+            IPlayerModel playerModel = new PlayerModel
+            {
+                Name = playerName,
+                Num = playerNum
+            };
             PlayerBLL pBLL = new PlayerBLL();
-            PlayerDTO playerDTO = pBLL.ConvertToDto(playerModel);
-            playerDTO.RoomId = roomModel.Id;
-            playerDTO = pRepo.AddPlayerToRoom(playerDTO);
-            return pBLL.ConvertToModel(playerDTO);
+            playerModel = pBLL.AddPlayerToRoom(playerModel, (int)roomModel.Id);
+            roomModel.Players.Add(playerModel);
+            return roomModel;
         }
         public IRoomModel GetRoomOccupancy(int roomId)
         {

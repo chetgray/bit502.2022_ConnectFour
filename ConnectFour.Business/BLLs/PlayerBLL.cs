@@ -12,6 +12,14 @@ namespace ConnectFour.Business.BLLs
 {
     public class PlayerBLL
     {
+        public IPlayerModel AddPlayerToRoom(IPlayerModel model, int roomId)
+        {
+            PlayerRepository pRepo = new PlayerRepository();
+            PlayerDTO dto = ConvertToDto(model);
+            dto.RoomId = roomId;
+            dto = pRepo.AddPlayerToRoom(dto);
+            return ConvertToModel(dto);
+        }
         internal PlayerDTO ConvertToDto(IPlayerModel playerModel)
         {
             PlayerDTO pDTO = new PlayerDTO();
