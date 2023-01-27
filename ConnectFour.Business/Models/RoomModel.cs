@@ -19,29 +19,21 @@ namespace ConnectFour.Business.Models
 
         public bool CheckForWin(ITurnModel turn)
         {
-            int playerNum = (turn.Num - 1) % Players.Count + 1;
-            int count;
+            int playerNum = ((turn.Num - 1) % Players.Count) + 1;
 
             // Check up to three cells to the left and three cells to the right of the Turn's column
             // for four in a row.
-            count = 0;
+            int count = 0;
             for (
                 int c = Math.Max(0, turn.ColNum - 1 - 3);
-                c < Math.Min(turn.ColNum - 1 + 3, Board.GetLength(1));
+                c <= Math.Min(turn.ColNum - 1 + 3, Board.GetLength(1) - 1);
                 c++
             )
             {
-                if (Board[turn.RowNum - 1, c - 1] != playerNum)
+                if (Board[turn.RowNum - 1, c] != playerNum && c != turn.ColNum - 1)
                 {
                     count = 0;
-                    if (c == turn.ColNum - 1)
-                    {
-                        break;
-                    }
-                    else
-                    {
-                        continue;
-                    }
+                    continue;
                 }
                 count++;
                 if (count == 4)
@@ -50,25 +42,19 @@ namespace ConnectFour.Business.Models
                 }
             }
 
-            // Check up to three cells below and three cells above the Turn's row for four in a row.
+            // Check up to three cells below Turn's row for four in a row.
+            // Not checking above because a new play will only ever be at the top.
             count = 0;
             for (
-                int r = Math.Min(turn.RowNum - 1 + 3, Board.GetLength(0));
+                int r = Math.Min(turn.RowNum - 1 + 3, Board.GetLength(0) - 1);
                 r > Math.Max(0, turn.RowNum - 1 - 3);
                 r--
             )
             {
-                if (Board[r - 1, turn.ColNum - 1] != playerNum)
+                if (Board[r, turn.ColNum - 1] != playerNum && r != turn.RowNum - 1)
                 {
                     count = 0;
-                    if (r == turn.RowNum - 1)
-                    {
-                        break;
-                    }
-                    else
-                    {
-                        continue;
-                    }
+                    continue;
                 }
                 count++;
                 if (count == 4)
