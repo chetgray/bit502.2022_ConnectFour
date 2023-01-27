@@ -9,8 +9,7 @@ namespace ConnectFour.App
 {
     internal static class Program
     {
-        private static IPlayerModel localPlayer = new PlayerModel();
-        private static IRoomModel localRoom = new RoomModel();
+        private static string _localPlayerName = string.Empty;
         private static void Main()
         {
             bool isRunning = true;
@@ -95,12 +94,12 @@ namespace ConnectFour.App
         }
         private static void JoinMultiPlayerGame()
         {            
-            if (localPlayer.Name == string.Empty)
+            if (_localPlayerName == string.Empty)
             {
                 Console.Clear();
                 WriteTitle();
                 Console.Write("What is your name?\n--> ");
-                localPlayer.Name = Console.ReadLine();
+                _localPlayerName = Console.ReadLine();
             }
             bool isJoining = true;
             while (isJoining)
@@ -125,13 +124,11 @@ namespace ConnectFour.App
                 else if (roomModel.Vacancy)
                 {
                     WriteTitle();
-                    localRoom = roomModel;
-                    localPlayer = rBLL.AddPlayerToRoom(localPlayer, roomModel);
-                    localRoom.Players.Add(localPlayer);
+                    roomModel = rBLL.AddPlayerToRoom(_localPlayerName, roomModel);
                     Console.Write($"Successfully joined room agaisnt {roomModel.Players[0].Name}\nPress any key to continue...");
                     Console.ReadKey();
                     isJoining = false;
-                    //Call gameplay loop
+                    //Call gameplay loop with the roomModel
                 }
                 else if (!roomModel.Vacancy)
                 {
