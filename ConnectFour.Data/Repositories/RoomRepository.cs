@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
-
+using System.Data.SqlTypes;
 using ConnectFour.Data.DTOs;
 
 namespace ConnectFour.Data.Repositories
@@ -24,17 +24,24 @@ namespace ConnectFour.Data.Repositories
             }
             PlayerRepository pRepo = new PlayerRepository();
 
-            roomDTO.Id = (int?)(dataTable.Rows[0]["RoomId"]);
-            roomDTO.CreationTime = (DateTime)dataTable.Rows[0]["RoomCreationTime"];
-            roomDTO.CurrentTurnNumber = (int?)dataTable.Rows[0]["RoomCurrentTurnNum"];
-
-            if (DBNull.Value.Equals(dataTable.Rows[0]["RoomResultCode"]))
+            DataRow row = dataTable.Rows[0];
+            roomDTO.Id = (int?)(row["RoomId"]);
+            roomDTO.CreationTime = (DateTime)row["RoomCreationTime"];
+            if (row.IsNull("RoomCurrentTurnNum"))
+            {
+                roomDTO.CurrentTurnNumber = null;
+            }
+            else
+            {
+                roomDTO.CurrentTurnNumber = (int?)row["RoomCurrentTurnNum"];
+            }
+            if (row.IsNull("RoomResultCode"))
             {
                 roomDTO.ResultCode = null;
             }
             else
             {
-                roomDTO.ResultCode = (int)dataTable.Rows[0]["RoomResultCode"];
+                roomDTO.ResultCode = (int?)row["RoomResultCode"];
             }
 
             for (int i = 0; i < dataTable.Rows.Count; i++)

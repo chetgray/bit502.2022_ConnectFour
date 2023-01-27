@@ -94,7 +94,7 @@ namespace ConnectFour.App
                     roomModel = rBLL.GetRoomOccupancy(roomId);
                 }
                 Console.Clear();
-                if (roomModel.Id == null || !successfullInput)
+                if (roomModel.Id == null || !successfullInput || roomModel.ResultCode != null)
                 {
                     WriteTitle();
                     Console.WriteLine("Room Id does not match any open rooms.\nPress any key to continue...\nTo quit trying to join a room press the escape(Esc) key.");
