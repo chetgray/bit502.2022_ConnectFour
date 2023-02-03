@@ -1,8 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Configuration;
+﻿using System.Collections.Generic;
 using System.Data;
-using ConnectFour.Data.DALs;
+
 using ConnectFour.Data.DTOs;
 
 namespace ConnectFour.Data.Repositories

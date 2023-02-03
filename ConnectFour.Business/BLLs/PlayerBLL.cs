@@ -1,13 +1,10 @@
-﻿using ConnectFour.Business.Models;
+﻿using System;
+using System.Collections.Generic;
+
+using ConnectFour.Business.Models;
 using ConnectFour.Business.Models.Interfaces;
 using ConnectFour.Data.DTOs;
 using ConnectFour.Data.Repositories;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ConnectFour.Business.BLLs
 {

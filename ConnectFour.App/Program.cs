@@ -1,11 +1,12 @@
-﻿using ConnectFour.Business.BLLs;
-using ConnectFour.Business.Models;
-using ConnectFour.Business.Models.Interfaces;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading;
+
+using ConnectFour.Business.BLLs;
+using ConnectFour.Business.Models;
+using ConnectFour.Business.Models.Interfaces;
 
 namespace ConnectFour.App
 {
@@ -168,21 +169,23 @@ namespace ConnectFour.App
             Console.CursorTop = inputLineFromTopLine;
             Console.CursorLeft = inputLineWidth;
             StringBuilder sb = new StringBuilder();
-            ConsoleKeyInfo input = Console.ReadKey(false);
-            if (input.Key == ConsoleKey.Enter)
+            ConsoleKeyInfo input = new ConsoleKeyInfo();
+            if (Console.KeyAvailable)
             {
                 Console.CursorLeft = inputLineWidth;
-                //This blocks the user from spamming the enter button and clears input stream (KeyAvaiable) up to this point
+                //This blocks the user from spamming and clears input stream (KeyAvailable) up to this point
                 Thread.Sleep(2000);
                 while (Console.KeyAvailable)
-                {
+                {                    
                     Console.ReadKey(false);
+                    Console.CursorLeft = inputLineWidth;
+                    Console.Write(" ");
                     Console.CursorLeft = inputLineWidth;
                 }
             }
             do
             {
-                Console.Write(" ");
+                input = Console.ReadKey(false);
                 if (input.Key.Equals(ConsoleKey.Backspace))
                 {
                     if (sb.Length > 0)
@@ -194,23 +197,10 @@ namespace ConnectFour.App
                         sb.Clear();
                         sb.Append(removeChar);
                     }
-                    input = Console.ReadKey(false);
                 }
-                else
+                else if (input.Key != ConsoleKey.Enter && input.Key != ConsoleKey.Escape)
                 {
-                    if (input.Key != ConsoleKey.Enter)
-                    {
-                        Console.CursorLeft = inputLineWidth + sb.Length;
-                        sb.Append(input.KeyChar);
-                        Console.Write(input.KeyChar);
-                        Console.Write(" ");
-                        Console.CursorLeft = inputLineWidth + sb.Length;
-                    }
-                    else
-                    {
-                        Console.CursorLeft = inputLineWidth;
-                    }                    
-                    input = Console.ReadKey(false);
+                    sb.Append(input.KeyChar);
                 }
             } while (input.Key != ConsoleKey.Enter && input.Key != ConsoleKey.Escape);
             if (input.Key == ConsoleKey.Escape)
