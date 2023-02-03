@@ -4,6 +4,8 @@ using ConnectFour.Business.Models.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
+using System.Threading;
 
 namespace ConnectFour.App
 {
@@ -81,27 +83,39 @@ namespace ConnectFour.App
                 _localPlayerName = Console.ReadLine();
             }
             bool isJoining = true;
+            string message = string.Empty;
             while (isJoining)
             {
                 Console.Clear();
                 WriteTitle();
-                Console.Write("What is the Room Id you would like to join?\n--> ");
-                bool successfullInput = int.TryParse(Console.ReadLine(), out int roomId);
+                Console.WriteLine("What is the Room Id you would like to join?");
+
+                //sets up the line that the user will be writing at with these two ints
+                int inputLineFromTopLine = 3;
+                int inputLineWidth = 4;
+                Console.Write($"--> ");
+
+                WriteInColor($"\n\n{message}", ConsoleColor.Red);
+                Console.ResetColor();
+                string userInput = GetUserInput(inputLineWidth, inputLineFromTopLine);
+                if(userInput == "Escape")
+                {
+                    return;
+                }
+                bool successfullInput = int.TryParse(userInput, out int roomId);
                 IRoomModel roomModel = new RoomModel();
                 RoomBLL rBLL = new RoomBLL();
                 if (successfullInput)
-                {                    
+                {
                     roomModel = rBLL.GetRoomOccupancy(roomId);
                 }
-                Console.Clear();
                 if (roomModel.Id == null || !successfullInput || roomModel.ResultCode != null)
                 {
-                    WriteTitle();
-                    Console.WriteLine("Room Id does not match any open rooms.\nPress any key to continue...\nTo quit trying to join a room press the escape(Esc) key.");
-                    isJoining = !IsPressingEscapeKey();
+                    message = $"Room Id {roomId} does not match any open rooms. To quit trying to join a room press the escape(Esc) key.";
                 }
                 else if (roomModel.Vacancy)
                 {
+                    Console.Clear();
                     WriteTitle();
                     roomModel = rBLL.AddPlayerToRoom(_localPlayerName, roomModel);
                     Console.Write($"Successfully joined room agaisnt {roomModel.Players[0].Name}\nPress any key to continue...");
@@ -111,27 +125,62 @@ namespace ConnectFour.App
                 }
                 else if (!roomModel.Vacancy)
                 {
-                    WriteTitle();
-                    Console.WriteLine("That room is full!\nPress any key to continue...\nTo quit trying to join a room press the escape(Esc) key.");
-                    isJoining = !IsPressingEscapeKey();
+                    message = "That room is full! To quit trying to join a room press the escape(Esc) key.";
                 }
                 else
                 {
-                    WriteTitle();
-                    Console.WriteLine("Something went wrong!\nPress any key to continue...\nTo quit trying to join a room press the escape(Esc) key.");
-                    isJoining = !IsPressingEscapeKey();
+                    message = "Something went wrong!\nTo quit trying to join a room press the escape(Esc) key.";
                 }
+                Console.Clear();
             }
         }
 
-        private static bool IsPressingEscapeKey()
+        private static string GetUserInput(int inputLineWidth, int inputLineFromTopLine)
         {
-            if (Console.ReadKey().Key == ConsoleKey.Escape)
+            Console.CursorTop = inputLineFromTopLine;
+            Console.CursorLeft = inputLineWidth;
+            ConsoleKeyInfo input = Console.ReadKey(true);
+
+            if (input.Key == ConsoleKey.Enter)
             {
-                return true;
+                //This blocks the user from spamming the enter button and clears input stream (KeyAvaiable) up to this point
+                while (Console.KeyAvailable)
+                {
+                    Console.ReadKey(false);
+                }
+                Thread.Sleep(2000);
             }
-            return false;
+
+            StringBuilder sb = new StringBuilder();
+            while (input.Key != ConsoleKey.Enter && input.Key != ConsoleKey.Escape)
+            {
+                if (input.Key.Equals(ConsoleKey.Backspace))
+                {
+                    if (sb.Length > 0)
+                    {
+                        string removeChar = sb.ToString(0, sb.Length - 1);
+                        Console.CursorLeft = inputLineWidth + removeChar.Length;
+                        Console.Write(" ");
+                        Console.CursorLeft = inputLineWidth + removeChar.Length;
+                        sb.Clear();
+                        sb.Append(removeChar);
+                    }
+                    input = Console.ReadKey(true);
+                }
+                else
+                {
+                    Console.Write(input.KeyChar);
+                    sb.Append(input.KeyChar);
+                    input = Console.ReadKey(true);
+                }
+            }
+            if(input.Key == ConsoleKey.Escape)
+            {
+                return "Escape";
+            }
+            return sb.ToString();
         }
+
         private static void DisplayBoard(IRoomModel room)
         {
             string p1 = $"░ {room.Players[0].Symbol} ░";
