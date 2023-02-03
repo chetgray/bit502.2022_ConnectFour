@@ -74,31 +74,27 @@ namespace ConnectFour.App
             Console.ReadKey();
         }
         private static void JoinMultiPlayerGame()
-        {            
-            if (_localPlayerName == string.Empty)
-            {
-                Console.Clear();
-                WriteTitle();
-                Console.Write("What is your name?\n--> ");
-                _localPlayerName = Console.ReadLine();
-            }
-            bool isJoining = true;
+        {
+            //initializes variables for the line that the user will be writing at with these two ints
+            int inputLineFromTopLine = 3;
+            int inputLineWidth = 4;
             string message = string.Empty;
+            bool isJoining = true;
+            _localPlayerName = GetPlayerName();
+            if(_localPlayerName == string.Empty)
+            {
+                return;
+            }
             while (isJoining)
             {
                 Console.Clear();
                 WriteTitle();
                 Console.WriteLine("What is the Room Id you would like to join?");
-
-                //sets up the line that the user will be writing at with these two ints
-                int inputLineFromTopLine = 3;
-                int inputLineWidth = 4;
                 Console.Write($"--> ");
-
                 WriteInColor($"\n\n{message}", ConsoleColor.Red);
                 Console.ResetColor();
                 string userInput = GetUserInput(inputLineWidth, inputLineFromTopLine);
-                if(userInput == "Escape")
+                if(userInput == "ReturnToMainMenu")
                 {
                     return;
                 }
@@ -134,26 +130,59 @@ namespace ConnectFour.App
                 Console.Clear();
             }
         }
+        private static string GetPlayerName()
+        {
+            string message = string.Empty;
+            int inputLineFromTopLine = 3;
+            int inputLineWidth = 4;
+            while (_localPlayerName == string.Empty)
+            {
+                Console.Clear();
+                WriteTitle();
+                Console.Write("What is your name?\n");
+                Console.Write($"--> ");
+                WriteInColor($"\n\n{message}", ConsoleColor.Red);
+                Console.ResetColor();
+                _localPlayerName = GetUserInput(inputLineWidth, inputLineFromTopLine);
+                if (_localPlayerName == string.Empty)
+                {
+                    message = "Please enter a name or press escape(Esc) to return to the main menu.";
+                }
+                else if (_localPlayerName == "ReturnToMainMenu")
+                {
+                    _localPlayerName = string.Empty;
+                    return _localPlayerName;
+                }
+            }
+            return _localPlayerName;
+        }
 
+        /// <summary>
+        /// Allows user to type a string with the ability to edit it, press enter to return the string, or press escape to return string containing "ReturnToMainMenu".
+        /// </summary>
+        /// <param name="inputLineWidth">The character location from the left of the window for the cursor on the line</param>
+        /// <param name="inputLineFromTopLine">The line from the first line on the top of the window that the user will write on. Starts at 0 value.</param>
+        /// <returns></returns>
         private static string GetUserInput(int inputLineWidth, int inputLineFromTopLine)
         {
             Console.CursorTop = inputLineFromTopLine;
             Console.CursorLeft = inputLineWidth;
-            ConsoleKeyInfo input = Console.ReadKey(true);
-
+            StringBuilder sb = new StringBuilder();
+            ConsoleKeyInfo input = Console.ReadKey(false);
             if (input.Key == ConsoleKey.Enter)
             {
+                Console.CursorLeft = inputLineWidth;
                 //This blocks the user from spamming the enter button and clears input stream (KeyAvaiable) up to this point
+                Thread.Sleep(2000);
                 while (Console.KeyAvailable)
                 {
                     Console.ReadKey(false);
+                    Console.CursorLeft = inputLineWidth;
                 }
-                Thread.Sleep(2000);
             }
-
-            StringBuilder sb = new StringBuilder();
-            while (input.Key != ConsoleKey.Enter && input.Key != ConsoleKey.Escape)
+            do
             {
+                Console.Write(" ");
                 if (input.Key.Equals(ConsoleKey.Backspace))
                 {
                     if (sb.Length > 0)
@@ -165,18 +194,28 @@ namespace ConnectFour.App
                         sb.Clear();
                         sb.Append(removeChar);
                     }
-                    input = Console.ReadKey(true);
+                    input = Console.ReadKey(false);
                 }
                 else
                 {
-                    Console.Write(input.KeyChar);
-                    sb.Append(input.KeyChar);
-                    input = Console.ReadKey(true);
+                    if (input.Key != ConsoleKey.Enter)
+                    {
+                        Console.CursorLeft = inputLineWidth + sb.Length;
+                        sb.Append(input.KeyChar);
+                        Console.Write(input.KeyChar);
+                        Console.Write(" ");
+                        Console.CursorLeft = inputLineWidth + sb.Length;
+                    }
+                    else
+                    {
+                        Console.CursorLeft = inputLineWidth;
+                    }                    
+                    input = Console.ReadKey(false);
                 }
-            }
-            if(input.Key == ConsoleKey.Escape)
+            } while (input.Key != ConsoleKey.Enter && input.Key != ConsoleKey.Escape);
+            if (input.Key == ConsoleKey.Escape)
             {
-                return "Escape";
+                return "ReturnToMainMenu";
             }
             return sb.ToString();
         }
