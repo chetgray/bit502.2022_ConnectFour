@@ -95,7 +95,7 @@ namespace ConnectFour.App
                 WriteInColor($"\n\n{message}", ConsoleColor.Red);
                 Console.ResetColor();
                 string userInput = GetUserInput(inputLineWidth, inputLineFromTopLine);
-                if(userInput == "ReturnToMainMenu")
+                if(userInput == null)
                 {
                     return;
                 }
@@ -149,7 +149,7 @@ namespace ConnectFour.App
                 {
                     message = "Please enter a name or press escape(Esc) to return to the main menu.";
                 }
-                else if (_localPlayerName == "ReturnToMainMenu")
+                else if (_localPlayerName == null)
                 {
                     _localPlayerName = string.Empty;
                     return _localPlayerName;
@@ -159,7 +159,7 @@ namespace ConnectFour.App
         }
 
         /// <summary>
-        /// Allows user to type a string with the ability to edit it, press enter to return the string, or press escape to return string containing "ReturnToMainMenu".
+        /// Allows user to type a string with the ability to edit it, press enter to return the string, or press escape to return a null string.
         /// </summary>
         /// <param name="inputLineWidth">The character location from the left of the window for the cursor on the line</param>
         /// <param name="inputLineFromTopLine">The line from the first line on the top of the window that the user will write on. Starts at 0 value.</param>
@@ -205,7 +205,7 @@ namespace ConnectFour.App
             } while (input.Key != ConsoleKey.Enter && input.Key != ConsoleKey.Escape);
             if (input.Key == ConsoleKey.Escape)
             {
-                return "ReturnToMainMenu";
+                return null;
             }
             return sb.ToString();
         }
