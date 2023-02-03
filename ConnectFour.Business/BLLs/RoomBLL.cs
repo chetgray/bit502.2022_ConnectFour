@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using ConnectFour.Business.Models;
 using ConnectFour.Business.Models.Interfaces;
 using ConnectFour.Data.DTOs;
@@ -25,6 +26,19 @@ namespace ConnectFour.Business.BLLs
         {
             RoomRepository roomRepo = new RoomRepository();
             IRoomModel room = ConvertToModel(roomRepo.GetRoomOccupancy(roomId));
+            if(room != null)
+            {
+                PlayerBLL pBLL = new PlayerBLL();
+                List<IPlayerModel> players = pBLL.GetPlayersInRoom(roomId);
+                if(players.Count < 2)
+                {
+                    foreach (IPlayerModel player in players)
+                    {
+                        room.Players.Add(player);
+                    }
+                    room.Vacancy = true;
+                }
+            }
             return room;
         }
         private RoomDTO ConvertToDto(IRoomModel model)
@@ -37,13 +51,7 @@ namespace ConnectFour.Business.BLLs
             rM.Id = dto.Id;
             rM.CreationTime = dto.CreationTime;
             rM.CurrentTurnNum = dto.CurrentTurnNumber;
-            rM.ResultCode = dto.ResultCode;
-            PlayerBLL pBLL = new PlayerBLL();
-            foreach (PlayerDTO pDTO in dto.Players)
-            {
-                rM.Players.Add(pBLL.ConvertToModel(pDTO));
-            }
-            rM.Vacancy = (rM.Players.Count < 2) ? true : false;            
+            rM.ResultCode = dto.ResultCode;           
             return rM;
         }
     }

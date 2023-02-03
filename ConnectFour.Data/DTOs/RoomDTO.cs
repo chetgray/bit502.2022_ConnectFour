@@ -9,6 +9,5 @@ namespace ConnectFour.Data.DTOs
         public DateTime CreationTime { get; set; }
         public int? CurrentTurnNumber { get; set; }
         public int? ResultCode { get; set; }
-        public List<PlayerDTO> Players { get; set; } = new List<PlayerDTO>();
     }
 }

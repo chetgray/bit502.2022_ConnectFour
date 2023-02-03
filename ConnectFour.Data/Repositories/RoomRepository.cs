@@ -13,18 +13,15 @@ namespace ConnectFour.Data.Repositories
             Dictionary<string, object> paramDictionary = new Dictionary<string, object>();
             paramDictionary.Add("@RoomId", roomId);
             DataTable dataTable = _dal.ExecuteStoredProcedure("dbo.spA_Room_GetRoomOccupancy", paramDictionary);
-            return ConvertToDto(dataTable);
+            if(dataTable.Rows.Count > 0)
+            {
+                return ConvertToDto(dataTable.Rows[0]);
+            }
+            return new RoomDTO();
         }
-        private RoomDTO ConvertToDto(DataTable dataTable)
+        private RoomDTO ConvertToDto(DataRow row)
         {
             RoomDTO roomDTO = new RoomDTO();
-            if(dataTable.Rows.Count == 0)
-            {
-                return roomDTO;
-            }
-            PlayerRepository pRepo = new PlayerRepository();
-
-            DataRow row = dataTable.Rows[0];
             roomDTO.Id = (int?)(row["RoomId"]);
             roomDTO.CreationTime = (DateTime)row["RoomCreationTime"];
             if (row.IsNull("RoomCurrentTurnNum"))
@@ -42,13 +39,7 @@ namespace ConnectFour.Data.Repositories
             else
             {
                 roomDTO.ResultCode = (int?)row["RoomResultCode"];
-            }
-
-            for (int i = 0; i < dataTable.Rows.Count; i++)
-            {
-                roomDTO.Players.Add(pRepo.ConvertToDto(dataTable.Rows[i]));
-            }        
-            
+            }            
             return roomDTO;
         }
     }

@@ -5,6 +5,7 @@ using ConnectFour.Data.Repositories;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -20,6 +21,13 @@ namespace ConnectFour.Business.BLLs
             dto = pRepo.AddPlayerToRoom(dto);
             return ConvertToModel(dto);
         }
+
+        public List<IPlayerModel> GetPlayersInRoom(int roomId)
+        {
+            PlayerRepository pRepo = new PlayerRepository();
+            List<PlayerDTO> dtos = pRepo.GetPlayersInRoom(roomId);
+            return ConvertManyToModels(dtos);
+        }
         internal PlayerDTO ConvertToDto(IPlayerModel playerModel)
         {
             PlayerDTO pDTO = new PlayerDTO();
@@ -28,7 +36,15 @@ namespace ConnectFour.Business.BLLs
             pDTO.Num = playerModel.Num;
             return pDTO;
         }
-
+        internal List<IPlayerModel> ConvertManyToModels(List<PlayerDTO> dtos)
+        {
+            List<IPlayerModel> models = new List<IPlayerModel>();
+            for (int i = 0; i < dtos.Count; i++)
+            {
+                models.Add(ConvertToModel(dtos[i]));
+            }
+            return models;
+        }
         internal IPlayerModel ConvertToModel(PlayerDTO dto)
         {
             PlayerModel pM = new PlayerModel();

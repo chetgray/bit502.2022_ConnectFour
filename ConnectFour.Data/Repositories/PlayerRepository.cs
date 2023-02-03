@@ -18,6 +18,22 @@ namespace ConnectFour.Data.Repositories
             DataTable dataTable = _dal.ExecuteStoredProcedure("dbo.spA_Player_AddPlayerToRoom", paramDictionary);
             return ConvertToDto(dataTable.Rows[0]);
         }
+        public List<PlayerDTO> GetPlayersInRoom(int roomId)
+        {
+            Dictionary<string, object> paramDictionary = new Dictionary<string, object>();
+            paramDictionary.Add("@RoomId", roomId);
+            DataTable dataTable = _dal.ExecuteStoredProcedure("dbo.spA_Player_GetPlayersInRoom", paramDictionary);
+            return ConvertManyToDTOs(dataTable);
+        }
+        internal List<PlayerDTO> ConvertManyToDTOs(DataTable dataTable)
+        {
+            List<PlayerDTO> dtos = new List<PlayerDTO>();
+            for (int i = 0; i < dataTable.Rows.Count; i++)
+            {
+                dtos.Add(ConvertToDto(dataTable.Rows[i]));
+            }
+            return dtos;
+        }
         internal PlayerDTO ConvertToDto(DataRow row)
         {
             PlayerDTO dto = new PlayerDTO
