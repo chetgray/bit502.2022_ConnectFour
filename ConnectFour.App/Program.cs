@@ -1,10 +1,11 @@
-﻿using ConnectFour.Business.BLLs;
-using ConnectFour.Business.Models;
-using ConnectFour.Business.Models.Interfaces;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+
+using ConnectFour.Business.BLLs;
+using ConnectFour.Business.Models;
+using ConnectFour.Business.Models.Interfaces;
 
 namespace ConnectFour.App
 {
