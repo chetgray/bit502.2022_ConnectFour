@@ -8,12 +8,12 @@ namespace ConnectFour.Data.Repositories
 {
     public class RoomRepository : BaseRepository
     {
-        public RoomDTO GetRoomOccupancy(int roomId)
+        public RoomDTO GetRoomById(int roomId)
         {
             Dictionary<string, object> paramDictionary = new Dictionary<string, object>();
             paramDictionary.Add("@RoomId", roomId);
-            DataTable dataTable = _dal.ExecuteStoredProcedure("dbo.spA_Room_GetRoomByIdAndNullResult", paramDictionary);
-            if(dataTable.Rows.Count > 0)
+            DataTable dataTable = _dal.ExecuteStoredProcedure("dbo.spA_Room_GetRoomById", paramDictionary);
+            if (dataTable.Rows.Count > 0)
             {
                 return ConvertToDto(dataTable.Rows[0]);
             }
@@ -23,6 +23,14 @@ namespace ConnectFour.Data.Repositories
         {
             RoomDTO roomDTO = new RoomDTO();
             roomDTO.Id = (int?)(row["RoomId"]);
+            if (row.IsNull("RoomId"))
+            {
+                roomDTO.Id = null;
+            }
+            else
+            {
+                roomDTO.Id = (int?)(row["RoomId"]);
+            }
             roomDTO.CreationTime = (DateTime)row["RoomCreationTime"];
             if (row.IsNull("RoomCurrentTurnNum"))
             {
@@ -39,7 +47,7 @@ namespace ConnectFour.Data.Repositories
             else
             {
                 roomDTO.ResultCode = (int?)row["RoomResultCode"];
-            }            
+            }
             return roomDTO;
         }
     }

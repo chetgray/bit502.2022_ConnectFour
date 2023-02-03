@@ -1,4 +1,4 @@
-﻿CREATE PROCEDURE [dbo].[spA_Room_GetRoomByIdAndNullResult]
+﻿CREATE PROCEDURE [dbo].[spA_Room_GetRoomById]
 	@RoomId int
 AS
 	SELECT	Room.Id					AS RoomId,
@@ -6,4 +6,4 @@ AS
 			Room.CurrentTurnNum		AS RoomCurrentTurnNum,
 			Room.ResultCode			AS RoomResultCode
 	FROM    Room
-	WHERE	Room.ResultCode IS NULL AND Room.Id = @RoomId
+	WHERE	Room.Id = @RoomId

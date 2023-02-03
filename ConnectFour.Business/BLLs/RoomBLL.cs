@@ -23,11 +23,11 @@ namespace ConnectFour.Business.BLLs
             roomModel.Players.Add(playerModel);
             return roomModel;
         }
-        public IRoomModel GetRoomOccupancy(int roomId)
+        public IRoomModel GetRoomById(int roomId)
         {
             RoomRepository roomRepo = new RoomRepository();
-            IRoomModel room = ConvertToModel(roomRepo.GetRoomOccupancy(roomId));
-            if(room != null)
+            IRoomModel room = ConvertToModel(roomRepo.GetRoomById(roomId));
+            if (room != null)
             {
                 PlayerBLL pBLL = new PlayerBLL();
                 List<IPlayerModel> players = pBLL.GetPlayersInRoom(roomId);

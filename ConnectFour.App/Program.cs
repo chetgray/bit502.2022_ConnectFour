@@ -104,7 +104,7 @@ namespace ConnectFour.App
                 RoomBLL rBLL = new RoomBLL();
                 if (successfullInput)
                 {
-                    roomModel = rBLL.GetRoomOccupancy(roomId);
+                    roomModel = rBLL.GetRoomById(roomId);
                 }
                 if (roomModel.Id == null || !successfullInput || roomModel.ResultCode != null)
                 {
