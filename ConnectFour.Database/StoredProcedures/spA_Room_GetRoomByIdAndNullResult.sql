@@ -1,4 +1,4 @@
-﻿CREATE PROCEDURE [dbo].[spA_Room_GetRoomOccupancy]
+﻿CREATE PROCEDURE [dbo].[spA_Room_GetRoomByIdAndNullResult]
 	@RoomId int
 AS
 	SELECT	Room.Id					AS RoomId,

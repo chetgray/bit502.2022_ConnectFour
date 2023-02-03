@@ -64,7 +64,7 @@
     <Build Include="Tables\Room.sql" />
     <Build Include="Tables\Turn.sql" />
     <Build Include="StoredProcedures\spA_Player_AddPlayerToRoom.sql" />
-    <Build Include="StoredProcedures\spA_Room_GetRoomOccupancy.sql" />
+    <Build Include="StoredProcedures\spA_Room_GetRoomByIdAndNullResult.sql" />
     <Build Include="StoredProcedures\spA_Player_GetPlayersInRoom.sql" />
   </ItemGroup>
   <ItemGroup>
