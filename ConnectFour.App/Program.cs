@@ -114,8 +114,9 @@ namespace ConnectFour.App
                 {
                     Console.Clear();
                     WriteTitle();
+                    string opponentName = roomModel.Players[0].Name;
                     roomModel = rBLL.AddPlayerToRoom(_localPlayerName, roomModel);
-                    Console.Write($"Successfully joined room agaisnt {roomModel.Players[0].Name}\nPress any key to continue...");
+                    Console.Write($"Successfully joined room agaisnt {opponentName}\nPress any key to continue...");
                     Console.ReadKey();
                     isJoining = false;
                     //Call gameplay loop with the roomModel
