@@ -21,6 +21,7 @@ namespace ConnectFour.Business.BLLs
             PlayerBLL pBLL = new PlayerBLL();
             playerModel = pBLL.AddPlayerToRoom(playerModel, (int)roomModel.Id);
             roomModel.Players.Add(playerModel);
+            roomModel.Players.Sort((x, x2) => x.Num.CompareTo(x2.Num));
             return roomModel;
         }
         public IRoomModel GetRoomById(int roomId)

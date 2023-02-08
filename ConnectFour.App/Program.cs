@@ -183,7 +183,7 @@ namespace ConnectFour.App
                     Console.CursorLeft = inputLineWidth;
                 }
             }
-            do
+            while (input.Key != ConsoleKey.Enter && input.Key != ConsoleKey.Escape)
             {
                 input = Console.ReadKey(false);
                 if (input.Key.Equals(ConsoleKey.Backspace))
@@ -202,7 +202,7 @@ namespace ConnectFour.App
                 {
                     sb.Append(input.KeyChar);
                 }
-            } while (input.Key != ConsoleKey.Enter && input.Key != ConsoleKey.Escape);
+            };
             if (input.Key == ConsoleKey.Escape)
             {
                 return null;
