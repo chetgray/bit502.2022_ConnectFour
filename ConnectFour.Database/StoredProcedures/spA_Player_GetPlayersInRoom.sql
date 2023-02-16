@@ -5,5 +5,5 @@ AS
 			Player.[Name]			AS PlayerName,
 			Player.RoomId			AS PlayerRoomId,
 			Player.Num				AS PlayerNum
-	FROM Player 
-	WHERE Player.RoomId = @RoomId
+	FROM	Player 
+	WHERE	Player.RoomId = @RoomId

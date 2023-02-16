@@ -22,7 +22,6 @@ namespace ConnectFour.Data.Repositories
         private RoomDTO ConvertToDto(DataRow row)
         {
             RoomDTO roomDTO = new RoomDTO();
-            roomDTO.Id = (int?)(row["RoomId"]);
             if (row.IsNull("RoomId"))
             {
                 roomDTO.Id = null;
