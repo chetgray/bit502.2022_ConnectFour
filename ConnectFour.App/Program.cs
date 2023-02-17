@@ -169,7 +169,7 @@ namespace ConnectFour.App
                         isWaiting = false;
                     }
                 }
-
+                //Test
                 //Adding second "player" to room to demo oppononent joining
                 newRoom.Players.Add(localPlayer);
             }
