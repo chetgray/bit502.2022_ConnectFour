@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 
 using ConnectFour.Business.BLLs.Interfaces;
+using ConnectFour.Business.Models;
 using ConnectFour.Business.Models.Interfaces;
 using ConnectFour.Data.DTOs;
 using ConnectFour.Data.Repositories;
@@ -37,8 +38,7 @@ namespace ConnectFour.Business.BLLs
         public List<IResultModel> GetAllFinished()
         {
             List<IResultModel> resultModels = new List<IResultModel>();
-            RoomRepository roomRepository = new RoomRepository();
-            List<ResultDTO> resultDTOs = roomRepository.GetAllFinished();
+            List<ResultDTO> resultDTOs = _repository.GetAllFinished();
             for (int i = 0; i < resultDTOs.Count; i++)
             {
                 resultModels.Add(ConvertToResultModel(resultDTOs[i]));
