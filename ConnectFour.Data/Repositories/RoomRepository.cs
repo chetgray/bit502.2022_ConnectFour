@@ -20,35 +20,41 @@ namespace ConnectFour.Data.Repositories
         public List<ResultDTO> GetAllFinished()
         {
             Dictionary<string, object> parameters = new Dictionary<string, object>();
-            DataTable dataTable = _dal.ExecuteStoredProcedure("dbo.spA_Room_GetAllFinished", parameters);
+            DataTable resultTable = _dal.ExecuteStoredProcedure(
+                "dbo.spA_Room_GetAllFinished",
+                parameters
+            );
 
-            Dictionary<int, ResultDTO> resultDTODictionary = new Dictionary<int, ResultDTO>();
-            for (int i = 0; i < dataTable.Rows.Count; i++)
-            {
-                DataRow row = dataTable.Rows[i];
-                resultDTODictionary = ConvertToDto(row, resultDTODictionary);
-            }
-
-            List<ResultDTO> resultDTOS = resultDTODictionary.Values.ToList();
-            return resultDTOS;
+            return ConvertTableToResultDtos(resultTable).ToList();
         }
-        private static Dictionary<int, ResultDTO> ConvertToDto(DataRow row, Dictionary<int, ResultDTO> resultDTODictionary)
+
+        private static IEnumerable<ResultDTO> ConvertTableToResultDtos(DataTable table)
         {
-            int roomId = (int)row["RoomId"];
-            if (!resultDTODictionary.ContainsKey(roomId))
+            Dictionary<int, ResultDTO> resultDtos = new Dictionary<int, ResultDTO>();
+            foreach (DataRow row in table.Rows)
             {
-                int result = (int)row["RoomResultCode"];
-                resultDTODictionary.Add(roomId, new ResultDTO
+                int roomId = (int)row["RoomId"];
+                if (!resultDtos.ContainsKey(roomId))
                 {
-                    RoomId = roomId,
-                    CreationTime = (DateTime)row["RoomCreationTime"],
-                    ResultCode = (int)row["RoomResultCode"],
-                    LastTurnTime = (DateTime)row["TurnTime"],
-                    LastTurnNum = (int)row["TurnNum"]
-                });
+                    resultDtos.Add(
+                        roomId,
+                        new ResultDTO
+                        {
+                            RoomId = roomId,
+                            CreationTime = (DateTime)row["RoomCreationTime"],
+                            ResultCode = (int)row["RoomResultCode"],
+                            LastTurnTime = (DateTime)row["TurnTime"],
+                            LastTurnNum = (int)row["TurnNum"]
+                        }
+                    );
+                }
+                resultDtos[roomId].Players.Add(
+                    (int)row["PlayerNum"],
+                    row["PlayerName"].ToString()
+                );
             }
-            resultDTODictionary[roomId].Players.Add((int)row["PlayerNum"], row["PlayerName"].ToString());
-            return resultDTODictionary;
+
+            return resultDtos.Values;
         }
 
         internal RoomDTO ConvertToDto(DataRow row)
