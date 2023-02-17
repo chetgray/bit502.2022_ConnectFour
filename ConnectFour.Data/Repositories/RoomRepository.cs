@@ -33,6 +33,7 @@ namespace ConnectFour.Data.Repositories
             }
             else
             {
+                int result = (int)row["RoomResultCode"];
                 resultDTODictionary.Add(roomId, new ResultDTO
                 {
                     RoomId = roomId,

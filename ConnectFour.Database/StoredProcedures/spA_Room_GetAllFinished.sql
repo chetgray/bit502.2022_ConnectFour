@@ -10,4 +10,4 @@ AS
 	FROM	Room
 	INNER JOIN Player ON Player.RoomId = Room.Id
 	INNER JOIN Turn ON Turn.RoomId = Room.Id AND Turn.Num = Room.CurrentTurnNum
-	WHERE	Room.ResultCode > 0
+	WHERE	Room.ResultCode >= 0
