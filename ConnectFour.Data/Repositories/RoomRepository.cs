@@ -35,11 +35,7 @@ namespace ConnectFour.Data.Repositories
         private static Dictionary<int, ResultDTO> ConvertToDto(DataRow row, Dictionary<int, ResultDTO> resultDTODictionary)
         {
             int roomId = (int)row["RoomId"];
-            if (resultDTODictionary.ContainsKey(roomId))
-            {
-                resultDTODictionary[roomId].Players.Add((int)row["PlayerNum"], row["PlayerName"].ToString());
-            }
-            else
+            if (!resultDTODictionary.ContainsKey(roomId))
             {
                 int result = (int)row["RoomResultCode"];
                 resultDTODictionary.Add(roomId, new ResultDTO
@@ -50,8 +46,8 @@ namespace ConnectFour.Data.Repositories
                     LastTurnTime = (DateTime)row["TurnTime"],
                     LastTurnNum = (int)row["TurnNum"]
                 });
-                resultDTODictionary[roomId].Players.Add((int)row["PlayerNum"], row["PlayerName"].ToString());
             }
+            resultDTODictionary[roomId].Players.Add((int)row["PlayerNum"], row["PlayerName"].ToString());
             return resultDTODictionary;
         }
 
