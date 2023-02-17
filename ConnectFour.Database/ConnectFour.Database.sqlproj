@@ -64,5 +64,7 @@
     <Build Include="Tables\Room.sql" />
     <Build Include="Tables\Turn.sql" />
     <Build Include="StoredProcedures\spA_Room_GetAllFinished.sql" />
+    <Build Include="StoredProcedures\spA_Room_InsertNewRoom.sql" />
+    <Build Include="StoredProcedures\spA_Room_GetRoomInfo.sql" />
   </ItemGroup>
 </Project>

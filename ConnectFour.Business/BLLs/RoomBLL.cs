@@ -11,6 +11,11 @@ namespace ConnectFour.Business.BLLs
 {
     public class RoomBLL
     {
+        public int InsertNewRoom()
+        {
+            RoomRepository roomRepository = new RoomRepository();
+            return roomRepository.InsertNewRoom();
+        }
         public List<IResultModel> GetAllFinished()
         {
             List<IResultModel> resultModels = new List<IResultModel>();

@@ -11,7 +11,7 @@ namespace ConnectFour.App
 {
     internal static class Program
     {
-        private static IPlayerModel localPlayer = new PlayerModel();
+        private static string _localPlayerName = string.Empty;
 
         private static void Main()
         {
@@ -105,27 +105,34 @@ namespace ConnectFour.App
 
         private static void HostNewGame()
         {
+            Random random = new Random();
             bool isWaiting = true;
 
             Console.Clear();
             WriteTitle();
 
-            if (localPlayer.Name == string.Empty)
+            RoomBLL roomBLL = new RoomBLL();
+            RoomModel newRoom = new RoomModel
+            {
+                Id = roomBLL.InsertNewRoom(),
+            };
+
+            if (_localPlayerName == string.Empty)
             {
                 Console.Write("What is your name?\n--> ");
-                localPlayer.Name = Console.ReadLine();
+                _localPlayerName = Console.ReadLine();
                 Console.Clear();
                 WriteTitle();
             }
 
-            Random random = new Random();
-            localPlayer.Num = random.Next(1, 3);
-
-            RoomModel newRoom = new RoomModel();
+            PlayerModel localPlayer = new PlayerModel
+            {
+                Name = _localPlayerName,
+                Symbol = _localPlayerName.Substring(0, 1),
+                Num = random.Next(1, 3)
+            };
             newRoom.Players.Add(localPlayer);
 
-            //Setting room ID for demo
-            newRoom.Id = 100;
 
             Console.WriteLine($"       Room ID: {newRoom.Id}");
             Console.WriteLine("\nWaiting for opponent...");
