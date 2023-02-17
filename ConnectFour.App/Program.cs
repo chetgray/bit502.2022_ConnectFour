@@ -100,7 +100,14 @@ namespace ConnectFour.App
                 ResultTable[i, 2] = results[i - 1].Duration;
                 ResultTable[i, 3] = results[i - 1].Players[0];
                 ResultTable[i, 4] = results[i - 1].Players[1];
-                ResultTable[i, 5] = results[i - 1].WinnerName;
+                if (results[i - 1].WinnerName.Length > 15)
+                {
+                    ResultTable[i, 5] = $"{results[i - 1].WinnerName.Substring(0, 15)}...";
+                }
+                else
+                {
+                    ResultTable[i, 5] = results[i - 1].WinnerName;
+                }
                 ResultTable[i, 6] = results[i - 1].LastTurnNum;
             }
 

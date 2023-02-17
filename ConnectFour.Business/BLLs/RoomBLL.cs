@@ -114,10 +114,6 @@ namespace ConnectFour.Business.BLLs
             if (resultCode > 0 && resultCode < 3)
             {
                 winnerName = $"{players[(int)resultCode]}";
-                if (winnerName.Length > 15)
-                {
-                    winnerName = $"{winnerName.Substring(0, 15)}...";
-                }
             }
             else if (resultCode == 0)
             {
