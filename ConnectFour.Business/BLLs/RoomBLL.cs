@@ -1,16 +1,39 @@
 ﻿using System;
 using System.Collections.Generic;
 
-using ConnectFour.Business.Models;
+using ConnectFour.Business.BLLs.Interfaces;
 using ConnectFour.Business.Models.Interfaces;
 using ConnectFour.Data.DTOs;
 using ConnectFour.Data.Repositories;
+using ConnectFour.Data.Repositories.Interfaces;
 
 
 namespace ConnectFour.Business.BLLs
 {
-    public class RoomBLL
+    public class RoomBLL : IRoomBLL
     {
+        private IRoomRepository _repository;
+
+        /// <summary>
+        /// Creates a <see cref="RoomBLL"/> instance with a default <see cref="RoomRepository"/>
+        /// backend.
+        /// </summary>
+        public RoomBLL()
+        {
+            _repository = new RoomRepository();
+        }
+
+        /// <summary>
+        /// Creates a <see cref="RoomBLL"/> instance with the passed <paramref name="repository"/>
+        /// as the backend.
+        /// </summary>
+        /// <param name="repository">The <see cref="IRoomRepository"/> to use as the backend.</param>
+        public RoomBLL(IRoomRepository repository)
+        {
+            _repository =
+                repository ?? throw new ArgumentNullException(nameof(repository));
+        }
+
         public List<IResultModel> GetAllFinished()
         {
             List<IResultModel> resultModels = new List<IResultModel>();
@@ -35,7 +58,7 @@ namespace ConnectFour.Business.BLLs
                 playerNames[player.Key - 1] = player.Value;
                 if (player.Value.Length > 15)
                 {
-                    playerNames[player.Key - 1] = $"{player.Value.Substring(0,15)}...";
+                    playerNames[player.Key - 1] = $"{player.Value.Substring(0, 15)}...";
                 }
             }
             resultModel.Players = playerNames;
@@ -91,7 +114,7 @@ namespace ConnectFour.Business.BLLs
             if (resultCode > 0 && resultCode < 3)
             {
                 winnerName = $"{players[(int)resultCode]}";
-                if(winnerName.Length > 15)
+                if (winnerName.Length > 15)
                 {
                     winnerName = $"{winnerName.Substring(0, 15)}...";
                 }
@@ -106,12 +129,13 @@ namespace ConnectFour.Business.BLLs
             }
             return winnerName;
         }
-        private static RoomDTO ConvertToDto(IRoomModel model)
+
+        internal RoomDTO ConvertToDto(IRoomModel model)
         {
             throw new NotImplementedException();
         }
 
-        private static IRoomModel ConvertToModel(RoomDTO dto)
+        internal IRoomModel ConvertToModel(RoomDTO dto)
         {
             throw new NotImplementedException();
         }

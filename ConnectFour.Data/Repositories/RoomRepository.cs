@@ -1,14 +1,20 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Data;
-using System.Linq;
 
+using ConnectFour.Data.DALs;
 using ConnectFour.Data.DTOs;
+using ConnectFour.Data.Repositories.Interfaces;
 
 namespace ConnectFour.Data.Repositories
 {
-    public class RoomRepository : BaseRepository
+    public class RoomRepository : BaseRepository, IRoomRepository
     {
+        /// <inheritdoc cref="BaseRepository()"/>
+        public RoomRepository() { }
+
+        /// <inheritdoc/>
+        public RoomRepository(IDAL dal) : base(dal) { }
+
         public List<ResultDTO> GetAllFinished()
         {
             Dictionary<string, object> parameters = new Dictionary<string, object>();
@@ -46,7 +52,8 @@ namespace ConnectFour.Data.Repositories
             }
             return resultDTODictionary;
         }
-        private static RoomDTO ConvertToDto(DataRow row)
+
+        internal RoomDTO ConvertToDto(DataRow row)
         {
             throw new NotImplementedException();
         }
