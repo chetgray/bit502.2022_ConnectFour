@@ -40,7 +40,8 @@ namespace ConnectFour.App
                         JoinMultiPlayerGame();
                         break;
                     case "4":
-                        //View Game Results
+                        RoomBLL rBLL = new RoomBLL();
+                        DisplayResults(rBLL.GetAllFinished());
                         break;
                     case "5":
                         isChoosing = false;
@@ -73,6 +74,146 @@ namespace ConnectFour.App
             DisplayBoard(testRoom);
 
             Console.ReadKey();
+        }
+
+        private static void DisplayResults(List<IResultModel> results)
+        {
+            Console.Clear();
+            if (results.Count == 0)
+            {
+                Console.WriteLine("No game results");
+                return;
+            }
+            string[,] ResultTable = new string[results.Count + 1, 7];
+            ResultTable[0, 0] = "Room ID";
+            ResultTable[0, 1] = "Started At";
+            ResultTable[0, 2] = "Duration";
+            ResultTable[0, 3] = "Player 1";
+            ResultTable[0, 4] = "Player 2";
+            ResultTable[0, 5] = "Winner";
+            ResultTable[0, 6] = "Number of Moves";
+            int amountOfResults = results.Count();
+
+            for (int i = 1; i <= amountOfResults; i++)
+            {
+                int resultCode = (int)results[i - 1].ResultCode;
+                ResultTable[i, 0] = results[i - 1].RoomId.ToString();
+                ResultTable[i, 1] = results[i - 1].CreationTime.ToString("MM/dd/yyyy hh:mm tt");
+                ResultTable[i, 2] = results[i - 1].Duration;
+                ResultTable[i, 3] = results[i - 1].Players[0];
+                ResultTable[i, 4] = results[i - 1].Players[1];
+                if (results[i - 1].WinnerName.Length > 15)
+                {
+                    ResultTable[i, 5] = $"{results[i - 1].WinnerName.Substring(0, 15)}...";
+                }
+                else
+                {
+                    ResultTable[i, 5] = results[i - 1].WinnerName;
+                }
+                ResultTable[i, 6] = results[i - 1].LastTurnNum;
+            }
+
+            int rows = ResultTable.GetLength(0);
+            int columns = ResultTable.GetLength(1);
+            int[] widths = new int[columns];
+
+            for (int i = 0; i < columns; i++)
+            {
+                widths[i] = ResultTable[0, i].Length;
+
+                for (int j = 0; j < rows; j++)
+                {
+                    if (ResultTable[j, i].Length > widths[i])
+                    {
+                        widths[i] = ResultTable[j, i].Length;
+                    }
+                }
+            }
+
+            StringBuilder sb = new StringBuilder();
+
+            for (int i = 0; i < rows; i++)
+            {
+                if (i == 1)
+                {
+                    sb.Append(" ╔═");
+                    for (int j = 0; j < widths.Count(); j++)
+                    {
+                        sb.Append(new string('═', widths[j]));
+                        if (j < widths.Count() - 1)
+                        {
+                            sb.Append("═╦═");
+                        }
+                        else
+                        {
+                            sb.Append("═╗");
+                        }
+                    }
+                    Console.WriteLine(sb.ToString());
+                }
+                else if (i > 1)
+                {
+                    sb.Clear();
+                    sb.Append(" ╠═");
+                    for (int j = 0; j < widths.Count(); j++)
+                    {
+                        sb.Append(new string('═', widths[j]));
+                        if (j < widths.Count() - 1)
+                        {
+                            sb.Append("═╬═");
+                        }
+                        else
+                        {
+                            sb.Append("═╣");
+                        }
+                    }
+                    Console.WriteLine(sb.ToString());
+                }
+
+                sb.Clear();
+                string border = (i > 0) ? border = " ║ " : border = "   ";
+                for (int j = 0; j < columns; j++)
+                {
+                    sb.Append(border);
+                    int columnWidth = widths[j];
+                    int stringLength = ResultTable[i, j].Length;
+                    int spacingBeforeAndAfter = columnWidth - stringLength;
+                    if (spacingBeforeAndAfter % 2 == 0)
+                    {
+                        sb.Append(' ', spacingBeforeAndAfter / 2);
+                        sb.Append(ResultTable[i, j]);
+                        sb.Append(' ', spacingBeforeAndAfter / 2);
+                    }
+                    else
+                    {
+                        sb.Append(" ");
+                        sb.Append(' ', spacingBeforeAndAfter / 2);
+                        sb.Append(ResultTable[i, j]);
+                        sb.Append(' ', spacingBeforeAndAfter / 2);
+                    }
+                }
+                sb.Append(border);
+                Console.WriteLine(sb.ToString());
+                sb.Clear();
+            }
+            sb.Clear();
+            sb.Append(" ╚═");
+            for (int j = 0; j < widths.Count(); j++)
+            {
+                sb.Append(new string('═', widths[j]));
+                if (j < widths.Count() - 1)
+                {
+                    sb.Append("═╩═");
+                }
+                else
+                {
+                    sb.Append("═╝");
+                }
+            }
+            Console.WriteLine(sb.ToString());
+            Console.WriteLine("Press any key to return to main menu...");
+            Console.ReadKey();
+            Console.Clear();
         }
         private static void JoinMultiPlayerGame()
         {

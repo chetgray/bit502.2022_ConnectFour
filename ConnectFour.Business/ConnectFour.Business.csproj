@@ -41,12 +41,15 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BLLs\Interfaces\IRoomBLL.cs" />
     <Compile Include="BLLs\PlayerBLL.cs" />
     <Compile Include="BLLs\RoomBLL.cs" />
     <Compile Include="Models\Interfaces\IPlayerModel.cs" />
     <Compile Include="Models\Interfaces\IRoomModel.cs" />
     <Compile Include="Models\Interfaces\ITurnModel.cs" />
+    <Compile Include="Models\Interfaces\IResultModel.cs" />
     <Compile Include="Models\PlayerModel.cs" />
+    <Compile Include="Models\ResultModel.cs" />
     <Compile Include="Models\RoomModel.cs" />
     <Compile Include="Models\TurnModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
