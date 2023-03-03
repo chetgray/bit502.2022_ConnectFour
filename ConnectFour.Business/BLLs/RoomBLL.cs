@@ -142,8 +142,8 @@ namespace ConnectFour.Business.BLLs
         public IRoomModel GetRoomById(int roomId)
         {
             RoomModel room = new RoomModel();
-            RoomRepository roomRepo = new RoomRepository();
-            RoomDTO dto = roomRepo.GetRoomById(roomId);
+
+            RoomDTO dto = _repository.GetRoomById(roomId);
             if (dto != null)
             {
                 room = ConvertToModel(dto);

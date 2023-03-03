@@ -5,24 +5,44 @@ using ConnectFour.Business.Models;
 using ConnectFour.Business.Models.Interfaces;
 using ConnectFour.Data.DTOs;
 using ConnectFour.Data.Repositories;
+using ConnectFour.Data.Repositories.Interfaces;
 
 namespace ConnectFour.Business.BLLs
 {
     public class PlayerBLL
     {
+        private IPlayerRepository _repository;
+
+        /// <summary>
+        /// Creates a <see cref="RoomBLL"/> instance with a default <see cref="RoomRepository"/>
+        /// backend.
+        /// </summary>
+        public PlayerBLL()
+        {
+            _repository = new PlayerRepository();
+        }
+
+        /// <summary>
+        /// Creates a <see cref="RoomBLL"/> instance with the passed <paramref name="repository"/>
+        /// as the backend.
+        /// </summary>
+        /// <param name="repository">The <see cref="IRoomRepository"/> to use as the backend.</param>
+        public PlayerBLL(IPlayerRepository repository)
+        {
+            _repository =
+                repository ?? throw new ArgumentNullException(nameof(repository));
+        }
         public IPlayerModel AddPlayerToRoom(IPlayerModel model, int roomId)
         {
-            PlayerRepository pRepo = new PlayerRepository();
             PlayerDTO dto = ConvertToDto(model);
             dto.RoomId = roomId;
-            dto = pRepo.AddPlayerToRoom(dto);
+            dto = _repository.AddPlayerToRoom(dto);
             return ConvertToModel(dto);
         }
 
         public List<IPlayerModel> GetPlayersInRoom(int roomId)
         {
-            PlayerRepository pRepo = new PlayerRepository();
-            List<PlayerDTO> dtos = pRepo.GetPlayersInRoom(roomId);
+            List<PlayerDTO> dtos = _repository.GetPlayersInRoom(roomId);
             return ConvertManyToModels(dtos);
         }
         internal PlayerDTO ConvertToDto(IPlayerModel playerModel)
