@@ -247,7 +247,7 @@ namespace ConnectFour.App
                 {
                     roomModel = rBLL.GetRoomById(roomId);
                 }
-                if (roomModel.Id == null || !successfullInput || roomModel.ResultCode != null)
+                if (roomModel == null || !successfullInput || roomModel.ResultCode != null)
                 {
                     message = $"Room Id {roomId} does not match any open rooms. To quit trying to join a room press the escape(Esc) key.";
                 }

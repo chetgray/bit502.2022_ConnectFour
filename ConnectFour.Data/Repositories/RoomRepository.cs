@@ -33,11 +33,11 @@ namespace ConnectFour.Data.Repositories
             Dictionary<string, object> paramDictionary = new Dictionary<string, object>();
             paramDictionary.Add("@RoomId", roomId);
             DataTable dataTable = _dal.ExecuteStoredProcedure("dbo.spA_Room_GetRoomById", paramDictionary);
-            if (dataTable.Rows.Count > 0)
+            if (dataTable.Rows.Count == 0)
             {
-                return ConvertToDto(dataTable.Rows[0]);
+                return null;
             }
-            return new RoomDTO();
+            return ConvertToDto(dataTable.Rows[0]);           
         }
 
         internal RoomDTO ConvertToDto(DataRow row)

@@ -137,25 +137,26 @@ namespace ConnectFour.Business.BLLs
             PlayerBLL pBLL = new PlayerBLL();
             playerModel = pBLL.AddPlayerToRoom(playerModel, (int)roomModel.Id);
             roomModel.Players.Add(playerModel);
-            roomModel.Players.Sort((x, x2) => x.Num.CompareTo(x2.Num));
             return roomModel;
         }
         public IRoomModel GetRoomById(int roomId)
         {
+            RoomModel room = new RoomModel();
             RoomRepository roomRepo = new RoomRepository();
-            IRoomModel room = ConvertToModel(roomRepo.GetRoomById(roomId));
-            if (room != null)
+            RoomDTO dto = roomRepo.GetRoomById(roomId);
+            if (dto != null)
             {
+                room = ConvertToModel(dto);
                 PlayerBLL pBLL = new PlayerBLL();
-                List<IPlayerModel> players = pBLL.GetPlayersInRoom(roomId);
-                if(players.Count < 2)
+                room.Players = pBLL.GetPlayersInRoom(roomId);
+                if (room.Players.Count < 2)
                 {
-                    foreach (IPlayerModel player in players)
-                    {
-                        room.Players.Add(player);
-                    }
                     room.Vacancy = true;
                 }
+            }
+            else
+            {
+                return null;
             }
             return room;
         }
@@ -164,7 +165,7 @@ namespace ConnectFour.Business.BLLs
             throw new NotImplementedException();
         }
 
-        internal IRoomModel ConvertToModel(RoomDTO dto)
+        internal RoomModel ConvertToModel(RoomDTO dto)
         {
             RoomModel rM = new RoomModel();
             rM.Id = dto.Id;

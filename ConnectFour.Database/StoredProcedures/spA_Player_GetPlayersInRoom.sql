@@ -7,3 +7,4 @@ AS
 			Player.Num				AS PlayerNum
 	FROM	Player 
 	WHERE	Player.RoomId = @RoomId
+	ORDER BY Player.Num ASC
