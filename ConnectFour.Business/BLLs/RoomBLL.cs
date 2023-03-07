@@ -14,6 +14,7 @@ namespace ConnectFour.Business.BLLs
     public class RoomBLL : IRoomBLL
     {
         private IRoomRepository _repository;
+        private IPlayerBLL _playerBLL;
 
         /// <summary>
         /// Creates a <see cref="RoomBLL"/> instance with a default <see cref="RoomRepository"/>
@@ -22,6 +23,7 @@ namespace ConnectFour.Business.BLLs
         public RoomBLL()
         {
             _repository = new RoomRepository();
+            _playerBLL = new PlayerBLL();
         }
 
         /// <summary>
@@ -29,10 +31,12 @@ namespace ConnectFour.Business.BLLs
         /// as the backend.
         /// </summary>
         /// <param name="repository">The <see cref="IRoomRepository"/> to use as the backend.</param>
-        public RoomBLL(IRoomRepository repository)
+        public RoomBLL(IRoomRepository repository, IPlayerBLL playerBLL)
         {
             _repository =
                 repository ?? throw new ArgumentNullException(nameof(repository));
+            _playerBLL = 
+                playerBLL ?? throw new ArgumentNullException(nameof(playerBLL));
         }
 
         public List<IResultModel> GetAllFinished()
@@ -134,8 +138,7 @@ namespace ConnectFour.Business.BLLs
                 Name = playerName,
                 Num = playerNum
             };
-            PlayerBLL pBLL = new PlayerBLL();
-            playerModel = pBLL.AddPlayerToRoom(playerModel, (int)roomModel.Id);
+            playerModel = _playerBLL.AddPlayerToRoom(playerModel, (int)roomModel.Id);
             roomModel.Players.Add(playerModel);
             return roomModel;
         }
@@ -147,8 +150,7 @@ namespace ConnectFour.Business.BLLs
             if (dto != null)
             {
                 room = ConvertToModel(dto);
-                PlayerBLL pBLL = new PlayerBLL();
-                room.Players = pBLL.GetPlayersInRoom(roomId);
+                room.Players = _playerBLL.GetPlayersInRoom(roomId);
                 if (room.Players.Count < 2)
                 {
                     room.Vacancy = true;

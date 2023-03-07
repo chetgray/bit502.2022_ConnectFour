@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
+using ConnectFour.Business.BLLs.Interfaces;
 using ConnectFour.Business.Models;
 using ConnectFour.Business.Models.Interfaces;
 using ConnectFour.Data.DTOs;
@@ -9,7 +10,7 @@ using ConnectFour.Data.Repositories.Interfaces;
 
 namespace ConnectFour.Business.BLLs
 {
-    public class PlayerBLL
+    public class PlayerBLL : IPlayerBLL
     {
         private IPlayerRepository _repository;
 
