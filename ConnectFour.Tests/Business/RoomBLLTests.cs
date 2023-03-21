@@ -41,5 +41,21 @@ namespace ConnectFour.Tests.Business
             Assert.AreEqual(2, resultRoom.Players.Count);
             Assert.AreEqual(newPlayerName, resultRoom.Players[0].Name);
         }
+
+        [TestMethod]
+        public void GetRoomById_IdDoesntExist_ReturnNull()
+        {
+            // Arrange
+            IRoomRepository repository = new RoomRepositoryStub { TestDto = null };
+            IPlayerBLL playerBLL = new PlayerBLLStub();
+            IRoomBLL bll = new RoomBLL(repository, playerBLL);
+
+            // ActG
+            IRoomModel result = bll.GetRoomById(0);
+
+            // Assert
+
+            Assert.IsNull(result);
+        }
     }
 }
