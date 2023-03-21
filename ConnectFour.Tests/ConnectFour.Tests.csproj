@@ -51,8 +51,11 @@
   <ItemGroup>
     <Compile Include="App\ProgramTests.cs" />
     <Compile Include="Business\RoomBLLTests.cs" />
+    <Compile Include="Business\PlayerBLLTests.cs" />
     <Compile Include="Data\RoomRepositoryTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="TestDoubles\PlayerBLLStub.cs" />
+    <Compile Include="TestDoubles\RoomRepositoryStub.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -62,7 +65,7 @@
       <Project>{5360dae6-c557-4fc5-99a4-4c4b441ed9c3}</Project>
       <Name>ConnectFour.App</Name>
     </ProjectReference>
-	<ProjectReference Include="..\ConnectFour.Business\ConnectFour.Business.csproj">
+    <ProjectReference Include="..\ConnectFour.Business\ConnectFour.Business.csproj">
       <Project>{a5ad7a8e-ab00-48ca-9172-b11a55761e80}</Project>
       <Name>ConnectFour.Business</Name>
     </ProjectReference>

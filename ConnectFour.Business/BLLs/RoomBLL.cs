@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 
 using ConnectFour.Business.BLLs.Interfaces;
@@ -130,18 +130,15 @@ namespace ConnectFour.Business.BLLs
             return winnerName;
         }
 
-        public IRoomModel AddPlayerToRoom(string playerName, IRoomModel roomModel)
+        public IRoomModel AddPlayerToOpenSeat(string playerName, IRoomModel roomModel)
         {
-            int playerNum = (roomModel.Players[0].Num == 1) ? 2 : 1;
-            IPlayerModel playerModel = new PlayerModel
-            {
-                Name = playerName,
-                Num = playerNum
-            };
+            int playerNum = (roomModel.Players[0] == null) ? 1 : 2;
+            IPlayerModel playerModel = new PlayerModel { Name = playerName, Num = playerNum };
             playerModel = _playerBLL.AddPlayerToRoom(playerModel, (int)roomModel.Id);
-            roomModel.Players.Add(playerModel);
+            roomModel.Players[playerModel.Num - 1] = playerModel;
             return roomModel;
         }
+
         public IRoomModel GetRoomById(int roomId)
         {
             RoomModel room = new RoomModel();

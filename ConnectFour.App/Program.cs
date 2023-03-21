@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -256,8 +256,10 @@ namespace ConnectFour.App
                     Console.Clear();
                     WriteTitle();
                     string opponentName = roomModel.Players[0].Name;
-                    roomModel = rBLL.AddPlayerToRoom(_localPlayerName, roomModel);
-                    Console.Write($"Successfully joined room agaisnt {opponentName}\nPress any key to continue...");
+                    roomModel = rBLL.AddPlayerToOpenSeat(_localPlayerName, roomModel);
+                    Console.Write(
+                        $"Successfully joined room agaisnt {opponentName}\nPress any key to continue..."
+                    );
                     Console.ReadKey();
                     isJoining = false;
                     //Call gameplay loop with the roomModel
