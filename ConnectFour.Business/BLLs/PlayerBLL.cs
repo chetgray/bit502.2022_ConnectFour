@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 
 using ConnectFour.Business.BLLs.Interfaces;
@@ -41,11 +41,12 @@ namespace ConnectFour.Business.BLLs
             return ConvertToModel(dto);
         }
 
-        public List<IPlayerModel> GetPlayersInRoom(int roomId)
+        public IPlayerModel[] GetPlayersInRoom(int roomId)
         {
-            List<PlayerDTO> dtos = _repository.GetPlayersInRoom(roomId);
-            return ConvertManyToModels(dtos);
+            PlayerDTO[] dtos = _repository.GetPlayersInRoom(roomId);
+            return ConvertManyToModels(dtos).ToArray();
         }
+
         internal PlayerDTO ConvertToDto(IPlayerModel playerModel)
         {
             PlayerDTO pDTO = new PlayerDTO();
@@ -54,15 +55,17 @@ namespace ConnectFour.Business.BLLs
             pDTO.Num = playerModel.Num;
             return pDTO;
         }
-        internal List<IPlayerModel> ConvertManyToModels(List<PlayerDTO> dtos)
+
+        internal List<IPlayerModel> ConvertManyToModels(IEnumerable<PlayerDTO> dtos)
         {
             List<IPlayerModel> models = new List<IPlayerModel>();
-            for (int i = 0; i < dtos.Count; i++)
+            foreach (PlayerDTO dto in dtos)
             {
-                models.Add(ConvertToModel(dtos[i]));
+                models.Add(ConvertToModel(dto));
             }
             return models;
         }
+
         internal IPlayerModel ConvertToModel(PlayerDTO dto)
         {
             PlayerModel pM = new PlayerModel();

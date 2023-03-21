@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Data;
 
 using ConnectFour.Data.DALs;
@@ -24,13 +24,23 @@ namespace ConnectFour.Data.Repositories
             DataTable dataTable = _dal.ExecuteStoredProcedure("dbo.spA_Player_AddPlayerToRoom", paramDictionary);
             return ConvertToDto(dataTable.Rows[0]);
         }
-        public List<PlayerDTO> GetPlayersInRoom(int roomId)
+
+        public PlayerDTO[] GetPlayersInRoom(int roomId)
         {
             Dictionary<string, object> paramDictionary = new Dictionary<string, object>();
             paramDictionary.Add("@RoomId", roomId);
-            DataTable dataTable = _dal.ExecuteStoredProcedure("dbo.spA_Player_GetPlayersInRoom", paramDictionary);
-            return ConvertManyToDTOs(dataTable);
+            DataTable dataTable = _dal.ExecuteStoredProcedure(
+                "dbo.spA_Player_GetPlayersInRoom",
+                paramDictionary
+            );
+            PlayerDTO[] dtos = new PlayerDTO[2];
+            foreach (PlayerDTO dto in ConvertManyToDTOs(dataTable))
+            {
+                dtos[dto.Num - 1] = dto;
+            }
+            return dtos;
         }
+
         internal List<PlayerDTO> ConvertManyToDTOs(DataTable dataTable)
         {
             List<PlayerDTO> dtos = new List<PlayerDTO>();

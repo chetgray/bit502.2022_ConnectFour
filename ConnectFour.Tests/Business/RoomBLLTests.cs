@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-using ConnectFour.Business.BLLs;
+﻿using ConnectFour.Business.BLLs;
 using ConnectFour.Business.BLLs.Interfaces;
 using ConnectFour.Business.Models;
 using ConnectFour.Business.Models.Interfaces;
@@ -23,7 +21,7 @@ namespace ConnectFour.Tests.Business
             IRoomModel room = new RoomModel
             {
                 Id = 0,
-                Players = new List<IPlayerModel>
+                Players = new IPlayerModel[]
                 {
                     null,
                     new PlayerModel { Num = 2 }
@@ -38,7 +36,7 @@ namespace ConnectFour.Tests.Business
             IRoomModel resultRoom = bll.AddPlayerToOpenSeat(newPlayerName, room);
 
             // Assert
-            Assert.AreEqual(2, resultRoom.Players.Count);
+            Assert.AreEqual(2, resultRoom.Players.Length);
             Assert.AreEqual(newPlayerName, resultRoom.Players[0].Name);
         }
 
@@ -65,7 +63,7 @@ namespace ConnectFour.Tests.Business
             IRoomRepository repository = new RoomRepositoryStub { TestDto = new RoomDTO() };
             IPlayerBLL playerBLL = new PlayerBLLStub
             {
-                TestModels = new List<IPlayerModel>
+                TestModels = new IPlayerModel[]
                 {
                     new PlayerModel { Num = 1 },
                     new PlayerModel { Num = 2 }
@@ -87,7 +85,7 @@ namespace ConnectFour.Tests.Business
             IRoomRepository repository = new RoomRepositoryStub { TestDto = new RoomDTO() };
             IPlayerBLL playerBLL = new PlayerBLLStub
             {
-                TestModels = new List<IPlayerModel>
+                TestModels = new IPlayerModel[]
                 {
                     new PlayerModel { Num = 1 },
                     null
@@ -109,7 +107,7 @@ namespace ConnectFour.Tests.Business
             IRoomRepository repository = new RoomRepositoryStub { TestDto = new RoomDTO() };
             IPlayerBLL playerBLL = new PlayerBLLStub
             {
-                TestModels = new List<IPlayerModel>
+                TestModels = new IPlayerModel[]
                 {
                     null,
                     new PlayerModel { Num = 2 }
@@ -131,7 +129,7 @@ namespace ConnectFour.Tests.Business
             IRoomRepository repository = new RoomRepositoryStub { TestDto = new RoomDTO() };
             IPlayerBLL playerBLL = new PlayerBLLStub
             {
-                TestModels = new List<IPlayerModel> { null, null }
+                TestModels = new IPlayerModel[] { null, null }
             };
             IRoomBLL bll = new RoomBLL(repository, playerBLL);
 

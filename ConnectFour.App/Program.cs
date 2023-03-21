@@ -58,10 +58,22 @@ namespace ConnectFour.App
             {
                 Id = 100,
                 CurrentTurnNum = 4,
-                Players = new List<IPlayerModel>
+                Players = new IPlayerModel[]
                 {
-                    new PlayerModel { Id = 1, Name = "Aaa", Symbol = "A", Color = ConsoleColor.Red },
-                    new PlayerModel { Id = 2, Name = "Bbb", Symbol = "B", Color = ConsoleColor.Yellow }
+                    new PlayerModel
+                    {
+                        Id = 1,
+                        Name = "Aaa",
+                        Symbol = "A",
+                        Color = ConsoleColor.Red
+                    },
+                    new PlayerModel
+                    {
+                        Id = 2,
+                        Name = "Bbb",
+                        Symbol = "B",
+                        Color = ConsoleColor.Yellow
+                    }
                 },
                 Turns = new List<ITurnModel>
                 {

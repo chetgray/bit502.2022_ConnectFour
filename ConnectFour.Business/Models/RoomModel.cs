@@ -12,7 +12,7 @@ namespace ConnectFour.Business.Models
         public int? CurrentTurnNum { get; set; }
         public int? ResultCode { get; set; }
 
-        public List<IPlayerModel> Players { get; set; } = new List<IPlayerModel>();
+        public IPlayerModel[] Players { get; set; } = new IPlayerModel[2];
         public List<ITurnModel> Turns { get; set; } = new List<ITurnModel>();
 
         public string[,] Board { get; set; } = new string[6, 7];
