@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Data;
 
 using ConnectFour.Data.DALs;
@@ -21,7 +21,10 @@ namespace ConnectFour.Data.Repositories
             paramDictionary.Add("@PlayerName", dto.Name);
             paramDictionary.Add("@RoomId", dto.RoomId);
             paramDictionary.Add("@PlayerNum", dto.Num);
-            DataTable dataTable = _dal.ExecuteStoredProcedure("dbo.spA_Player_AddPlayerToRoom", paramDictionary);
+            DataTable dataTable = _dal.ExecuteStoredProcedure(
+                "dbo.spA_Player_AddPlayerToRoom",
+                paramDictionary
+            );
             return ConvertToDto(dataTable.Rows[0]);
         }
 
@@ -50,6 +53,7 @@ namespace ConnectFour.Data.Repositories
             }
             return dtos;
         }
+
         internal PlayerDTO ConvertToDto(DataRow row)
         {
             PlayerDTO dto = new PlayerDTO

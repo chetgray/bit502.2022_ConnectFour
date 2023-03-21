@@ -1,8 +1,7 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading;
 
 using ConnectFour.Business.BLLs;
 using ConnectFour.Business.Models;
@@ -13,6 +12,7 @@ namespace ConnectFour.App
     internal static class Program
     {
         private static string _localPlayerName = string.Empty;
+
         private static void Main()
         {
             bool isChoosing = true;
@@ -20,12 +20,14 @@ namespace ConnectFour.App
             {
                 Console.Clear();
                 WriteTitle();
-                Console.WriteLine("What would you like to do?\n" +
-                "[1] - New Single-Player Game\n" +
-                "[2] - New Multi-Player Game\n" +
-                "[3] - Join Multi-Player Game\n" +
-                "[4] - View Game Results\n" +
-                "[5] - Quit\n");
+                Console.WriteLine(
+                    "What would you like to do?\n"
+                        + "[1] - New Single-Player Game\n"
+                        + "[2] - New Multi-Player Game\n"
+                        + "[3] - Join Multi-Player Game\n"
+                        + "[4] - View Game Results\n"
+                        + "[5] - Quit\n"
+                );
                 Console.Write("--> ");
                 string userResponse = Console.ReadLine();
                 switch (userResponse)
@@ -48,7 +50,9 @@ namespace ConnectFour.App
                         break;
                     default:
                         Console.Clear();
-                        Console.WriteLine("Invalid response please choose 1, 2, 3, 4, or 5\nPress any key to go back to the main menu");
+                        Console.WriteLine(
+                            "Invalid response please choose 1, 2, 3, 4, or 5\nPress any key to go back to the main menu"
+                        );
                         Console.ReadKey();
                         break;
                 }
@@ -77,9 +81,27 @@ namespace ConnectFour.App
                 },
                 Turns = new List<ITurnModel>
                 {
-                    new TurnModel { Id = 1, ColNum = 1, RowNum = 6, Num = 1 },
-                    new TurnModel { Id = 2, ColNum = 2, RowNum = 6, Num = 2 },
-                    new TurnModel { Id = 3, ColNum = 1, RowNum = 5, Num = 3 }
+                    new TurnModel
+                    {
+                        Id = 1,
+                        ColNum = 1,
+                        RowNum = 6,
+                        Num = 1
+                    },
+                    new TurnModel
+                    {
+                        Id = 2,
+                        ColNum = 2,
+                        RowNum = 6,
+                        Num = 2
+                    },
+                    new TurnModel
+                    {
+                        Id = 3,
+                        ColNum = 1,
+                        RowNum = 5,
+                        Num = 3
+                    }
                 }
             };
 
@@ -227,6 +249,7 @@ namespace ConnectFour.App
             Console.ReadKey();
             Console.Clear();
         }
+
         private static void JoinMultiPlayerGame()
         {
             //initializes variables for the line that the user will be writing at with these two ints
@@ -235,7 +258,7 @@ namespace ConnectFour.App
             string message = string.Empty;
             bool isJoining = true;
             _localPlayerName = GetPlayerName();
-            if(_localPlayerName == string.Empty)
+            if (_localPlayerName == string.Empty)
             {
                 return;
             }
@@ -248,7 +271,7 @@ namespace ConnectFour.App
                 WriteInColor($"\n\n{message}", ConsoleColor.Red);
                 Console.ResetColor();
                 string userInput = GetUserInput(inputLineWidth, inputLineFromTopLine);
-                if(userInput == null)
+                if (userInput == null)
                 {
                     return;
                 }
@@ -261,7 +284,8 @@ namespace ConnectFour.App
                 }
                 if (roomModel == null || !successfullInput || roomModel.ResultCode != null)
                 {
-                    message = $"Room Id {roomId} does not match any open rooms. To quit trying to join a room press the escape(Esc) key.";
+                    message =
+                        $"Room Id {roomId} does not match any open rooms. To quit trying to join a room press the escape(Esc) key.";
                 }
                 else if (roomModel.Vacancy)
                 {
@@ -278,15 +302,18 @@ namespace ConnectFour.App
                 }
                 else if (!roomModel.Vacancy)
                 {
-                    message = "That room is full! To quit trying to join a room press the escape(Esc) key.";
+                    message =
+                        "That room is full! To quit trying to join a room press the escape(Esc) key.";
                 }
                 else
                 {
-                    message = "Something went wrong!\nTo quit trying to join a room press the escape(Esc) key.";
+                    message =
+                        "Something went wrong!\nTo quit trying to join a room press the escape(Esc) key.";
                 }
                 Console.Clear();
             }
         }
+
         private static string GetPlayerName()
         {
             string message = string.Empty;
@@ -303,7 +330,8 @@ namespace ConnectFour.App
                 _localPlayerName = GetUserInput(inputLineWidth, inputLineFromTopLine);
                 if (_localPlayerName == string.Empty)
                 {
-                    message = "Please enter a name or press escape(Esc) to return to the main menu.";
+                    message =
+                        "Please enter a name or press escape(Esc) to return to the main menu.";
                 }
                 else if (_localPlayerName == null)
                 {

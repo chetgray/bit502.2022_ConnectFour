@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 
 using ConnectFour.Business.BLLs.Interfaces;
@@ -30,9 +30,9 @@ namespace ConnectFour.Business.BLLs
         /// <param name="repository">The <see cref="IPlayerRepository"/> to use as the backend.</param>
         public PlayerBLL(IPlayerRepository repository)
         {
-            _repository =
-                repository ?? throw new ArgumentNullException(nameof(repository));
+            _repository = repository ?? throw new ArgumentNullException(nameof(repository));
         }
+
         public IPlayerModel AddPlayerToRoom(IPlayerModel model, int roomId)
         {
             PlayerDTO dto = ConvertToDto(model);

@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -33,10 +33,8 @@ namespace ConnectFour.Business.BLLs
         /// <param name="repository">The <see cref="IRoomRepository"/> to use as the backend.</param>
         public RoomBLL(IRoomRepository repository, IPlayerBLL playerBLL)
         {
-            _repository =
-                repository ?? throw new ArgumentNullException(nameof(repository));
-            _playerBLL = 
-                playerBLL ?? throw new ArgumentNullException(nameof(playerBLL));
+            _repository = repository ?? throw new ArgumentNullException(nameof(repository));
+            _playerBLL = playerBLL ?? throw new ArgumentNullException(nameof(playerBLL));
         }
 
         public List<IResultModel> GetAllFinished()
@@ -168,7 +166,7 @@ namespace ConnectFour.Business.BLLs
             rM.Id = dto.Id;
             rM.CreationTime = dto.CreationTime;
             rM.CurrentTurnNum = dto.CurrentTurnNumber;
-            rM.ResultCode = dto.ResultCode;           
+            rM.ResultCode = dto.ResultCode;
             return rM;
         }
     }
