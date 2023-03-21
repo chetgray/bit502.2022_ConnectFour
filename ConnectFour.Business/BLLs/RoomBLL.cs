@@ -148,10 +148,7 @@ namespace ConnectFour.Business.BLLs
             {
                 room = ConvertToModel(dto);
                 room.Players = _playerBLL.GetPlayersInRoom(roomId);
-                if (room.Players.Count < 2)
-                {
-                    room.Vacancy = true;
-                }
+                room.Vacancy = room.Players.Contains(null);
             }
             else
             {
@@ -159,6 +156,7 @@ namespace ConnectFour.Business.BLLs
             }
             return room;
         }
+
         internal RoomDTO ConvertToDto(IRoomModel model)
         {
             throw new NotImplementedException();

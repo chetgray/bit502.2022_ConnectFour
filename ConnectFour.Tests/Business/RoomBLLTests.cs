@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 using ConnectFour.Business.BLLs;
 using ConnectFour.Business.BLLs.Interfaces;
@@ -56,6 +56,90 @@ namespace ConnectFour.Tests.Business
             // Assert
 
             Assert.IsNull(result);
+        }
+
+        [TestMethod]
+        public void GetRoomById_SeatOneFullSeatTwoFull_VacancyIsFalse()
+        {
+            // Arrange
+            IRoomRepository repository = new RoomRepositoryStub { TestDto = new RoomDTO() };
+            IPlayerBLL playerBLL = new PlayerBLLStub
+            {
+                TestModels = new List<IPlayerModel>
+                {
+                    new PlayerModel { Num = 1 },
+                    new PlayerModel { Num = 2 }
+                }
+            };
+            IRoomBLL bll = new RoomBLL(repository, playerBLL);
+
+            // Act
+            IRoomModel result = bll.GetRoomById(0);
+
+            // Assert
+            Assert.IsFalse(result.Vacancy);
+        }
+
+        [TestMethod]
+        public void GetRoomById_SeatOneFullSeatTwoOpen_VacancyIsTrue()
+        {
+            // Arrange
+            IRoomRepository repository = new RoomRepositoryStub { TestDto = new RoomDTO() };
+            IPlayerBLL playerBLL = new PlayerBLLStub
+            {
+                TestModels = new List<IPlayerModel>
+                {
+                    new PlayerModel { Num = 1 },
+                    null
+                }
+            };
+            IRoomBLL bll = new RoomBLL(repository, playerBLL);
+
+            // Act
+            IRoomModel result = bll.GetRoomById(0);
+
+            // Assert
+            Assert.IsTrue(result.Vacancy);
+        }
+
+        [TestMethod]
+        public void GetRoomById_SeatOneOpenSeatTwoFull_VacancyIsTrue()
+        {
+            // Arrange
+            IRoomRepository repository = new RoomRepositoryStub { TestDto = new RoomDTO() };
+            IPlayerBLL playerBLL = new PlayerBLLStub
+            {
+                TestModels = new List<IPlayerModel>
+                {
+                    null,
+                    new PlayerModel { Num = 2 }
+                }
+            };
+            IRoomBLL bll = new RoomBLL(repository, playerBLL);
+
+            // Act
+            IRoomModel result = bll.GetRoomById(0);
+
+            // Assert
+            Assert.IsTrue(result.Vacancy);
+        }
+
+        [TestMethod]
+        public void GetRoomById_SeatOneOpenSeatTwoOpen_VacancyIsFalse()
+        {
+            // Arrange
+            IRoomRepository repository = new RoomRepositoryStub { TestDto = new RoomDTO() };
+            IPlayerBLL playerBLL = new PlayerBLLStub
+            {
+                TestModels = new List<IPlayerModel> { null, null }
+            };
+            IRoomBLL bll = new RoomBLL(repository, playerBLL);
+
+            // Act
+            IRoomModel result = bll.GetRoomById(0);
+
+            // Assert
+            Assert.IsTrue(result.Vacancy);
         }
     }
 }
