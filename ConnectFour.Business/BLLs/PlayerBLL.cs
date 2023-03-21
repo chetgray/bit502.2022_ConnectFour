@@ -15,7 +15,7 @@ namespace ConnectFour.Business.BLLs
         private IPlayerRepository _repository;
 
         /// <summary>
-        /// Creates a <see cref="RoomBLL"/> instance with a default <see cref="RoomRepository"/>
+        /// Creates a <see cref="PlayerBLL"/> instance with a default <see cref="PlayerRepository"/>
         /// backend.
         /// </summary>
         public PlayerBLL()
@@ -24,10 +24,10 @@ namespace ConnectFour.Business.BLLs
         }
 
         /// <summary>
-        /// Creates a <see cref="RoomBLL"/> instance with the passed <paramref name="repository"/>
+        /// Creates a <see cref="PlayerBLL"/> instance with the passed <paramref name="repository"/>
         /// as the backend.
         /// </summary>
-        /// <param name="repository">The <see cref="IRoomRepository"/> to use as the backend.</param>
+        /// <param name="repository">The <see cref="IPlayerRepository"/> to use as the backend.</param>
         public PlayerBLL(IPlayerRepository repository)
         {
             _repository =
