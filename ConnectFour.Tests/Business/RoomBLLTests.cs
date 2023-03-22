@@ -14,26 +14,30 @@ namespace ConnectFour.Tests.Business
     public class RoomBLLTests
     {
         [TestMethod]
-        public void AddPlayerToOpenSeat_SeatOneOpenSeatTwoFull_NewPlayerTakesSeatOne()
+        public void AddPlayerToRoom_SeatOneOpenSeatTwoFull_NewPlayerTakesSeatOne()
         {
             // Arrange
-            IRoomRepository repository = new RoomRepositoryStub { TestDto = new RoomDTO() };
-            IRoomModel room = new RoomModel
-            {
-                Id = 0,
-                Players = new IPlayerModel[]
-                {
-                    null,
-                    new PlayerModel { Num = 2 }
-                }
-            };
             const string newPlayerName = "Player One";
             IPlayerModel newPlayer = new PlayerModel { Name = newPlayerName, Num = 1 };
-            IPlayerBLL playerBLL = new PlayerBLLStub { TestModel = newPlayer };
+            IPlayerModel[] players = new IPlayerModel[]
+            {
+                null,
+                new PlayerModel { Name = "Player Two", Num = 2 }
+            };
+            IRoomModel room = new RoomModel { Id = 0, Players = players };
+            IRoomRepository repository = new RoomRepositoryStub
+            {
+                TestDto = new RoomDTO { Id = 0 }
+            };
+            IPlayerBLL playerBLL = new PlayerBLLStub
+            {
+                TestModel = newPlayer,
+                TestModels = players
+            };
             IRoomBLL bll = new RoomBLL(repository, playerBLL);
 
             // Act
-            IRoomModel resultRoom = bll.AddPlayerToOpenSeat(newPlayerName, room);
+            IRoomModel resultRoom = bll.AddPlayerToRoom(newPlayerName, (int)room.Id);
 
             // Assert
             Assert.AreEqual(2, resultRoom.Players.Length);

@@ -68,6 +68,10 @@ namespace ConnectFour.Business.BLLs
 
         internal IPlayerModel ConvertToModel(PlayerDTO dto)
         {
+            if (dto == null)
+            {
+                return null;
+            }
             PlayerModel pM = new PlayerModel();
             pM.Id = dto.Id;
             pM.Name = dto.Name;

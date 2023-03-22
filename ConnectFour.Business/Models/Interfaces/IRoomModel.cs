@@ -15,5 +15,6 @@ namespace ConnectFour.Business.Models.Interfaces
 
         string[,] Board { get; set; }
         bool Vacancy { get; set; }
+        string Message { get; set; }
     }
 }

@@ -17,5 +17,7 @@ namespace ConnectFour.Business.Models
 
         public string[,] Board { get; set; } = new string[6, 7];
         public bool Vacancy { get; set; }
+
+        public string Message { get; set; }
     }
 }

@@ -128,30 +128,44 @@ namespace ConnectFour.Business.BLLs
             return winnerName;
         }
 
-        public IRoomModel AddPlayerToOpenSeat(string playerName, IRoomModel roomModel)
+        public IRoomModel AddPlayerToRoom(string localPlayerName, int roomId)
         {
+            IRoomModel roomModel = GetRoomById(roomId);
+            if (roomModel == null)
+            {
+                throw new System.ArgumentException(
+                    $"Room Id {roomId} does not match any open rooms."
+                );
+            }
+            if (roomModel.ResultCode != null)
+            {
+                throw new System.ArgumentException($"Room Id {roomId} is already finished!");
+            }
+            if (!roomModel.Vacancy)
+            {
+                throw new System.ArgumentException($"Room Id {roomId} is full!");
+            }
             int playerNum = (roomModel.Players[0] == null) ? 1 : 2;
-            IPlayerModel playerModel = new PlayerModel { Name = playerName, Num = playerNum };
+            IPlayerModel playerModel = new PlayerModel { Name = localPlayerName, Num = playerNum };
             playerModel = _playerBLL.AddPlayerToRoom(playerModel, (int)roomModel.Id);
             roomModel.Players[playerModel.Num - 1] = playerModel;
+
+            string opponentName = roomModel.Players[2 - playerNum].Name;
+            roomModel.Message = $"Successfully joined room against {opponentName}";
             return roomModel;
         }
 
         public IRoomModel GetRoomById(int roomId)
         {
-            RoomModel room = new RoomModel();
-
             RoomDTO dto = _repository.GetRoomById(roomId);
-            if (dto != null)
-            {
-                room = ConvertToModel(dto);
-                room.Players = _playerBLL.GetPlayersInRoom(roomId);
-                room.Vacancy = room.Players.Contains(null);
-            }
-            else
+            RoomModel room = ConvertToModel(dto);
+            if (room == null)
             {
                 return null;
             }
+            room.Players = _playerBLL.GetPlayersInRoom(roomId);
+            room.Vacancy = room.Players.Contains(null);
+
             return room;
         }
 
@@ -162,6 +176,10 @@ namespace ConnectFour.Business.BLLs
 
         internal RoomModel ConvertToModel(RoomDTO dto)
         {
+            if (dto == null)
+            {
+                return null;
+            }
             RoomModel rM = new RoomModel();
             rM.Id = dto.Id;
             rM.CreationTime = dto.CreationTime;

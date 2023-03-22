@@ -252,13 +252,13 @@ namespace ConnectFour.App
 
         private static void JoinMultiPlayerGame()
         {
+            IRoomModel room = new RoomModel();
             //initializes variables for the line that the user will be writing at with these two ints
             int inputLineFromTopLine = 3;
             int inputLineWidth = 4;
-            string message = string.Empty;
             bool isJoining = true;
             _localPlayerName = GetPlayerName();
-            if (_localPlayerName == string.Empty)
+            if (_localPlayerName == null)
             {
                 return;
             }
@@ -268,50 +268,42 @@ namespace ConnectFour.App
                 WriteTitle();
                 Console.WriteLine("What is the Room Id you would like to join?");
                 Console.Write($"--> ");
-                WriteInColor($"\n\n{message}", ConsoleColor.Red);
+                WriteInColor($"\n\n{room.Message}", ConsoleColor.Red);
                 Console.ResetColor();
                 string userInput = GetUserInput(inputLineWidth, inputLineFromTopLine);
                 if (userInput == null)
                 {
                     return;
                 }
-                bool successfullInput = int.TryParse(userInput, out int roomId);
-                IRoomModel roomModel = new RoomModel();
+                int roomId;
+                try
+                {
+                    roomId = int.Parse(userInput);
+                }
+                catch (FormatException e)
+                {
+                    room.Message =
+                        "Please enter an integer ID. To quit trying to join a room press the escape(Esc) key.";
+                    continue;
+                }
                 RoomBLL rBLL = new RoomBLL();
-                if (successfullInput)
+                try
                 {
-                    roomModel = rBLL.GetRoomById(roomId);
-                }
-                if (roomModel == null || !successfullInput || roomModel.ResultCode != null)
-                {
-                    message =
-                        $"Room Id {roomId} does not match any open rooms. To quit trying to join a room press the escape(Esc) key.";
-                }
-                else if (roomModel.Vacancy)
-                {
-                    Console.Clear();
-                    WriteTitle();
-                    string opponentName = roomModel.Players[0].Name;
-                    roomModel = rBLL.AddPlayerToOpenSeat(_localPlayerName, roomModel);
-                    Console.Write(
-                        $"Successfully joined room agaisnt {opponentName}\nPress any key to continue..."
-                    );
-                    Console.ReadKey();
+                    room = rBLL.AddPlayerToRoom(_localPlayerName, roomId);
                     isJoining = false;
-                    //Call gameplay loop with the roomModel
                 }
-                else if (!roomModel.Vacancy)
+                catch (ArgumentException e)
                 {
-                    message =
-                        "That room is full! To quit trying to join a room press the escape(Esc) key.";
+                    room.Message =
+                        e.Message + " To quit trying to join a room press the escape(Esc) key.";
                 }
-                else
-                {
-                    message =
-                        "Something went wrong!\nTo quit trying to join a room press the escape(Esc) key.";
-                }
-                Console.Clear();
             }
+            Console.Clear();
+            WriteTitle();
+            Console.WriteLine(room.Message);
+            Console.Write("Press any key to continue . . . ");
+            Console.ReadKey(intercept: false);
+            // TODO: Call gameplay loop with the roomModel and playerNum
         }
 
         private static string GetPlayerName()
@@ -328,15 +320,10 @@ namespace ConnectFour.App
                 WriteInColor($"\n\n{message}", ConsoleColor.Red);
                 Console.ResetColor();
                 _localPlayerName = GetUserInput(inputLineWidth, inputLineFromTopLine);
-                if (_localPlayerName == string.Empty)
+                if (_localPlayerName != null && string.IsNullOrWhiteSpace(_localPlayerName))
                 {
                     message =
                         "Please enter a name or press escape(Esc) to return to the main menu.";
-                }
-                else if (_localPlayerName == null)
-                {
-                    _localPlayerName = string.Empty;
-                    return _localPlayerName;
                 }
             }
             return _localPlayerName;

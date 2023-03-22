@@ -6,7 +6,7 @@ namespace ConnectFour.Business.BLLs.Interfaces
 {
     public interface IRoomBLL
     {
-        IRoomModel AddPlayerToOpenSeat(string playerName, IRoomModel roomModel);
+        IRoomModel AddPlayerToRoom(string localPlayerName, int roomId);
         List<IResultModel> GetAllFinished();
 
         /// <summary>
