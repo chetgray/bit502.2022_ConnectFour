@@ -1,5 +1,13 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using ConnectFour.Data.DALs;
+using ConnectFour.Data.Repositories;
+using ConnectFour.Data.Repositories.Interfaces;
+using ConnectFour.Tests.TestDoubles;
+using ConnectFour.Data.DTOs;
+
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+
 using System;
+using System.Data;
 
 namespace ConnectFour.Tests.Data
 {
@@ -7,8 +15,72 @@ namespace ConnectFour.Tests.Data
     public class RoomRepositoryTests
     {
         [TestMethod]
-        public void TestMethod1()
+        public void GetRoomById_DoesntExist_ReturnsNull()
         {
+            // Arrange
+            DALStub dal = new DALStub { TestDataTable = CreateRoomTable() };
+            IRoomRepository repository = new RoomRepository(dal);
+
+            // Act
+            RoomDTO result = repository.GetRoomById(0);
+
+            // Assert
+            Assert.IsNull(result);
+        }
+
+        [TestMethod]
+        public void GetRoomById_MultipleResultRows_ReturnsFirstResult()
+        {
+            // Arrange
+            DALStub dal = new DALStub { TestDataTable = CreateRoomTable() };
+            DateTime creationTime = DateTime.Now;
+            dal.TestDataTable.Rows.Add(0, creationTime, null, null);
+            dal.TestDataTable.Rows.Add(0, creationTime.AddMinutes(-30), 1, 1);
+            dal.TestDataTable.Rows.Add(0, creationTime.AddMinutes(-999), 999, -999);
+            IRoomRepository repository = new RoomRepository(dal);
+
+            // Act
+            RoomDTO actual = repository.GetRoomById(0);
+
+            // Assert
+            Assert.AreEqual(0, actual.Id);
+            Assert.AreEqual(creationTime, actual.CreationTime);
+            Assert.AreEqual(null, actual.CurrentTurnNumber);
+            Assert.AreEqual(null, actual.ResultCode);
+        }
+
+        [DataRow(3, 2, 1)]
+        [DataRow(-1, null, null)]
+        [DataRow(1, 2, null)]
+        [DataRow(1, null, -1)]
+        [DataRow(0, 0, 0)]
+        [TestMethod]
+        public void GetRoomById_RoomExists_ReturnsRoom(int id, int? currentTurnNumber, int? resultCode)
+        {
+            // Arrange
+            DALStub dal = new DALStub { TestDataTable = CreateRoomTable() };
+            DateTime creationTime = DateTime.Now;
+            dal.TestDataTable.Rows.Add(id, creationTime, currentTurnNumber, resultCode);
+            IRoomRepository repository = new RoomRepository(dal);
+
+            // Act
+            RoomDTO actual = repository.GetRoomById(id);
+
+            // Assert
+            Assert.AreEqual(id, actual.Id);
+            Assert.AreEqual(creationTime, actual.CreationTime);
+            Assert.AreEqual(currentTurnNumber, actual.CurrentTurnNumber);
+            Assert.AreEqual(resultCode, actual.ResultCode);
+        }
+
+        private static DataTable CreateRoomTable()
+        {
+            DataTable table = new DataTable();
+            table.Columns.Add("RoomId", typeof(int));
+            table.Columns.Add("RoomCreationTime", typeof(DateTime));
+            table.Columns.Add("RoomCurrentTurnNum", typeof(int));
+            table.Columns.Add("RoomResultCode", typeof(int));
+            return table;
         }
     }
 }

@@ -10,7 +10,7 @@ namespace ConnectFour.Business.Models.Interfaces
         int? CurrentTurnNum { get; set; }
         int? ResultCode { get; set; }
 
-        List<IPlayerModel> Players { get; }
+        IPlayerModel[] Players { get; }
         List<ITurnModel> Turns { get; }
 
         /// <summary>
@@ -20,6 +20,8 @@ namespace ConnectFour.Business.Models.Interfaces
         /// A two-dimensional array representing the pieces in each cell.
         /// </value>
         int[,] Board { get; set; }
+        bool Vacancy { get; set; }
+        string Message { get; set; }
 
         /// <summary>
         /// Checks if the given <paramref name="turn"/> will result in a win.

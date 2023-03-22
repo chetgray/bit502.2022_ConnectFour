@@ -34,8 +34,6 @@ namespace ConnectFour.Tests.Business
                 ColNum = colNum
             };
             RoomModel room = new RoomModel();
-            room.Players.Add(new PlayerModel());
-            room.Players.Add(new PlayerModel());
             // Set up board to the left of turn
             for (int c = colNum - (positionWithinFour - 1) - 1; c < colNum - 1; c++)
             {
@@ -59,8 +57,6 @@ namespace ConnectFour.Tests.Business
         {
             // Arrange
             RoomModel room = new RoomModel();
-            room.Players.Add(new PlayerModel());
-            room.Players.Add(new PlayerModel());
             room.Board[5, 0] = 1;
             room.Board[5, 1] = 1;
             room.Board[5, 2] = 1;
@@ -83,8 +79,6 @@ namespace ConnectFour.Tests.Business
         {
             // Arrange
             RoomModel room = new RoomModel();
-            room.Players.Add(new PlayerModel());
-            room.Players.Add(new PlayerModel());
             room.Board[5, 0] = 1;
             room.Board[4, 0] = 1;
             room.Board[3, 0] = 1;

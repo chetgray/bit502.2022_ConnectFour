@@ -12,14 +12,17 @@ namespace ConnectFour.Business.Models
         public int? CurrentTurnNum { get; set; }
         public int? ResultCode { get; set; }
 
-        public List<IPlayerModel> Players { get; set; } = new List<IPlayerModel>();
+        public IPlayerModel[] Players { get; set; } = new IPlayerModel[2];
         public List<ITurnModel> Turns { get; set; } = new List<ITurnModel>();
 
         public int[,] Board { get; set; } = new int[6, 7];
+        public bool Vacancy { get; set; }
+
+        public string Message { get; set; }
 
         public bool CheckForWin(ITurnModel turn)
         {
-            int playerNum = ((turn.Num - 1) % Players.Count) + 1;
+            int playerNum = ((turn.Num - 1) % Players.Length) + 1;
 
             // Check up to three cells to the left and three cells to the right of the Turn's column
             // for four in a row.
