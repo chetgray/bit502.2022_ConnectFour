@@ -133,17 +133,15 @@ namespace ConnectFour.Business.BLLs
             IRoomModel roomModel = GetRoomById(roomId);
             if (roomModel == null)
             {
-                throw new System.ArgumentException(
-                    $"Room Id {roomId} does not match any open rooms."
-                );
+                throw new ArgumentException($"Room Id {roomId} does not match any open rooms.");
             }
             if (roomModel.ResultCode != null)
             {
-                throw new System.ArgumentException($"Room Id {roomId} is already finished!");
+                throw new ArgumentException($"Room Id {roomId} is already finished!");
             }
             if (!roomModel.Vacancy)
             {
-                throw new System.ArgumentException($"Room Id {roomId} is full!");
+                throw new ArgumentException($"Room Id {roomId} is full!");
             }
             int playerNum = (roomModel.Players[0] == null) ? 1 : 2;
             IPlayerModel playerModel = new PlayerModel { Name = localPlayerName, Num = playerNum };
