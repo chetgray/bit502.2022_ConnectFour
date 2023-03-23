@@ -56,13 +56,16 @@ namespace ConnectFour.Tests.Business
         [DataRow(6, 3)]
         [DataRow(6, 4)]
         [DataRow(7, 4)]
-        public void TestHorizontalWin(int colNum, int positionWithinFour)
+        public void CheckForWin_FourthPieceHorizontal_WillWin(
+            int colNum,
+            int positionWithinFour
+        )
         {
             // Arrange
             int rowNum = positionWithinFour;
             TurnModel turn = new TurnModel
             {
-                Num = 1, // Player 1
+                Num = 1,
                 RowNum = rowNum,
                 ColNum = colNum
             };
@@ -86,38 +89,26 @@ namespace ConnectFour.Tests.Business
         }
 
         [TestMethod]
-        public void TestOpponentPieceDoesntWin()
+        public void CheckForWin_FourthPieceUp_WillWin()
         {
             // Arrange
-            RoomModel room = new RoomModel();
-            room.Board[5, 0] = 1;
-            room.Board[5, 1] = 1;
-            room.Board[5, 2] = 1;
-            TurnModel turn = new TurnModel
+            RoomModel room = new RoomModel()
             {
-                Num = 2, // Player 2
-                RowNum = 6,
-                ColNum = 4
+                Board = new int[,]
+                { //                        index / RowNum
+                    { 0, 0, 0, 0, 0, 0, 0 }, // 0 / 1
+                    { 0, 0, 0, 0, 0, 0, 0 }, // 1 / 2
+                    { 0, 0, 0, 0, 0, 0, 0 }, // 2 / 3
+                    { 1, 0, 0, 0, 0, 0, 0 }, // 3 / 4
+                    { 1, 0, 0, 0, 0, 0, 0 }, // 4 / 5
+                    { 1, 0, 0, 0, 0, 0, 0 }, // 5 / 6
+                    //0, 1, 2, 3, 4, 5, 6 - index
+                    //1, 2, 3, 4, 5, 6, 7 - ColNum
+                }
             };
-
-            // Act
-            bool result = room.CheckForWin(turn);
-
-            // Assert
-            Assert.IsFalse(result);
-        }
-
-        [TestMethod]
-        public void TestFourthPieceUpWins()
-        {
-            // Arrange
-            RoomModel room = new RoomModel();
-            room.Board[5, 0] = 1;
-            room.Board[4, 0] = 1;
-            room.Board[3, 0] = 1;
             TurnModel turn = new TurnModel
             {
-                Num = 1, // Player 1
+                Num = 1,
                 RowNum = 3,
                 ColNum = 1
             };
@@ -127,6 +118,38 @@ namespace ConnectFour.Tests.Business
 
             // Assert
             Assert.IsTrue(result);
+        }
+
+        [TestMethod]
+        public void CheckForWin_PieceCompletesOpponentsFourInARow_WontWin()
+        {
+            // Arrange
+            RoomModel room = new RoomModel()
+            {
+                Board = new int[,]
+                { //                        index / RowNum
+                    { 0, 0, 0, 0, 0, 0, 0 }, // 0 / 1
+                    { 0, 0, 0, 0, 0, 0, 0 }, // 1 / 2
+                    { 0, 0, 0, 0, 0, 0, 0 }, // 2 / 3
+                    { 0, 0, 0, 0, 0, 0, 0 }, // 3 / 4
+                    { 0, 0, 0, 0, 0, 0, 0 }, // 4 / 5
+                    { 2, 2, 2, 0, 0, 0, 0 }, // 5 / 6
+                    //0, 1, 2, 3, 4, 5, 6 - index
+                    //1, 2, 3, 4, 5, 6, 7 - ColNum
+                }
+            };
+            TurnModel turn = new TurnModel
+            {
+                Num = 1,
+                RowNum = 6,
+                ColNum = 4
+            };
+
+            // Act
+            bool result = room.CheckForWin(turn);
+
+            // Assert
+            Assert.IsFalse(result);
         }
     }
 }
