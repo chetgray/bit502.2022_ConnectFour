@@ -3,58 +3,101 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 
+using ConnectFour.Data.DALs;
 using ConnectFour.Data.DTOs;
+using ConnectFour.Data.Repositories.Interfaces;
 
 namespace ConnectFour.Data.Repositories
 {
-    public class RoomRepository : BaseRepository
+    public class RoomRepository : BaseRepository, IRoomRepository
     {
-        public int InsertNewRoom()
-        {
-            Dictionary<string, object> parameters = new Dictionary<string, object>();
-            DataTable dataTable = _dal.ExecuteStoredProcedure("spA_Room_InsertNewRoom", parameters);
+        /// <inheritdoc cref="BaseRepository()"/>
+        public RoomRepository() { }
 
-            return Convert.ToInt32(dataTable.Rows[0][0]);
-        }
+        /// <inheritdoc/>
+        public RoomRepository(IDAL dal) : base(dal) { }
+
         public List<ResultDTO> GetAllFinished()
         {
             Dictionary<string, object> parameters = new Dictionary<string, object>();
-            DataTable dataTable = _dal.ExecuteStoredProcedure("dbo.spA_Room_GetAllFinished", parameters);
+            DataTable resultTable = _dal.ExecuteStoredProcedure(
+                "dbo.spA_Room_GetAllFinished",
+                parameters
+            );
 
-            Dictionary<int, ResultDTO> resultDTODictionary = new Dictionary<int, ResultDTO>();
-            for (int i = 0; i < dataTable.Rows.Count; i++)
-            {
-                DataRow row = dataTable.Rows[i];
-                resultDTODictionary = ConvertToDto(row, resultDTODictionary);
-            }
-
-            List<ResultDTO> resultDTOS = resultDTODictionary.Values.ToList();
-            return resultDTOS;
+            return ConvertTableToResultDtos(resultTable).ToList();
         }
-        private static Dictionary<int, ResultDTO> ConvertToDto(DataRow row, Dictionary<int, ResultDTO> resultDTODictionary)
+
+        public RoomDTO GetRoomById(int roomId)
         {
-            int roomId = (int)row["RoomId"];
-            if (resultDTODictionary.ContainsKey(roomId))
+            Dictionary<string, object> paramDictionary = new Dictionary<string, object>();
+            paramDictionary.Add("@RoomId", roomId);
+            DataTable dataTable = _dal.ExecuteStoredProcedure("dbo.spA_Room_GetRoomById", paramDictionary);
+            if (dataTable.Rows.Count == 0)
             {
-                resultDTODictionary[roomId].Players.Add((int)row["PlayerNum"], row["PlayerName"].ToString());
+                return null;
+            }
+            return ConvertToDto(dataTable.Rows[0]);           
+        }
+
+        internal RoomDTO ConvertToDto(DataRow row)
+        {
+            RoomDTO roomDTO = new RoomDTO();
+            if (row.IsNull("RoomId"))
+            {
+                roomDTO.Id = null;
             }
             else
             {
-                resultDTODictionary.Add(roomId, new ResultDTO
-                {
-                    RoomId = roomId,
-                    CreationTime = (DateTime)row["RoomCreationTime"],
-                    ResultCode = (int)row["RoomResultCode"],
-                    LastTurnTime = (DateTime)row["TurnTime"],
-                    LastTurnNum = (int)row["TurnNum"]
-                });
-                resultDTODictionary[roomId].Players.Add((int)row["PlayerNum"], row["PlayerName"].ToString());
+                roomDTO.Id = (int?)(row["RoomId"]);
             }
-            return resultDTODictionary;
+            roomDTO.CreationTime = (DateTime)row["RoomCreationTime"];
+            if (row.IsNull("RoomCurrentTurnNum"))
+            {
+                roomDTO.CurrentTurnNumber = null;
+            }
+            else
+            {
+                roomDTO.CurrentTurnNumber = (int?)row["RoomCurrentTurnNum"];
+            }
+            if (row.IsNull("RoomResultCode"))
+            {
+                roomDTO.ResultCode = null;
+            }
+            else
+            {
+                roomDTO.ResultCode = (int?)row["RoomResultCode"];
+            }
+            return roomDTO;
         }
-        private static RoomDTO ConvertToDto(DataRow row)
+
+        private static IEnumerable<ResultDTO> ConvertTableToResultDtos(DataTable table)
         {
-            throw new NotImplementedException();
+            Dictionary<int, ResultDTO> resultDtos = new Dictionary<int, ResultDTO>();
+            foreach (DataRow row in table.Rows)
+            {
+                int roomId = (int)row["RoomId"];
+                if (!resultDtos.ContainsKey(roomId))
+                {
+                    resultDtos.Add(
+                        roomId,
+                        new ResultDTO
+                        {
+                            RoomId = roomId,
+                            CreationTime = (DateTime)row["RoomCreationTime"],
+                            ResultCode = (int)row["RoomResultCode"],
+                            LastTurnTime = (DateTime)row["TurnTime"],
+                            LastTurnNum = (int)row["TurnNum"]
+                        }
+                    );
+                }
+                resultDtos[roomId].Players.Add(
+                    (int)row["PlayerNum"],
+                    row["PlayerName"].ToString()
+                );
+            }
+
+            return resultDtos.Values;
         }
     }
 }

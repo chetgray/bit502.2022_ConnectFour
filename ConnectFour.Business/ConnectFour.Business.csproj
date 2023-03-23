@@ -41,6 +41,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BLLs\Interfaces\IPlayerBLL.cs" />
+    <Compile Include="BLLs\Interfaces\IRoomBLL.cs" />
+    <Compile Include="BLLs\PlayerBLL.cs" />
     <Compile Include="BLLs\RoomBLL.cs" />
     <Compile Include="Models\Interfaces\IPlayerModel.cs" />
     <Compile Include="Models\Interfaces\IRoomModel.cs" />

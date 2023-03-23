@@ -10,9 +10,11 @@ namespace ConnectFour.Business.Models.Interfaces
         int? CurrentTurnNum { get; set; }
         int? ResultCode { get; set; }
 
-        List<IPlayerModel> Players { get; }
+        IPlayerModel[] Players { get; }
         List<ITurnModel> Turns { get; }
 
         string[,] Board { get; set; }
+        bool Vacancy { get; set; }
+        string Message { get; set; }
     }
 }
