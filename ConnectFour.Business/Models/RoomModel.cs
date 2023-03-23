@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 
 using ConnectFour.Business.Models.Interfaces;
@@ -22,6 +22,12 @@ namespace ConnectFour.Business.Models
 
         public bool CheckForWin(ITurnModel turn)
         {
+            // Bail if the turn's cell is already occupied.
+            if (Board[turn.RowNum - 1, turn.ColNum - 1] != 0)
+            {
+                return false;
+            }
+
             int playerNum = ((turn.Num - 1) % Players.Length) + 1;
 
             // Check up to three cells to the left and three cells to the right of the Turn's column

@@ -151,5 +151,32 @@ namespace ConnectFour.Tests.Business
             // Assert
             Assert.IsFalse(result);
         }
+
+        [TestMethod]
+        [DataRow(1, 1, 1, 1)]
+        [DataRow(4, 3, 2, 1)]
+        public void CheckForWin_PlayInOccupiedCell_WontWin(
+            int rowNum,
+            int colNum,
+            int existingPieceNum,
+            int newPieceNum
+        )
+        {
+            // Arrange
+            RoomModel room = new RoomModel();
+            room.Board[rowNum - 1, colNum - 1] = existingPieceNum;
+            TurnModel turn = new TurnModel
+            {
+                Num = newPieceNum,
+                RowNum = rowNum,
+                ColNum = colNum
+            };
+
+            // Act
+            bool result = room.CheckForWin(turn);
+
+            // Assert
+            Assert.IsFalse(result);
+        }
     }
 }
