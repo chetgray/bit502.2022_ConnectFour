@@ -1,4 +1,4 @@
-using ConnectFour.Business.Models;
+﻿using ConnectFour.Business.Models;
 
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -39,6 +39,113 @@ namespace ConnectFour.Tests.Business
             Assert.IsFalse(result);
         }
 
+        // ↗
+        [TestMethod]
+        [DataRow(1, 0)]
+        [DataRow(1, 1)]
+        [DataRow(1, 2)]
+        [DataRow(1, 3)]
+        [DataRow(2, 0)]
+        [DataRow(2, 1)]
+        [DataRow(2, 2)]
+        [DataRow(2, 3)]
+        [DataRow(3, 0)]
+        [DataRow(3, 1)]
+        [DataRow(3, 2)]
+        [DataRow(3, 3)]
+        [DataRow(4, 0)]
+        [DataRow(4, 1)]
+        [DataRow(4, 2)]
+        [DataRow(4, 3)]
+        public void CheckForWin_FourthPieceDiagonalAscending_WillWin(
+            int runStartColNum,
+            int positionWithinRun
+        )
+        {
+            // Arrange
+            int runStartRowNum = 6;
+            TurnModel turn = new TurnModel
+            {
+                Num = 1,
+                RowNum = runStartRowNum - positionWithinRun,
+                ColNum = runStartColNum + positionWithinRun
+            };
+            RoomModel room = new RoomModel();
+            // Set up run, skipping the turn cell
+            for (
+                int r = runStartRowNum - 1, c = runStartColNum - 1;
+                c < runStartColNum + 4 - 1;
+                r--, c++
+            )
+            {
+                if (r == turn.RowNum - 1 && c == turn.ColNum - 1)
+                {
+                    continue;
+                }
+                room.Board[r, c] = 1;
+            }
+
+            // Act
+            bool result = room.CheckForWin(turn);
+
+            // Assert
+            Assert.IsTrue(result);
+        }
+
+        // ↘
+        [TestMethod]
+        [DataRow(1, 0)]
+        [DataRow(1, 1)]
+        [DataRow(1, 2)]
+        [DataRow(1, 3)]
+        [DataRow(2, 0)]
+        [DataRow(2, 1)]
+        [DataRow(2, 2)]
+        [DataRow(2, 3)]
+        [DataRow(3, 0)]
+        [DataRow(3, 1)]
+        [DataRow(3, 2)]
+        [DataRow(3, 3)]
+        [DataRow(4, 0)]
+        [DataRow(4, 1)]
+        [DataRow(4, 2)]
+        [DataRow(4, 3)]
+        public void CheckForWin_FourthPieceDiagonalDescending_WillWin(
+            int runStartColNum,
+            int positionWithinRun
+        )
+        {
+            // Arrange
+            int runStartRowNum = 1;
+            TurnModel turn = new TurnModel
+            {
+                Num = 1,
+                RowNum = runStartRowNum + positionWithinRun,
+                ColNum = runStartColNum + positionWithinRun
+            };
+            RoomModel room = new RoomModel();
+            // Set up run, skipping the turn cell
+            for (
+                int r = runStartRowNum - 1, c = runStartColNum - 1;
+                c < runStartColNum + 4 - 1;
+                r++, c++
+            )
+            {
+                if (r == turn.RowNum - 1 && c == turn.ColNum - 1)
+                {
+                    continue;
+                }
+                room.Board[r, c] = 1;
+            }
+
+            // Act
+            bool result = room.CheckForWin(turn);
+
+            // Assert
+            Assert.IsTrue(result);
+        }
+
+        // →
         [TestMethod]
         [DataRow(1, 0)]
         [DataRow(1, 1)]
@@ -87,6 +194,7 @@ namespace ConnectFour.Tests.Business
             Assert.IsTrue(result);
         }
 
+        // ↑
         [TestMethod]
         public void CheckForWin_FourthPieceUp_WillWin()
         {

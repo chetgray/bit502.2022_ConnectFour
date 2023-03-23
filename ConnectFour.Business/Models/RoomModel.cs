@@ -30,12 +30,13 @@ namespace ConnectFour.Business.Models
 
             int playerNum = ((turn.Num - 1) % Players.Length) + 1;
 
-            // Check up to three cells to the left and three cells to the right of the Turn's column
-            // for four in a row.
+            // →
+            // Check up to three cells to the left and three cells to the right of the Turn's
+            // column for four in a row.
             int count = 0;
             for (
-                int c = Math.Max(0, turn.ColNum - 1 - 3);
-                c <= Math.Min(turn.ColNum - 1 + 3, Board.GetLength(1) - 1);
+                int c = Math.Max(0, turn.ColNum - 3 - 1);
+                c <= Math.Min(turn.ColNum + 3 - 1, Board.GetLength(1) - 1);
                 c++
             )
             {
@@ -51,16 +52,69 @@ namespace ConnectFour.Business.Models
                 }
             }
 
-            // Check up to three cells below Turn's row for four in a row.
-            // Not checking above because a new play will only ever be at the top.
+            // ↑
+            // Check up to three cells below Turn's row for four in a row. Not checking above
+            // because a new play will only ever be at the top.
             count = 0;
             for (
-                int r = Math.Min(turn.RowNum - 1 + 3, Board.GetLength(0) - 1);
+                int r = Math.Min(turn.RowNum + 3 - 1, Board.GetLength(0) - 1);
                 r >= turn.RowNum - 1;
                 r--
             )
             {
                 if (Board[r, turn.ColNum - 1] != playerNum && r != turn.RowNum - 1)
+                {
+                    count = 0;
+                    continue;
+                }
+                count++;
+                if (count == 4)
+                {
+                    return true;
+                }
+            }
+
+            // ↗
+            // Check ascending (left-to-right) diagonal
+            count = 0;
+            for (
+                int r = turn.RowNum + 3 - 1, c = turn.ColNum - 3 - 1;
+                r >= Math.Max(0, turn.RowNum - 3 - 1)
+                    && c <= Math.Min(turn.ColNum + 3 - 1, Board.GetLength(1) - 1);
+                r--, c++
+            )
+            {
+                if (r > Board.GetLength(0) - 1 || c < 0)
+                {
+                    continue;
+                }
+                if (Board[r, c] != playerNum && r != turn.RowNum - 1 && c != turn.ColNum - 1)
+                {
+                    count = 0;
+                    continue;
+                }
+                count++;
+                if (count == 4)
+                {
+                    return true;
+                }
+            }
+
+            // ↘
+            // Check descending (left-to-right) diagonal
+            count = 0;
+            for (
+                int r = turn.RowNum - 3 - 1, c = turn.ColNum - 3 - 1;
+                r <= Math.Min(turn.RowNum + 3 - 1, Board.GetLength(0) - 1)
+                    && c <= Math.Min(turn.ColNum + 3 - 1, Board.GetLength(1) - 1);
+                r++, c++
+            )
+            {
+                if (r < 0 || c < 0)
+                {
+                    continue;
+                }
+                if (Board[r, c] != playerNum && r != turn.RowNum - 1 && c != turn.ColNum - 1)
                 {
                     count = 0;
                     continue;
