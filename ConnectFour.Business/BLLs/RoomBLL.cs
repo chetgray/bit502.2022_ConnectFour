@@ -38,6 +38,11 @@ namespace ConnectFour.Business.BLLs
             _playerBLL = playerBLL ?? throw new ArgumentNullException(nameof(playerBLL));
         }
 
+        public int InsertNewRoom()
+        {
+            return _repository.InsertNewRoom();
+        }
+
         public List<IResultModel> GetAllFinished()
         {
             List<IResultModel> resultModels = new List<IResultModel>();
@@ -149,8 +154,8 @@ namespace ConnectFour.Business.BLLs
             playerModel = _playerBLL.AddPlayerToRoom(playerModel, (int)roomModel.Id);
             roomModel.Players[playerModel.Num - 1] = playerModel;
 
-            string opponentName = roomModel.Players[2 - playerNum].Name;
-            roomModel.Message = $"Successfully joined room against {opponentName}";
+            //string opponentName = roomModel.Players[2 - playerNum].Name;
+            //roomModel.Message = $"Successfully joined room against {opponentName}";
             return roomModel;
         }
 

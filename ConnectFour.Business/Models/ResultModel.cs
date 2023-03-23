@@ -1,8 +1,6 @@
 ﻿using ConnectFour.Business.Models.Interfaces;
 using System;
 
-using ConnectFour.Business.Models.Interfaces;
-
 namespace ConnectFour.Business.Models
 {
     public class ResultModel : IResultModel
