@@ -5,11 +5,11 @@ using System.Data.SqlClient;
 
 namespace ConnectFour.Data.DALs
 {
-    public class DAL : IDAL
+    internal class DAL : IDAL
     {
         private readonly string _connectionString;
 
-        public DAL(string connectionString)
+        internal DAL(string connectionString)
         {
             _connectionString =
                 connectionString ?? throw new ArgumentNullException(nameof(connectionString));

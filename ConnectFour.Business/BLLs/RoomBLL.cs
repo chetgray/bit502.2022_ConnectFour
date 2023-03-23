@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 using ConnectFour.Business.BLLs.Interfaces;
 using ConnectFour.Business.Models;
@@ -8,12 +9,12 @@ using ConnectFour.Data.DTOs;
 using ConnectFour.Data.Repositories;
 using ConnectFour.Data.Repositories.Interfaces;
 
-
 namespace ConnectFour.Business.BLLs
 {
     public class RoomBLL : IRoomBLL
     {
         private IRoomRepository _repository;
+        private IPlayerBLL _playerBLL;
 
         /// <summary>
         /// Creates a <see cref="RoomBLL"/> instance with a default <see cref="RoomRepository"/>
@@ -22,6 +23,7 @@ namespace ConnectFour.Business.BLLs
         public RoomBLL()
         {
             _repository = new RoomRepository();
+            _playerBLL = new PlayerBLL();
         }
 
         /// <summary>
@@ -29,10 +31,10 @@ namespace ConnectFour.Business.BLLs
         /// as the backend.
         /// </summary>
         /// <param name="repository">The <see cref="IRoomRepository"/> to use as the backend.</param>
-        public RoomBLL(IRoomRepository repository)
+        public RoomBLL(IRoomRepository repository, IPlayerBLL playerBLL)
         {
-            _repository =
-                repository ?? throw new ArgumentNullException(nameof(repository));
+            _repository = repository ?? throw new ArgumentNullException(nameof(repository));
+            _playerBLL = playerBLL ?? throw new ArgumentNullException(nameof(playerBLL));
         }
 
         public List<IResultModel> GetAllFinished()
@@ -126,14 +128,62 @@ namespace ConnectFour.Business.BLLs
             return winnerName;
         }
 
+        public IRoomModel AddPlayerToRoom(string localPlayerName, int roomId)
+        {
+            IRoomModel roomModel = GetRoomById(roomId);
+            if (roomModel == null)
+            {
+                throw new ArgumentException($"Room Id {roomId} does not match any open rooms.");
+            }
+            if (roomModel.ResultCode != null)
+            {
+                throw new ArgumentException($"Room Id {roomId} is already finished!");
+            }
+            if (!roomModel.Vacancy)
+            {
+                throw new ArgumentException($"Room Id {roomId} is full!");
+            }
+            int playerNum = (roomModel.Players[0] == null) ? 1 : 2;
+            IPlayerModel playerModel = new PlayerModel { Name = localPlayerName, Num = playerNum };
+            playerModel = _playerBLL.AddPlayerToRoom(playerModel, (int)roomModel.Id);
+            roomModel.Players[playerModel.Num - 1] = playerModel;
+
+            string opponentName = roomModel.Players[2 - playerNum].Name;
+            roomModel.Message = $"Successfully joined room against {opponentName}";
+            return roomModel;
+        }
+
+        public IRoomModel GetRoomById(int roomId)
+        {
+            RoomDTO dto = _repository.GetRoomById(roomId);
+            RoomModel room = ConvertToModel(dto);
+            if (room == null)
+            {
+                return null;
+            }
+            room.Players = _playerBLL.GetPlayersInRoom(roomId);
+            room.Vacancy = room.Players.Contains(null);
+
+            return room;
+        }
+
         internal RoomDTO ConvertToDto(IRoomModel model)
         {
             throw new NotImplementedException();
         }
 
-        internal IRoomModel ConvertToModel(RoomDTO dto)
+        internal RoomModel ConvertToModel(RoomDTO dto)
         {
-            throw new NotImplementedException();
+            if (dto == null)
+            {
+                return null;
+            }
+            RoomModel rM = new RoomModel();
+            rM.Id = dto.Id;
+            rM.CreationTime = dto.CreationTime;
+            rM.CurrentTurnNum = dto.CurrentTurnNumber;
+            rM.ResultCode = dto.ResultCode;
+            return rM;
         }
     }
 }

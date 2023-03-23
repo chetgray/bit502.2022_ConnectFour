@@ -1,6 +1,10 @@
-﻿namespace ConnectFour.Data.Repositories.Interfaces
+﻿using ConnectFour.Data.DTOs;
+
+namespace ConnectFour.Data.Repositories.Interfaces
 {
-    internal interface IPlayerRepository
+    public interface IPlayerRepository
     {
+        PlayerDTO AddPlayerToRoom(PlayerDTO dto);
+        PlayerDTO[] GetPlayersInRoom(int roomId);
     }
 }

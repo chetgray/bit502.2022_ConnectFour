@@ -64,5 +64,11 @@
     <Build Include="Tables\Room.sql" />
     <Build Include="Tables\Turn.sql" />
     <Build Include="StoredProcedures\spA_Room_GetAllFinished.sql" />
+    <Build Include="StoredProcedures\spA_Player_AddPlayerToRoom.sql" />
+    <Build Include="StoredProcedures\spA_Room_GetRoomById.sql" />
+    <Build Include="StoredProcedures\spA_Player_GetPlayersInRoom.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="ConnectFour.Database.publish.xml" />
   </ItemGroup>
 </Project>
