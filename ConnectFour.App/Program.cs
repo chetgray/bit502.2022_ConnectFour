@@ -119,12 +119,6 @@ namespace ConnectFour.App
             Console.Clear();
             WriteTitle();
 
-            IRoomBLL rBLL = new RoomBLL();
-            IRoomModel room = new RoomModel
-            {
-                Id = rBLL.InsertNewRoom(),
-            };
-
             if (_localPlayerName == string.Empty)
             {
                 GetPlayerName();
@@ -132,19 +126,22 @@ namespace ConnectFour.App
                 WriteTitle();
             }
 
-            //PlayerModel localPlayer = new PlayerModel
-            //{
-            //    Name = _localPlayerName,
-            //    Symbol = _localPlayerName.Substring(0, 1),
-            //    Num = random.Next(1, 3)
-            //};
-            //room.Players.Add(localPlayer);
+            IPlayerModel localPlayer = new PlayerModel
+            {
+                Name = _localPlayerName,
+                Symbol = _localPlayerName.Substring(0, 1),
+                Num = random.Next(1, 3)
+            };
 
+            IRoomBLL rBLL = new RoomBLL();
+            IRoomModel room = new RoomModel
+            {
+                Id = rBLL.InsertNewRoom(),
+            };
 
             try
             {
-                room = rBLL.AddPlayerToRoom(_localPlayerName, (int)room.Id);
-                //isJoining = false;
+                room.Players[localPlayer.Num - 1] = localPlayer;
             }
             catch (ArgumentException e)
             {
@@ -190,7 +187,14 @@ namespace ConnectFour.App
                 }
                 //Test
                 //Adding second "player" to room to demo oppononent joining
-                rBLL.AddPlayerToRoom(_localPlayerName, (int)room.Id);
+                if (room.Players[0] == null)
+                {
+                    room.Players[0] = localPlayer;
+                }
+                else
+                {
+                    room.Players[1] = localPlayer;
+                }
             }
         }
 
