@@ -1,4 +1,4 @@
-﻿using ConnectFour.Business.Models;
+using ConnectFour.Business.Models;
 
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -7,6 +7,38 @@ namespace ConnectFour.Tests.Business
     [TestClass]
     public class RoomModelTests
     {
+        [TestMethod]
+        public void CheckForWin_FourInARowInterruptedByOpponent_WontWin()
+        {
+            // Arrange
+            RoomModel room = new RoomModel()
+            {
+                Board = new int[,]
+                { //                        index / RowNum
+                    { 0, 0, 0, 0, 0, 0, 0 }, // 0 / 1
+                    { 0, 0, 0, 0, 0, 0, 0 }, // 1 / 2
+                    { 0, 0, 0, 0, 0, 0, 0 }, // 2 / 3
+                    { 0, 0, 0, 0, 0, 0, 0 }, // 3 / 4
+                    { 0, 0, 0, 0, 0, 0, 0 }, // 4 / 5
+                    { 1, 2, 1, 0, 1, 2, 1 }, // 5 / 6
+                    //0, 1, 2, 3, 4, 5, 6 - index
+                    //1, 2, 3, 4, 5, 6, 7 - ColNum
+                }
+            };
+            TurnModel turn = new TurnModel
+            {
+                Num = 1,
+                RowNum = 6,
+                ColNum = 4
+            };
+
+            // Act
+            bool result = room.CheckForWin(turn);
+
+            // Assert
+            Assert.IsFalse(result);
+        }
+
         [TestMethod]
         [DataRow(1, 1)]
         [DataRow(2, 1)]
