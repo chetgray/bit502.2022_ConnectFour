@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 
 using ConnectFour.Business.Models.Interfaces;
@@ -50,7 +50,7 @@ namespace ConnectFour.Business.Models
             count = 0;
             for (
                 int r = Math.Min(turn.RowNum - 1 + 3, Board.GetLength(0) - 1);
-                r > Math.Max(0, turn.RowNum - 1 - 3);
+                r >= turn.RowNum - 1;
                 r--
             )
             {
