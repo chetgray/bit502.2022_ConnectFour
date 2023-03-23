@@ -59,22 +59,23 @@ namespace ConnectFour.Tests.Business
         public void TestHorizontalWin(int colNum, int positionWithinFour)
         {
             // Arrange
+            int rowNum = positionWithinFour;
             TurnModel turn = new TurnModel
             {
                 Num = 1, // Player 1
-                RowNum = 6,
+                RowNum = rowNum,
                 ColNum = colNum
             };
             RoomModel room = new RoomModel();
             // Set up board to the left of turn
             for (int c = colNum - (positionWithinFour - 1) - 1; c < colNum - 1; c++)
             {
-                room.Board[5, c] = 1;
+                room.Board[rowNum - 1, c] = 1;
             }
             // Set up board to the right of turn
             for (int c = colNum + 1 - 1; c <= (colNum - 1) + (4 - positionWithinFour); c++)
             {
-                room.Board[5, c] = 1;
+                room.Board[rowNum - 1, c] = 1;
             }
 
             // Act
