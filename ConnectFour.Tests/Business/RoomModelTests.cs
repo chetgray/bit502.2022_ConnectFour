@@ -40,44 +40,43 @@ namespace ConnectFour.Tests.Business
         }
 
         [TestMethod]
+        [DataRow(1, 0)]
         [DataRow(1, 1)]
+        [DataRow(1, 2)]
+        [DataRow(1, 3)]
+        [DataRow(2, 0)]
         [DataRow(2, 1)]
         [DataRow(2, 2)]
+        [DataRow(2, 3)]
+        [DataRow(3, 0)]
         [DataRow(3, 1)]
         [DataRow(3, 2)]
         [DataRow(3, 3)]
+        [DataRow(4, 0)]
         [DataRow(4, 1)]
         [DataRow(4, 2)]
         [DataRow(4, 3)]
-        [DataRow(4, 4)]
-        [DataRow(5, 2)]
-        [DataRow(5, 3)]
-        [DataRow(5, 4)]
-        [DataRow(6, 3)]
-        [DataRow(6, 4)]
-        [DataRow(7, 4)]
         public void CheckForWin_FourthPieceHorizontal_WillWin(
-            int colNum,
-            int positionWithinFour
+            int runStartColNum,
+            int positionWithinRun
         )
         {
             // Arrange
-            int rowNum = positionWithinFour;
+            int rowNum = 6 - positionWithinRun;
             TurnModel turn = new TurnModel
             {
                 Num = 1,
                 RowNum = rowNum,
-                ColNum = colNum
+                ColNum = runStartColNum + positionWithinRun
             };
             RoomModel room = new RoomModel();
-            // Set up board to the left of turn
-            for (int c = colNum - (positionWithinFour - 1) - 1; c < colNum - 1; c++)
+            // Set up run, skipping the turn cell
+            for (int c = runStartColNum - 1; c < runStartColNum + 4 - 1; c++)
             {
-                room.Board[rowNum - 1, c] = 1;
-            }
-            // Set up board to the right of turn
-            for (int c = colNum + 1 - 1; c <= (colNum - 1) + (4 - positionWithinFour); c++)
-            {
+                if (c == turn.ColNum - 1)
+                {
+                    continue;
+                }
                 room.Board[rowNum - 1, c] = 1;
             }
 
