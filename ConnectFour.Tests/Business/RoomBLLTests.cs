@@ -8,6 +8,7 @@ using ConnectFour.Tests.TestDoubles;
 using System;
 
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.Linq;
 
 namespace ConnectFour.Tests.Business
 {
@@ -78,6 +79,31 @@ namespace ConnectFour.Tests.Business
                 () => bll.AddPlayerToRoom(newPlayerName, 0),
                 $"Room Id 0 is full!"
             );
+        }
+
+        [TestMethod]
+        public void AddPlayerToRoom_BothSeatsOpen_NewPlayerTakesASeat()
+        {
+            // Arrange
+            const string newPlayerName = "New Player";
+            IRoomRepository repository = new RoomRepositoryStub
+            {
+                TestDto = new RoomDTO { Id = 0 }
+            };
+            IPlayerBLL playerBLL = new PlayerBLLStub
+            {
+                TestModel = new PlayerModel { Name = newPlayerName },
+                TestModels = (new IPlayerModel[] { null, null })
+            };
+            IRoomBLL bll = new RoomBLL(repository, playerBLL);
+
+            // Act
+            IRoomModel resultRoom = bll.AddPlayerToRoom(newPlayerName, 0);
+
+            // Assert
+            Assert.AreEqual(2, resultRoom.Players.Length);
+            Assert.IsTrue(resultRoom.Vacancy);
+            Assert.IsTrue(resultRoom.Players.Any((IPlayerModel p) => p.Name == newPlayerName));
         }
 
         [TestMethod]
