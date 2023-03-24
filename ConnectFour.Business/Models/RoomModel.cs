@@ -30,99 +30,41 @@ namespace ConnectFour.Business.Models
 
             int playerNum = ((turn.Num - 1) % Players.Length) + 1;
 
-            // →
-            // Check up to three cells to the left and three cells to the right of the Turn's
-            // column for four in a row.
-            int count = 0;
-            for (
-                int c = Math.Max(0, turn.ColNum - 3 - 1);
-                c <= Math.Min(turn.ColNum + 3 - 1, Board.GetLength(1) - 1);
-                c++
+            // Check for four-in-a-row in each direction.
+            foreach (
+                (int rowDir, int colDir) in new (int, int)[]
+                {
+                    (-1, -1), // ↖
+                    (-1, 1), // ↗
+                    (0, 1), // →
+                    (-1, 0), // ↑
+                }
             )
             {
-                if (Board[turn.RowNum - 1, c] != playerNum && c != turn.ColNum - 1)
+                int count = 0;
+                for (int i = -3; i <= 3; i++)
                 {
-                    count = 0;
-                    continue;
-                }
-                count++;
-                if (count == 4)
-                {
-                    return true;
-                }
-            }
-
-            // ↑
-            // Check up to three cells below Turn's row for four in a row. Not checking above
-            // because a new play will only ever be at the top.
-            count = 0;
-            for (
-                int r = Math.Min(turn.RowNum + 3 - 1, Board.GetLength(0) - 1);
-                r >= turn.RowNum - 1;
-                r--
-            )
-            {
-                if (Board[r, turn.ColNum - 1] != playerNum && r != turn.RowNum - 1)
-                {
-                    count = 0;
-                    continue;
-                }
-                count++;
-                if (count == 4)
-                {
-                    return true;
-                }
-            }
-
-            // ↗
-            // Check ascending (left-to-right) diagonal
-            count = 0;
-            for (
-                int r = turn.RowNum + 3 - 1, c = turn.ColNum - 3 - 1;
-                r >= Math.Max(0, turn.RowNum - 3 - 1)
-                    && c <= Math.Min(turn.ColNum + 3 - 1, Board.GetLength(1) - 1);
-                r--, c++
-            )
-            {
-                if (r > Board.GetLength(0) - 1 || c < 0)
-                {
-                    continue;
-                }
-                if (Board[r, c] != playerNum && r != turn.RowNum - 1 && c != turn.ColNum - 1)
-                {
-                    count = 0;
-                    continue;
-                }
-                count++;
-                if (count == 4)
-                {
-                    return true;
-                }
-            }
-
-            // ↘
-            // Check descending (left-to-right) diagonal
-            count = 0;
-            for (
-                int r = turn.RowNum - 3 - 1, c = turn.ColNum - 3 - 1;
-                r <= Math.Min(turn.RowNum + 3 - 1, Board.GetLength(0) - 1)
-                    && c <= Math.Min(turn.ColNum + 3 - 1, Board.GetLength(1) - 1);
-                r++, c++
-            )
-            {
-                if (r < 0 || c < 0)
-                {
-                    continue;
-                }
-                if (Board[r, c] != playerNum && r != turn.RowNum - 1 && c != turn.ColNum - 1)
-                {
-                    count = 0;
-                    continue;
-                }
-                count++;
-                if (count == 4)
-                {
-                    return true;
+                    int r = turn.RowNum + (rowDir * i) - 1;
+                    int c = turn.ColNum + (colDir * i) - 1;
+                    // Skip to the next cell if we're outside the board.
+                    if (r < 0 || r >= Board.GetLength(0) || c < 0 || c >= Board.GetLength(1))
+                    {
+                        continue;
+                    }
+                    // Reset count if this isn't our piece (aside from the new piece's cell).
+                    if (
+                        Board[r, c] != playerNum
+                        && (r != turn.RowNum - 1 || c != turn.ColNum - 1)
+                    )
+                    {
+                        count = 0;
+                        continue;
+                    }
+                    count++;
+                    if (count == 4)
+                    {
+                        return true;
+                    }
                 }
             }
 
