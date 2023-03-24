@@ -113,42 +113,28 @@ namespace ConnectFour.App
 
         private static void HostNewGame()
         {
-            Random random = new Random();
+            IPlayerModel localPlayer = new PlayerModel();
             bool isWaiting = true;
-
-            Console.Clear();
-            WriteTitle();
+            string opponentName = string.Empty;
 
             if (_localPlayerName == string.Empty)
             {
                 GetPlayerName();
-                Console.Clear();
-                WriteTitle();
             }
-
-            IPlayerModel localPlayer = new PlayerModel
-            {
-                Name = _localPlayerName,
-                Symbol = _localPlayerName.Substring(0, 1),
-                Num = random.Next(1, 3)
-            };
+            Console.Clear();
+            WriteTitle();
 
             IRoomBLL rBLL = new RoomBLL();
-            IRoomModel room = new RoomModel
-            {
-                Id = rBLL.InsertNewRoom(),
-            };
+            IRoomModel room = rBLL.AddPlayerToRoom(_localPlayerName, rBLL.InsertNewRoom());
 
-            try
+            if (room.Players[0] == null)
             {
-                room.Players[localPlayer.Num - 1] = localPlayer;
+                localPlayer = room.Players[1];
             }
-            catch (ArgumentException e)
+            else
             {
-                room.Message =
-                    e.Message + " To quit trying to join a room press the escape(Esc) key.";
+                localPlayer = room.Players[0];
             }
-
 
             Console.WriteLine($"       Room ID: {room.Id}");
             Console.WriteLine("\nWaiting for opponent...");
@@ -157,14 +143,25 @@ namespace ConnectFour.App
             while (isWaiting)
             {
                 Thread.Sleep(2000);
+                room = rBLL.GetRoomById((int)room.Id);
 
-                if (room.Players.Count() == 2)
+                if (!room.Vacancy)
                 {
                     isWaiting = false;
                     Console.Clear();
                     WriteTitle();
                     Console.WriteLine($"       Room ID: {room.Id}");
-                    Console.WriteLine($"\n{room.Players[1].Name} has joined!");
+
+                    if (localPlayer.Num == 1)
+                    {
+                        opponentName = room.Players[1].Name;
+                    }
+                    else
+                    {
+                        opponentName = room.Players[0].Name;
+                    }
+
+                    Console.WriteLine($"\n{opponentName} has joined!");
                     Console.WriteLine("\nPress any key to continue to the game.");
                     Console.ReadKey();
 
@@ -185,16 +182,9 @@ namespace ConnectFour.App
                         isWaiting = false;
                     }
                 }
-                //Test
-                //Adding second "player" to room to demo oppononent joining
-                if (room.Players[0] == null)
-                {
-                    room.Players[0] = localPlayer;
-                }
-                else
-                {
-                    room.Players[1] = localPlayer;
-                }
+                
+                // Demo second player joining room; will throw exception "room is full" due to utilization of the same AddPlayerToRoom() method
+                room = rBLL.AddPlayerToRoom(_localPlayerName, (int)room.Id);
             }
         }
 
