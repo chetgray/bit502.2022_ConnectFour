@@ -19,5 +19,9 @@ namespace ConnectFour.Tests.TestDoubles
         {
             return TestDto;
         }
+
+        public void UpdateRoomResultCode(int roomId, int resultCode)
+        {
+        }
     }
 }

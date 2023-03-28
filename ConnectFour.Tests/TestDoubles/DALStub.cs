@@ -8,6 +8,7 @@ namespace ConnectFour.Tests.TestDoubles
     internal class DALStub : IDAL
     {
         public DataTable TestDataTable { get; set; }
+        public object TestObject { get;set; }
 
         public DataTable ExecuteStoredProcedure(
             string storedProcedureName,
@@ -15,6 +16,11 @@ namespace ConnectFour.Tests.TestDoubles
         )
         {
             return TestDataTable;
+        }
+
+        public object InsertDataViaStoredProcedure(string storedProcedureName, Dictionary<string, object> parameters)
+        {
+            return TestObject;
         }
     }
 }

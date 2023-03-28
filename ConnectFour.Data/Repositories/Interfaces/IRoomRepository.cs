@@ -7,5 +7,7 @@ namespace ConnectFour.Data.Repositories.Interfaces
     {
         List<ResultDTO> GetAllFinished();
         RoomDTO GetRoomById(int roomId);
+
+        void UpdateRoomResultCode(int roomId, int resultCode);
     }
 }

@@ -40,6 +40,15 @@ namespace ConnectFour.Data.Repositories
             return ConvertToDto(dataTable.Rows[0]);           
         }
 
+        public void UpdateRoomResultCode(int roomId, int resultCode)
+        {
+            Dictionary<string, object> paramDictionary = new Dictionary<string, object>();
+            paramDictionary.Add("@RoomId", roomId);
+            paramDictionary.Add("@RoomResultCode", resultCode);
+
+            _dal.InsertDataViaStoredProcedure("dbo.spA_Room_UpdateRoomResultCode", paramDictionary);
+        }
+
         internal RoomDTO ConvertToDto(DataRow row)
         {
             RoomDTO roomDTO = new RoomDTO();

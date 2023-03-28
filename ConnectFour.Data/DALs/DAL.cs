@@ -44,5 +44,26 @@ namespace ConnectFour.Data.DALs
 
             return dataTable;
         }
+        public object InsertDataViaStoredProcedure(string storedProcedureName, Dictionary<string, object> parameters)
+        {
+            try
+            {
+                using (SqlConnection connection = new SqlConnection(_connectionString))
+                {
+                    connection.Open();
+                    SqlCommand cmd = new SqlCommand(storedProcedureName, connection);
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    foreach (var param in parameters)
+                    {
+                        cmd.Parameters.Add(new SqlParameter(param.Key, param.Value));
+                    }
+                    return cmd.ExecuteScalar();
+                }
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
     }
 }

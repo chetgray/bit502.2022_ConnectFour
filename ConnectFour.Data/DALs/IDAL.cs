@@ -19,5 +19,13 @@ namespace ConnectFour.Data.DALs
             string storedProcedureName,
             Dictionary<string, object> parameters
         );
+
+        /// <summary>
+        /// Inserts value(s) via stored procedure and returns the first column of the first row in the result set or a null reference if the result set is empty.
+        /// </summary>
+        /// <returns>The first column of the first row in the result set, or a null reference if the result set is empty. Returns a maximum of 2033 characters.</returns>
+        /// <param name="storedProcedureName">The name of the stored procedure to execute.</param>
+        /// <param name="parameters">The Dictionary of parameters to pass to the stored procedure.</param>
+        object InsertDataViaStoredProcedure(string storedProcedureName, Dictionary<string, object> parameters);
     }
 }

@@ -97,7 +97,7 @@ namespace ConnectFour.Business.BLLs
             if (room.CheckForWin)
             {
                 room.ResultCode = ((turn.Num - 1) % room.Players.Length) + 1;
-                //TODO CEH Set ResultCode in DB
+                UpdateRoomResultCode((int)room.Id, (int)room.ResultCode);
             }
 
             room.Message = $"Waiting on {room.Players[room.CurrentTurnPlayersNum - 1].Name} to place a piece.";
@@ -303,6 +303,11 @@ namespace ConnectFour.Business.BLLs
                 }
             }
             return roomModel;
+        }
+
+        private void UpdateRoomResultCode(int roomId, int resultCode)
+        {
+            _repository.UpdateRoomResultCode(roomId, resultCode);
         }
 
         internal RoomDTO ConvertToDto(IRoomModel model)
