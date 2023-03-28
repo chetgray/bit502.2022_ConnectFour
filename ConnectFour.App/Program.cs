@@ -187,9 +187,6 @@ namespace ConnectFour.App
                         isWaiting = false;
                     }
                 }
-                
-                // Demo second player joining room; will throw exception "room is full" due to utilization of the same AddPlayerToRoom() method
-                room = rBLL.AddPlayerToRoom(_localPlayerName, (int)room.Id);
             }
         }
 
