@@ -19,5 +19,10 @@ namespace ConnectFour.Tests.TestDoubles
         {
             return TestDto;
         }
+
+        public int InsertNewRoom()
+        {
+            throw new System.NotImplementedException();
+        }
     }
 }

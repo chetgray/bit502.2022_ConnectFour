@@ -1,13 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-
-using ConnectFour.Business.BLLs.Interfaces;
+﻿using ConnectFour.Business.BLLs.Interfaces;
 using ConnectFour.Business.Models;
 using ConnectFour.Business.Models.Interfaces;
 using ConnectFour.Data.DTOs;
 using ConnectFour.Data.Repositories;
 using ConnectFour.Data.Repositories.Interfaces;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace ConnectFour.Business.BLLs
 {
@@ -35,6 +34,11 @@ namespace ConnectFour.Business.BLLs
         {
             _repository = repository ?? throw new ArgumentNullException(nameof(repository));
             _playerBLL = playerBLL ?? throw new ArgumentNullException(nameof(playerBLL));
+        }
+
+        public int InsertNewRoom()
+        {
+            return _repository.InsertNewRoom();
         }
 
         public List<IResultModel> GetAllFinished()
@@ -143,13 +147,22 @@ namespace ConnectFour.Business.BLLs
             {
                 throw new ArgumentException($"Room Id {roomId} is full!");
             }
-            int playerNum = (roomModel.Players[0] == null) ? 1 : 2;
-            IPlayerModel playerModel = new PlayerModel { Name = localPlayerName, Num = playerNum };
+
+            IPlayerModel playerModel = new PlayerModel { Name = localPlayerName };
+            int playerNum;
+            if (roomModel.Players[0] == null && roomModel.Players[1] == null)
+            {
+                playerNum = new Random().Next(1, 3); 
+            }
+            else
+            {
+                playerNum = (roomModel.Players[0] == null) ? 1 : 2;
+                string opponentName = roomModel.Players[2 - playerNum].Name;
+                roomModel.Message = $"Successfully joined room against {opponentName}";
+            }
+            playerModel.Num = playerNum;
             playerModel = _playerBLL.AddPlayerToRoom(playerModel, (int)roomModel.Id);
             roomModel.Players[playerModel.Num - 1] = playerModel;
-
-            string opponentName = roomModel.Players[2 - playerNum].Name;
-            roomModel.Message = $"Successfully joined room against {opponentName}";
             return roomModel;
         }
 
