@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Data;
 
 using ConnectFour.Data.DALs;
@@ -15,9 +16,47 @@ namespace ConnectFour.Data.Repositories
         /// <inheritdoc/>
         public TurnRepository(IDAL dal) : base(dal) { }
 
-        internal TurnDTO ConvertToDto(DataRow row)
+        public TurnDTO GetLastTurnInRoom(int roomId)
         {
-            throw new NotImplementedException();
+            Dictionary<string, object> paramDictionary = new Dictionary<string, object>
+            {
+                { "@RoomId", roomId }
+            };
+            DataTable dataTable = _dal.ExecuteStoredProcedure("dbo.spA_Turn_GetLastTurnInRoom", paramDictionary);
+            if (dataTable.Rows.Count == 0)
+            {
+                return null;
+            }
+            return ConvertToDto(dataTable.Rows[0]);
+        }
+
+        public void AddTurnToRoom(TurnDTO dto)
+        {
+            Dictionary<string, object> paramDictionary = new Dictionary<string, object>
+            {
+                { "@TurnRoomId", dto.RoomId },
+                { "@TurnTime", dto.Time },
+                { "@TurnRowNum", dto.RowNum },
+                { "@TurnColNum", dto.ColNum },
+                { "@TurnNum", dto.Num }
+            };
+
+            _dal.ExecuteStoredProcedure("dbo.spA_Turn_AddTurnToRoom", paramDictionary);
+        }
+
+        private static TurnDTO ConvertToDto(DataRow row)
+        {
+            TurnDTO turnDTO = new TurnDTO
+            {
+                Id = (int?)(row["TurnId"]),
+                RoomId = (int)row["TurnRoomId"],
+                Time = (DateTime)row["TurnTime"],
+                Num = (int)row["TurnNum"],
+                RowNum = (int)row["TurnRowNum"],
+                ColNum = (int)row["TurnColNum"]
+            };
+
+            return turnDTO;
         }
     }
 }
