@@ -119,7 +119,12 @@ namespace ConnectFour.App
 
             if (_localPlayerName == string.Empty)
             {
-                GetPlayerName();
+                _localPlayerName = GetPlayerName();
+                if (_localPlayerName == null)
+                {
+                    _localPlayerName = string.Empty;
+                    return;
+                }
             }
             Console.Clear();
             WriteTitle();
@@ -195,10 +200,14 @@ namespace ConnectFour.App
             int inputLineFromTopLine = 3;
             int inputLineWidth = 4;
             bool isJoining = true;
-            _localPlayerName = GetPlayerName();
-            if (_localPlayerName == null)
+            if (_localPlayerName == string.Empty)
             {
-                return;
+                _localPlayerName = GetPlayerName();
+                if (_localPlayerName == null)
+                {
+                    _localPlayerName = string.Empty;
+                    return;
+                }
             }
             while (isJoining)
             {
