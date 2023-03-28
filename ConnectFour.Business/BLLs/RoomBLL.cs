@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 
 using ConnectFour.Business.BLLs.Interfaces;
 using ConnectFour.Business.Models;
@@ -13,8 +14,9 @@ namespace ConnectFour.Business.BLLs
 {
     public class RoomBLL : IRoomBLL
     {
-        private IRoomRepository _repository;
-        private IPlayerBLL _playerBLL;
+        protected readonly IRoomRepository _repository;
+        protected readonly IPlayerBLL _playerBLL;
+        protected readonly ITurnBLL _turnBLL;
 
         /// <summary>
         /// Creates a <see cref="RoomBLL"/> instance with a default <see cref="RoomRepository"/>
@@ -24,17 +26,82 @@ namespace ConnectFour.Business.BLLs
         {
             _repository = new RoomRepository();
             _playerBLL = new PlayerBLL();
+            _turnBLL = new TurnBLL();
         }
 
         /// <summary>
-        /// Creates a <see cref="RoomBLL"/> instance with the passed <paramref name="repository"/>
-        /// as the backend.
+        /// Creates a <see cref="RoomBLL"/> instance with the passed <paramref name="repository"/>,
+        /// <paramref name="playerBLL"/>, and <paramref name="turnBLL"/> as the backend.
         /// </summary>
-        /// <param name="repository">The <see cref="IRoomRepository"/> to use as the backend.</param>
-        public RoomBLL(IRoomRepository repository, IPlayerBLL playerBLL)
+        /// <param name="repository">The <see cref="IRoomRepository"/> to use in the backend.</param>
+        /// <param name="playerBLL">The <see cref="IPlayerBLL"/> to use in the backend.</param>
+        /// <param name="turnBLL">The <see cref="ITurnBLL"/> to use in the backend.</param>
+        public RoomBLL(IRoomRepository repository, IPlayerBLL playerBLL, ITurnBLL turnBLL)
         {
             _repository = repository ?? throw new ArgumentNullException(nameof(repository));
             _playerBLL = playerBLL ?? throw new ArgumentNullException(nameof(playerBLL));
+            _turnBLL = turnBLL ?? throw new ArgumentNullException(nameof(turnBLL));
+        }
+
+        public IRoomModel AddTurnToRoom(string colNum, IRoomModel room)
+        {
+            if(room.CurrentTurnPlayersNum != room.LocalPlayerNum)
+            {
+                room.Message = $"It's Not Your Turn! Waiting on {room.Players[room.CurrentTurnPlayersNum - 1].Name} to place a piece.";
+                return room;
+            }
+            room.Message = string.Empty;
+            int turnColNum;
+            try
+            {
+                turnColNum = int.Parse(colNum);
+            }
+            catch
+            {
+                room.Message = "Please enter an integer for the column you would like to choose.";
+                return room;
+            }
+            if (turnColNum < 1 || turnColNum > 7)
+            {
+                room.Message = "Please choose a column between 1 - 7";
+                return room;
+            }
+
+            int turnsInColumnCount = 0;
+            foreach (TurnModel turnModel in room.Turns)
+            {
+                if (turnModel.ColNum == turnColNum)
+                {
+                    turnsInColumnCount++;
+                }
+            }
+            int rowNum = room.Board.GetLength(0) - turnsInColumnCount;
+            if (rowNum < 1)
+            {
+                room.Message = "That Column is Full!";
+                return room;
+            }
+
+            TurnBLL turnBLL = new TurnBLL();
+            TurnModel turn = new TurnModel
+            {
+                ColNum = turnColNum,
+                RowNum = rowNum,
+                Num = (int)room.CurrentTurnNum
+            };
+
+            room.Turns.Add(turn);
+            turnBLL.AddTurnToRoom(turn, (int)room.Id);
+            room.CurrentTurnNum++;
+
+            if (room.CheckForWin)
+            {
+                room.ResultCode = ((turn.Num - 1) % room.Players.Length) + 1;
+                //TODO CEH Set ResultCode in DB
+            }
+
+            room.Message = $"Waiting on {room.Players[room.CurrentTurnPlayersNum - 1].Name} to place a piece.";
+            return room;
         }
 
         public List<IResultModel> GetAllFinished()
@@ -110,6 +177,54 @@ namespace ConnectFour.Business.BLLs
             }
         }
 
+        public IRoomModel GetLastTurnInRoom(IRoomModel room)
+        {
+            ITurnModel turn = _turnBLL.GetLastTurnInRoom((int)room.Id);
+
+            if(room.CurrentTurnNum == null)
+            {
+                room.CurrentTurnNum = 1;
+                if(turn == null)
+                {
+                    if (room.LocalPlayerNum == 1)
+                    {
+                        room.Message = "Where would you like to place a piece?";
+                        return room;
+                    }
+                    else
+                    {
+                        room.Message = $"Waiting on {room.Players[room.CurrentTurnPlayersNum - 1].Name} to place a piece.";
+                        return room;
+                    }
+                }
+            }
+
+            if(turn == null)
+            {
+                return room;
+            }
+
+            if(room.Turns.Count != turn.Num)
+            {
+                room.Board[turn.RowNum - 1, turn.ColNum - 1] = room.CurrentTurnPlayersNum.ToString();
+                room.CurrentTurnNum++;
+                room.Turns.Add(turn);
+                room.Message = "Where would you like to place a piece?";
+            }
+            else if(room.Turns.Count == turn.Num)
+            {
+                room.Message = $"Waiting on {room.Players[room.CurrentTurnPlayersNum - 1].Name} to place a piece.";
+                return room;
+            }
+
+            if (room.CheckForWin)
+            {
+                room.ResultCode = ((turn.Num - 1) % room.Players.Length) + 1;
+            }
+
+            return room;
+        }
+
         private static string DetermineWinner(int? resultCode, Dictionary<int, string> players)
         {
             string winnerName = string.Empty;
@@ -148,6 +263,7 @@ namespace ConnectFour.Business.BLLs
             playerModel = _playerBLL.AddPlayerToRoom(playerModel, (int)roomModel.Id);
             roomModel.Players[playerModel.Num - 1] = playerModel;
 
+            roomModel.LocalPlayerNum = playerNum;
             string opponentName = roomModel.Players[2 - playerNum].Name;
             roomModel.Message = $"Successfully joined room against {opponentName}";
             return roomModel;
@@ -165,6 +281,32 @@ namespace ConnectFour.Business.BLLs
             room.Vacancy = room.Players.Contains(null);
 
             return room;
+        }
+
+        public virtual IRoomModel LetThemPlay(IRoomModel roomModel)
+        {
+            bool isWaiting = true;
+            while (isWaiting)
+            {
+                int turnNum = roomModel.Turns.Count;
+                GetLastTurnInRoom(roomModel);
+
+                if (roomModel.ResultCode != null)
+                {
+                    return roomModel;
+                }
+
+                if (turnNum == roomModel.Turns.Count)
+                {
+                    Thread.Sleep(5000);
+                }
+
+                if (roomModel.CurrentTurnPlayersNum == roomModel.LocalPlayerNum)
+                {
+                    isWaiting = false;
+                }
+            }
+            return roomModel;
         }
 
         internal RoomDTO ConvertToDto(IRoomModel model)

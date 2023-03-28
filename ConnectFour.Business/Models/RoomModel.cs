@@ -19,5 +19,27 @@ namespace ConnectFour.Business.Models
         public bool Vacancy { get; set; }
 
         public string Message { get; set; }
+
+        public int CurrentTurnPlayersNum 
+        {
+            get
+            {
+                return (((int)CurrentTurnNum - 1) % 2) + 1;
+            }
+        }
+
+        public int LocalPlayerNum { get; set; }
+
+        public bool CheckForWin 
+        {
+            get
+            {
+                if (Turns.Count > 10)
+                {
+                    return true;
+                }
+                return false;
+            }
+        }
     }
 }
