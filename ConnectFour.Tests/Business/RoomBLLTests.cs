@@ -1,11 +1,12 @@
-﻿using ConnectFour.Business.BLLs;
+﻿using System;
+
+using ConnectFour.Business.BLLs;
 using ConnectFour.Business.BLLs.Interfaces;
 using ConnectFour.Business.Models;
 using ConnectFour.Business.Models.Interfaces;
 using ConnectFour.Data.DTOs;
 using ConnectFour.Data.Repositories.Interfaces;
 using ConnectFour.Tests.TestDoubles;
-using System;
 
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -27,7 +28,8 @@ namespace ConnectFour.Tests.Business
                 TestDto = new RoomDTO { Id = 1, ResultCode = resultCode }
             };
             IPlayerBLL playerBLL = new PlayerBLLStub { TestModels = new IPlayerModel[2] };
-            IRoomBLL bll = new RoomBLL(repository, playerBLL);
+            ITurnBLL turnBLL = new TurnBLLStub();
+            IRoomBLL bll = new RoomBLL(repository, playerBLL, turnBLL);
 
             // Act & Assert
             Assert.ThrowsException<ArgumentException>(
@@ -43,7 +45,8 @@ namespace ConnectFour.Tests.Business
             const string newPlayerName = "New Player";
             IRoomRepository repository = new RoomRepositoryStub { TestDto = null };
             IPlayerBLL playerBLL = new PlayerBLLStub();
-            IRoomBLL bll = new RoomBLL(repository, playerBLL);
+            ITurnBLL turnBLL = new TurnBLLStub();
+            IRoomBLL bll = new RoomBLL(repository, playerBLL, turnBLL);
 
             // Act & Assert
             Assert.ThrowsException<ArgumentException>(
@@ -71,7 +74,8 @@ namespace ConnectFour.Tests.Business
                     }
                 )
             };
-            IRoomBLL bll = new RoomBLL(repository, playerBLL);
+            ITurnBLL turnBLL = new TurnBLLStub();
+            IRoomBLL bll = new RoomBLL(repository, playerBLL, turnBLL);
 
             // Act & Assert
             Assert.ThrowsException<ArgumentException>(
@@ -100,7 +104,8 @@ namespace ConnectFour.Tests.Business
                     }
                 )
             };
-            IRoomBLL bll = new RoomBLL(repository, playerBLL);
+            ITurnBLL turnBLL = new TurnBLLStub();
+            IRoomBLL bll = new RoomBLL(repository, playerBLL, turnBLL);
 
             // Act
             IRoomModel resultRoom = bll.AddPlayerToRoom(newPlayerName, 0);
@@ -130,7 +135,8 @@ namespace ConnectFour.Tests.Business
                     }
                 )
             };
-            IRoomBLL bll = new RoomBLL(repository, playerBLL);
+            ITurnBLL turnBLL = new TurnBLLStub();
+            IRoomBLL bll = new RoomBLL(repository, playerBLL, turnBLL);
 
             // Act
             IRoomModel resultRoom = bll.AddPlayerToRoom(newPlayerName, 0);
@@ -141,12 +147,247 @@ namespace ConnectFour.Tests.Business
         }
 
         [TestMethod]
+        public void AddTurnToRoom_ReponseIsStringOfCharacters_ReturnRoomWithErrorMessage()
+        {
+            // Arrange
+            IRoomRepository repository = new RoomRepositoryStub();
+            IPlayerBLL playerBLL = new PlayerBLLStub();
+            ITurnBLL turnBLL = new TurnBLLStub();
+            IRoomBLL bll = new RoomBLL(repository, playerBLL, turnBLL);
+            IRoomModel room = new RoomModel
+            {
+                Id = 0,
+                CurrentTurnNum = 1,
+                LocalPlayerNum = 1,
+                Players = new PlayerModel[]
+                {
+                    new PlayerModel
+                    {
+                        Id = 0,
+                        Name = "testOne",
+                        Num = 1,
+                        Color = ConsoleColor.Red,
+                        Symbol = "1"
+                    },
+                    new PlayerModel
+                    {
+                        Id = 1,
+                        Name = "testTwo",
+                        Num = 2,
+                        Color = ConsoleColor.Yellow,
+                        Symbol = "2"
+                    }
+                }
+            };
+
+            // Act
+            IRoomModel result = bll.AddTurnToRoom("ILikeToTestAllTheCases", room);
+            // Assert
+            Assert.AreEqual("Please enter an integer for the column you would like to choose.", result.Message);
+            Assert.AreEqual(1, result.CurrentTurnNum);
+            Assert.AreEqual(1, result.CurrentTurnPlayersNum);
+        }
+
+        [DataRow("0")]
+        [DataRow("8")]
+        [TestMethod]
+        public void AddTurnToRoom_ReponseIsNotInRange_ReturnRoomWithErrorMessage(string ColumnChoice)
+        {
+            // Arrange
+            IRoomRepository repository = new RoomRepositoryStub();
+            IPlayerBLL playerBLL = new PlayerBLLStub();
+            ITurnBLL turnBLL = new TurnBLLStub();
+            IRoomBLL bll = new RoomBLL(repository, playerBLL, turnBLL);
+            IRoomModel room = new RoomModel
+            {
+                Id = 0,
+                CurrentTurnNum = 2,
+                LocalPlayerNum = 2,
+                Players = new PlayerModel[]
+                {
+                    new PlayerModel
+                    {
+                        Id = 0,
+                        Name = "testOne",
+                        Num = 1,
+                        Color = ConsoleColor.Red,
+                        Symbol = "1"
+                    },
+                    new PlayerModel
+                    {
+                        Id = 1,
+                        Name = "testTwo",
+                        Num = 2,
+                        Color = ConsoleColor.Yellow,
+                        Symbol = "2"
+                    }
+                }
+            };
+
+            // Act
+            IRoomModel result = bll.AddTurnToRoom(ColumnChoice, room);
+            // Assert
+            Assert.AreEqual("Please choose a column between 1 - 7", result.Message);
+            Assert.AreEqual(2, result.CurrentTurnNum);
+            Assert.AreEqual(2, result.CurrentTurnPlayersNum);
+        }
+
+        [TestMethod]
+        public void GetLastTurnInRoom_RoomCurrentTurnNumOne_NewTurnRecievedIsNull()
+        {
+            // Arrange
+            IRoomRepository repository = new RoomRepositoryStub();
+            IPlayerBLL playerBLL = new PlayerBLLStub();
+            DateTime currentTime = DateTime.Now;
+            ITurnBLL turnBLL = new TurnBLLStub
+            {
+                TestModel = null
+            };
+            IRoomBLL bll = new RoomBLL(repository, playerBLL, turnBLL);
+            IRoomModel room = new RoomModel
+            {
+                Id = 0,
+                CurrentTurnNum = 1,
+                LocalPlayerNum = 1,
+                Players = new PlayerModel[]
+                {
+                    new PlayerModel
+                    {
+                        Id = 0,
+                        Name = "testOne",
+                        Num = 1,
+                        Color = ConsoleColor.Red,
+                        Symbol = "1"
+                    },
+                    new PlayerModel
+                    {
+                        Id = 1,
+                        Name = "testTwo",
+                        Num = 2,
+                        Color = ConsoleColor.Yellow,
+                        Symbol = "2"
+                    }
+                }
+            };
+
+            // Act
+            IRoomModel result = bll.GetLastTurnInRoom(room);
+            // Assert
+            Assert.AreEqual(1, result.CurrentTurnPlayersNum);
+        }
+
+        [TestMethod]
+        public void GetLastTurnInRoom_RoomCurrentTurnNull_NewTurnAddedCurrentTurnPlayersNumTwo()
+        {
+            // Arrange
+            IRoomRepository repository = new RoomRepositoryStub();
+            IPlayerBLL playerBLL = new PlayerBLLStub();
+            DateTime currentTime = DateTime.Now;
+            ITurnBLL turnBLL = new TurnBLLStub
+            {
+                TestModel = new TurnModel
+                {
+                    Id = 0,
+                    Time = currentTime,
+                    RowNum = 5,
+                    ColNum = 1,
+                    Num = 1
+                }
+            };
+            IRoomBLL bll = new RoomBLL(repository, playerBLL, turnBLL);
+            IRoomModel room = new RoomModel
+            {
+                Id = 0,
+                CurrentTurnNum = null,
+                LocalPlayerNum = 2,
+                Players = new PlayerModel[]
+                {
+                    new PlayerModel
+                    {
+                        Id = 0,
+                        Name = "testOne",
+                        Num = 1,
+                        Color = ConsoleColor.Red,
+                        Symbol = "1"
+                    },
+                    new PlayerModel
+                    {
+                        Id = 1,
+                        Name = "testTwo",
+                        Num = 2,
+                        Color = ConsoleColor.Yellow,
+                        Symbol = "2"
+                    }
+                }
+            };
+
+            // Act
+            IRoomModel result = bll.GetLastTurnInRoom(room);
+
+            // Assert
+            Assert.AreEqual(2, result.CurrentTurnPlayersNum);
+        }
+
+        [TestMethod]
+        public void GetLastTurnInRoom_CheckBoardForNewTurnAdded_NewTurnAdded()
+        {
+            // Arrange
+            IRoomRepository repository = new RoomRepositoryStub();
+            IPlayerBLL playerBLL = new PlayerBLLStub();
+            DateTime currentTime = DateTime.Now;
+            ITurnBLL turnBLL = new TurnBLLStub
+            {
+                TestModel = new TurnModel
+                {
+                    Id = 0,
+                    Time = currentTime,
+                    RowNum = 6,
+                    ColNum = 1,
+                    Num = 1
+                }
+            };
+            IRoomBLL bll = new RoomBLL(repository, playerBLL, turnBLL);
+            IRoomModel room = new RoomModel
+            {
+                Id = 0,
+                CurrentTurnNum = null,
+                LocalPlayerNum = 2,
+                Players = new PlayerModel[]
+                {
+                    new PlayerModel
+                    {
+                        Id = 0,
+                        Name = "testOne",
+                        Num = 1,
+                        Color = ConsoleColor.Red,
+                        Symbol = "1"
+                    },
+                    new PlayerModel
+                    {
+                        Id = 1,
+                        Name = "testTwo",
+                        Num = 2,
+                        Color = ConsoleColor.Yellow,
+                        Symbol = "2"
+                    }
+                }
+            };
+
+            // Act
+            IRoomModel result = bll.GetLastTurnInRoom(room);
+
+            // Assert
+            Assert.AreEqual("1", result.Board[5, 0]);
+        }
+
+        [TestMethod]
         public void GetRoomById_IdDoesntExist_ReturnNull()
         {
             // Arrange
             IRoomRepository repository = new RoomRepositoryStub { TestDto = null };
             IPlayerBLL playerBLL = new PlayerBLLStub();
-            IRoomBLL bll = new RoomBLL(repository, playerBLL);
+            ITurnBLL turnBLL = new TurnBLLStub();
+            IRoomBLL bll = new RoomBLL(repository, playerBLL, turnBLL);
 
             // ActG
             IRoomModel result = bll.GetRoomById(0);
@@ -169,7 +410,8 @@ namespace ConnectFour.Tests.Business
                     new PlayerModel { Num = 2 }
                 }
             };
-            IRoomBLL bll = new RoomBLL(repository, playerBLL);
+            ITurnBLL turnBLL = new TurnBLLStub();
+            IRoomBLL bll = new RoomBLL(repository, playerBLL, turnBLL);
 
             // Act
             IRoomModel result = bll.GetRoomById(0);
@@ -191,7 +433,8 @@ namespace ConnectFour.Tests.Business
                     null
                 }
             };
-            IRoomBLL bll = new RoomBLL(repository, playerBLL);
+            ITurnBLL turnBLL = new TurnBLLStub();
+            IRoomBLL bll = new RoomBLL(repository, playerBLL, turnBLL);
 
             // Act
             IRoomModel result = bll.GetRoomById(0);
@@ -213,7 +456,8 @@ namespace ConnectFour.Tests.Business
                     new PlayerModel { Num = 2 }
                 }
             };
-            IRoomBLL bll = new RoomBLL(repository, playerBLL);
+            ITurnBLL turnBLL = new TurnBLLStub();
+            IRoomBLL bll = new RoomBLL(repository, playerBLL, turnBLL);
 
             // Act
             IRoomModel result = bll.GetRoomById(0);
@@ -231,13 +475,66 @@ namespace ConnectFour.Tests.Business
             {
                 TestModels = new IPlayerModel[] { null, null }
             };
-            IRoomBLL bll = new RoomBLL(repository, playerBLL);
+            ITurnBLL turnBLL = new TurnBLLStub();
+            IRoomBLL bll = new RoomBLL(repository, playerBLL, turnBLL);
 
             // Act
             IRoomModel result = bll.GetRoomById(0);
 
             // Assert
             Assert.IsTrue(result.Vacancy);
+        }
+
+        [TestMethod]
+        public void LetThemPlay_Player2Waiting_NewTurnAddedToRoomAndPlayer2Turn()
+        {
+            // Arrange
+            IRoomRepository repository = new RoomRepositoryStub();
+            IPlayerBLL playerBLL = new PlayerBLLStub();
+            DateTime currentTime = DateTime.Now;
+            ITurnBLL turnBLL = new TurnBLLStub
+            {
+                TestModel = new TurnModel
+                {
+                    Id = 1,
+                    Time = currentTime,
+                    RowNum = 5,
+                    ColNum = 1,
+                    Num = 2
+                }
+            };
+            IRoomBLL bll = new RoomBLL(repository, playerBLL, turnBLL);
+            IRoomModel room = new RoomModel
+            {
+                Id = 0,
+                CurrentTurnNum = 1,
+                LocalPlayerNum = 2,
+                Players = new PlayerModel[]
+                {
+                    new PlayerModel
+                    {
+                        Id = 0,
+                        Name = "testOne",
+                        Num = 1,
+                        Color = ConsoleColor.Red,
+                        Symbol = "1"
+                    },
+                    new PlayerModel
+                    {
+                        Id = 1,
+                        Name = "testTwo",
+                        Num = 2,
+                        Color = ConsoleColor.Yellow,
+                        Symbol = "2"
+                    }
+                }
+            };
+
+            // Act
+            IRoomModel result = bll.LetThemPlay(room);
+
+            // Assert
+            Assert.AreEqual(2, result.CurrentTurnPlayersNum);
         }
     }
 }
