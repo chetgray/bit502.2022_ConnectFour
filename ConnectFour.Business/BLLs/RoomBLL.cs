@@ -95,7 +95,7 @@ namespace ConnectFour.Business.BLLs
             turnBLL.AddTurnToRoom(turn, (int)room.Id);
             room.CurrentTurnNum++;
 
-            if (room.CheckForWin)
+            if (room.CheckForWin(turn))
             {
                 room.ResultCode = ((turn.Num - 1) % room.Players.Length) + 1;
                 UpdateRoomResultCode((int)room.Id, (int)room.ResultCode);
@@ -110,6 +110,11 @@ namespace ConnectFour.Business.BLLs
 
             room.Message = $"Waiting on {room.Players[room.CurrentTurnPlayersNum - 1].Name} to place a piece.";
             return room;
+        }
+
+        public int InsertNewRoom()
+        {
+            return _repository.InsertNewRoom();
         }
 
         public List<IResultModel> GetAllFinished()
@@ -210,7 +215,7 @@ namespace ConnectFour.Business.BLLs
 
             if (room.Turns.Count != turn.Num)
             {
-                room.Board[turn.RowNum - 1, turn.ColNum - 1] = room.CurrentTurnPlayersNum.ToString();
+                room.Board[turn.RowNum - 1, turn.ColNum - 1] = room.CurrentTurnPlayersNum;
                 room.CurrentTurnNum++;
                 room.Turns.Add(turn);
                 room.Message = "Where would you like to place a piece?";
@@ -221,7 +226,7 @@ namespace ConnectFour.Business.BLLs
                 return room;
             }
 
-            if (room.CheckForWin)
+            if (room.CheckForWin(turn))
             {
                 room.ResultCode = ((turn.Num - 1) % room.Players.Length) + 1;
             }
@@ -270,14 +275,23 @@ namespace ConnectFour.Business.BLLs
             {
                 throw new ArgumentException($"Room Id {roomId} is full!");
             }
-            int playerNum = (roomModel.Players[0] == null) ? 1 : 2;
-            IPlayerModel playerModel = new PlayerModel { Name = localPlayerName, Num = playerNum };
-            playerModel = _playerBLL.AddPlayerToRoom(playerModel, (int)roomModel.Id);
-            roomModel.Players[playerModel.Num - 1] = playerModel;
 
+            IPlayerModel playerModel = new PlayerModel { Name = localPlayerName };
+            int playerNum;
+            if (roomModel.Players[0] == null && roomModel.Players[1] == null)
+            {
+                playerNum = new Random().Next(1, 3); 
+            }
+            else
+            {
+                playerNum = (roomModel.Players[0] == null) ? 1 : 2;
+                string opponentName = roomModel.Players[2 - playerNum].Name;
+                roomModel.Message = $"Successfully joined room against {opponentName}";
+            }
+            playerModel.Num = playerNum;
+            playerModel = _playerBLL.AddPlayerToRoom(playerModel, (int)roomModel.Id);
             roomModel.LocalPlayerNum = playerNum;
-            string opponentName = roomModel.Players[2 - playerNum].Name;
-            roomModel.Message = $"Successfully joined room against {opponentName}";
+            roomModel.Players[playerModel.Num - 1] = playerModel;
             return roomModel;
         }
 

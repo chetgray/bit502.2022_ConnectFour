@@ -20,6 +20,11 @@ namespace ConnectFour.Tests.TestDoubles
             return TestDto;
         }
 
+        public int InsertNewRoom()
+        {
+            throw new System.NotImplementedException();
+        }
+
         public void UpdateRoomResultCode(int roomId, int resultCode)
         {
         }

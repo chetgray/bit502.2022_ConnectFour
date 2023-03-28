@@ -53,6 +53,7 @@
     <Compile Include="App\ProgramTests.cs" />
     <Compile Include="Business\RoomBLLTests.cs" />
     <Compile Include="Business\PlayerBLLTests.cs" />
+    <Compile Include="Business\RoomModelTests.cs" />
     <Compile Include="Data\RoomRepositoryTests.cs" />
     <Compile Include="Data\PlayerRepositoryTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -72,10 +73,6 @@
     <ProjectReference Include="..\ConnectFour.Business\ConnectFour.Business.csproj">
       <Project>{a5ad7a8e-ab00-48ca-9172-b11a55761e80}</Project>
       <Name>ConnectFour.Business</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\ConnectFour.Database\ConnectFour.Database.sqlproj">
-      <Project>{922c818b-0e29-44de-a0b2-47d90a1a9dac}</Project>
-      <Name>ConnectFour.Database</Name>
     </ProjectReference>
     <ProjectReference Include="..\ConnectFour.Data\ConnectFour.Data.csproj">
       <Project>{ac1b2de2-b5a0-4b06-93fc-01c7d5a76fa9}</Project>

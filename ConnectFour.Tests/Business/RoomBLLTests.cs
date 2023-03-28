@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 
 using ConnectFour.Business.BLLs;
 using ConnectFour.Business.BLLs.Interfaces;
@@ -82,6 +83,32 @@ namespace ConnectFour.Tests.Business
                 () => bll.AddPlayerToRoom(newPlayerName, 0),
                 $"Room Id 0 is full!"
             );
+        }
+
+        [TestMethod]
+        public void AddPlayerToRoom_BothSeatsOpen_NewPlayerTakesASeat()
+        {
+            // Arrange
+            const string newPlayerName = "New Player";
+            IRoomRepository repository = new RoomRepositoryStub
+            {
+                TestDto = new RoomDTO { Id = 1 }
+            };
+            IPlayerBLL playerBLL = new PlayerBLLStub
+            {
+                TestModel = new PlayerModel { Name = newPlayerName, Num = 2 },
+                TestModels = (new IPlayerModel[] { null, null })
+            };
+            ITurnBLL turnBLL = new TurnBLLStub();
+            IRoomBLL bll = new RoomBLL(repository, playerBLL, turnBLL);
+
+            // Act
+            IRoomModel resultRoom = bll.AddPlayerToRoom(newPlayerName, 1);
+            
+            // Assert
+            Assert.AreEqual(2, resultRoom.Players.Length);
+            Assert.IsTrue(resultRoom.Vacancy);
+            Assert.IsNotNull(resultRoom.Players.Where(p => p.Name == newPlayerName));
         }
 
         [TestMethod]

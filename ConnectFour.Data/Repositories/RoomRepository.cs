@@ -17,6 +17,14 @@ namespace ConnectFour.Data.Repositories
         /// <inheritdoc/>
         public RoomRepository(IDAL dal) : base(dal) { }
 
+        public int InsertNewRoom()
+        {
+            Dictionary<string, object> parameters = new Dictionary<string, object>();
+            DataTable dataTable = _dal.ExecuteStoredProcedure("spA_Room_InsertNewRoom", parameters);
+
+            return Convert.ToInt32(dataTable.Rows[0][0]);
+        }
+
         public List<ResultDTO> GetAllFinished()
         {
             Dictionary<string, object> parameters = new Dictionary<string, object>();
