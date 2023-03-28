@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 
 using ConnectFour.Business.BLLs;
+using ConnectFour.Business.BLLs.Interfaces;
 using ConnectFour.Business.Models;
 using ConnectFour.Business.Models.Interfaces;
 
@@ -250,6 +251,59 @@ namespace ConnectFour.App
             Console.Clear();
         }
 
+        private static void GamePlayLoop(IRoomModel roomModel, IRoomBLL rBLL)
+        {
+            bool isPlaying = true;
+            roomModel = rBLL.GetLastTurnInRoom(roomModel);
+            while (isPlaying)
+            {
+                Console.Clear();
+                Console.Write("             ");
+                WriteTitle();
+                DisplayBoard(roomModel);
+                Console.Write($"\n     {roomModel.Message}\n");
+                Console.ResetColor();
+
+                if (roomModel.ResultCode != null)
+                {
+                    HandleGameEnd(roomModel);
+                    return;
+                }
+
+                if(roomModel.LocalPlayerNum == roomModel.CurrentTurnPlayersNum)
+                {
+                    Console.Write("\n     --> ");
+                    string response = Console.ReadLine();
+                    roomModel = rBLL.AddTurnToRoom(response, roomModel);
+                }
+                else if (roomModel.LocalPlayerNum != roomModel.CurrentTurnPlayersNum)
+                {
+                    roomModel = rBLL.LetThemPlay(roomModel);
+                }
+            }
+        }
+
+        private static void HandleGameEnd(IRoomModel roomModel)
+        {
+            Console.Clear();
+            Console.Write("             ");
+            WriteTitle();
+            DisplayBoard(roomModel);
+            if (roomModel.ResultCode == 0)
+            {
+                WriteInColor($"\n     DRAW!!!", ConsoleColor.Blue);
+            }
+            else
+            {
+                WriteInColor($"\n     {roomModel.Players[(int)roomModel.ResultCode - 1].Name} Wins! " +
+                    $"Last move was in Column {roomModel.Turns.Last().ColNum}.",
+                    roomModel.Players[(int)roomModel.ResultCode - 1].Color);
+            }
+            Console.ResetColor();
+            Console.Write("\n     Press any key to return to the Main Menu.");
+            Console.ReadLine();
+        }
+
         private static void JoinMultiPlayerGame()
         {
             IRoomModel room = new RoomModel();
@@ -262,6 +316,7 @@ namespace ConnectFour.App
             {
                 return;
             }
+            RoomBLL rBLL = new RoomBLL();
             while (isJoining)
             {
                 Console.Clear();
@@ -286,7 +341,6 @@ namespace ConnectFour.App
                         "Please enter an integer ID. To quit trying to join a room press the escape(Esc) key.";
                     continue;
                 }
-                RoomBLL rBLL = new RoomBLL();
                 try
                 {
                     room = rBLL.AddPlayerToRoom(_localPlayerName, roomId);
@@ -303,7 +357,7 @@ namespace ConnectFour.App
             Console.WriteLine(room.Message);
             Console.Write("Press any key to continue . . . ");
             Console.ReadKey(intercept: false);
-            // TODO: Call gameplay loop with the roomModel and playerNum
+            GamePlayLoop(room, rBLL);
         }
 
         private static string GetPlayerName()
