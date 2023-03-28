@@ -132,6 +132,7 @@ namespace ConnectFour.App
 
             IRoomBLL rBLL = new RoomBLL();
             IRoomModel room = rBLL.AddPlayerToRoom(_localPlayerName, rBLL.InsertNewRoom());
+            int localPlayerNum = room.LocalPlayerNum;
 
             if (room.Players[0] == null)
             {
@@ -150,6 +151,7 @@ namespace ConnectFour.App
             {
                 Thread.Sleep(2000);
                 room = rBLL.GetRoomById((int)room.Id);
+                room.LocalPlayerNum = localPlayerNum;
 
                 if (!room.Vacancy)
                 {
@@ -171,7 +173,7 @@ namespace ConnectFour.App
                     Console.WriteLine("\nPress any key to continue to the game.");
                     Console.ReadKey();
 
-                    //Sending to main menu until gameplay loop has been implemented
+                    GamePlayLoop(room, rBLL);
                     Console.Clear();
                 }
 
