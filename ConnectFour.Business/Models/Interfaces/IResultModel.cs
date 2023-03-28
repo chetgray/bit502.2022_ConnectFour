@@ -1,6 +1,4 @@
-﻿using ConnectFour.Business.Models.Interfaces;
-using System;
-using System.Collections.Generic;
+﻿using System;
 
 namespace ConnectFour.Business.Models.Interfaces
 {
