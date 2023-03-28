@@ -9,6 +9,7 @@ using System;
 
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Linq;
+using System.Security.Cryptography.X509Certificates;
 
 namespace ConnectFour.Tests.Business
 {
@@ -88,22 +89,22 @@ namespace ConnectFour.Tests.Business
             const string newPlayerName = "New Player";
             IRoomRepository repository = new RoomRepositoryStub
             {
-                TestDto = new RoomDTO { Id = 0 }
+                TestDto = new RoomDTO { Id = 1 }
             };
             IPlayerBLL playerBLL = new PlayerBLLStub
             {
-                TestModel = new PlayerModel { Name = newPlayerName },
+                TestModel = new PlayerModel { Name = newPlayerName, Num = 2 },
                 TestModels = (new IPlayerModel[] { null, null })
             };
             IRoomBLL bll = new RoomBLL(repository, playerBLL);
 
             // Act
-            IRoomModel resultRoom = bll.AddPlayerToRoom(newPlayerName, 0);
-
+            IRoomModel resultRoom = bll.AddPlayerToRoom(newPlayerName, 1);
+            
             // Assert
             Assert.AreEqual(2, resultRoom.Players.Length);
             Assert.IsTrue(resultRoom.Vacancy);
-            Assert.IsTrue(resultRoom.Players.Any((IPlayerModel p) => p.Name == newPlayerName));
+            Assert.IsNotNull(resultRoom.Players.Where(p => p.Name == newPlayerName));
         }
 
         [TestMethod]
