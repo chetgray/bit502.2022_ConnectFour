@@ -45,12 +45,12 @@ namespace ConnectFour.Business.BLLs
 
         public IRoomModel AddTurnToRoom(string colNum, IRoomModel room)
         {
-            if(room.CurrentTurnPlayersNum != room.LocalPlayerNum)
+            if (room.CurrentTurnPlayersNum != room.LocalPlayerNum)
             {
                 room.Message = $"It's Not Your Turn! Waiting on {room.Players[room.CurrentTurnPlayersNum - 1].Name} to place a piece.";
                 return room;
             }
-            room.Message = string.Empty;
+
             int turnColNum;
             try
             {
@@ -61,6 +61,7 @@ namespace ConnectFour.Business.BLLs
                 room.Message = "Please enter an integer for the column you would like to choose.";
                 return room;
             }
+
             if (turnColNum < 1 || turnColNum > 7)
             {
                 room.Message = "Please choose a column between 1 - 7";
@@ -98,6 +99,13 @@ namespace ConnectFour.Business.BLLs
             {
                 room.ResultCode = ((turn.Num - 1) % room.Players.Length) + 1;
                 UpdateRoomResultCode((int)room.Id, (int)room.ResultCode);
+            }
+
+            int totalPiecesToPlay = room.Board.GetLength(0) * room.Board.GetLength(1);
+            if (room.Turns.Count >= totalPiecesToPlay)
+            {
+                room.ResultCode = 0;
+                return room;
             }
 
             room.Message = $"Waiting on {room.Players[room.CurrentTurnPlayersNum - 1].Name} to place a piece.";
@@ -216,6 +224,14 @@ namespace ConnectFour.Business.BLLs
             if (room.CheckForWin)
             {
                 room.ResultCode = ((turn.Num - 1) % room.Players.Length) + 1;
+            }
+
+            int totalPiecesToPlay = room.Board.GetLength(0) * room.Board.GetLength(1);
+            if (room.Turns.Count >= totalPiecesToPlay)
+            {
+                room.ResultCode = 0;
+                room.Message = string.Empty;
+                return room;
             }
 
             return room;
