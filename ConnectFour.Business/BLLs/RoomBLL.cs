@@ -181,37 +181,33 @@ namespace ConnectFour.Business.BLLs
         {
             ITurnModel turn = _turnBLL.GetLastTurnInRoom((int)room.Id);
 
-            if(room.CurrentTurnNum == null)
+            if (room.CurrentTurnNum == null)
             {
                 room.CurrentTurnNum = 1;
-                if(turn == null)
+            }
+
+            if (turn == null)
+            {
+                if (room.LocalPlayerNum == 1)
                 {
-                    if (room.LocalPlayerNum == 1)
-                    {
-                        room.Message = "Where would you like to place a piece?";
-                        return room;
-                    }
-                    else
-                    {
-                        room.Message = $"Waiting on {room.Players[room.CurrentTurnPlayersNum - 1].Name} to place a piece.";
-                        return room;
-                    }
+                    room.Message = "Where would you like to place a piece?";
+                    return room;
+                }
+                else
+                {
+                    room.Message = $"Waiting on {room.Players[room.CurrentTurnPlayersNum - 1].Name} to place a piece.";
+                    return room;
                 }
             }
 
-            if(turn == null)
-            {
-                return room;
-            }
-
-            if(room.Turns.Count != turn.Num)
+            if (room.Turns.Count != turn.Num)
             {
                 room.Board[turn.RowNum - 1, turn.ColNum - 1] = room.CurrentTurnPlayersNum.ToString();
                 room.CurrentTurnNum++;
                 room.Turns.Add(turn);
                 room.Message = "Where would you like to place a piece?";
             }
-            else if(room.Turns.Count == turn.Num)
+            else if (room.Turns.Count == turn.Num)
             {
                 room.Message = $"Waiting on {room.Players[room.CurrentTurnPlayersNum - 1].Name} to place a piece.";
                 return room;
