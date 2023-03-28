@@ -215,20 +215,22 @@ namespace ConnectFour.Business.BLLs
 
             if (room.Turns.Count != turn.Num)
             {
+                if (room.CheckForWin(turn))
+                {
+                    room.ResultCode = ((turn.Num - 1) % room.Players.Length) + 1;
+                }
+                else
+                {
+                    room.Message = "Where would you like to place a piece?";
+                }
                 room.Board[turn.RowNum - 1, turn.ColNum - 1] = room.CurrentTurnPlayersNum;
                 room.CurrentTurnNum++;
                 room.Turns.Add(turn);
-                room.Message = "Where would you like to place a piece?";
             }
             else if (room.Turns.Count == turn.Num)
             {
                 room.Message = $"Waiting on {room.Players[room.CurrentTurnPlayersNum - 1].Name} to place a piece.";
                 return room;
-            }
-
-            if (room.CheckForWin(turn))
-            {
-                room.ResultCode = ((turn.Num - 1) % room.Players.Length) + 1;
             }
 
             int totalPiecesToPlay = room.Board.GetLength(0) * room.Board.GetLength(1);
