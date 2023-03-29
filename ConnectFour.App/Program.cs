@@ -274,7 +274,7 @@ namespace ConnectFour.App
                     return;
                 }
             }
-            RoomBLL rBLL = new RoomBLL();
+            IRoomBLL rBLL = new RoomBLL();
             while (isJoining)
             {
                 Console.Clear();
