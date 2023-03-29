@@ -10,7 +10,7 @@ namespace ConnectFour.Business.BLLs
     public class NPCRoomBLL : RoomBLL, IRoomBLL
     {
         /// <summary>
-        /// Creates a <see cref="RoomBLL"/> instance with a default <see cref="RoomRepository"/>
+        /// Creates a <see cref="NPCRoomBLL"/> instance with a default <see cref="RoomRepository"/>
         /// backend.
         /// </summary>
         public NPCRoomBLL()
@@ -18,7 +18,7 @@ namespace ConnectFour.Business.BLLs
         }
 
         /// <summary>
-        /// Creates a <see cref="RoomBLL"/> instance with the passed <paramref name="repository"/>,
+        /// Creates a <see cref="NPCRoomBLL"/> instance with the passed <paramref name="repository"/>,
         /// <paramref name="playerBLL"/>, and <paramref name="turnBLL"/> as the backend.
         /// </summary>
         /// <param name="repository">The <see cref="IRoomRepository"/> to use in the backend.</param>
