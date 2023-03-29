@@ -349,6 +349,14 @@ namespace ConnectFour.App
                 Console.WriteLine("No game results");
                 return;
             }
+            WriteResultTable(results);
+            Console.WriteLine("Press any key to return to main menu...");
+            Console.ReadKey();
+            Console.Clear();
+        }
+
+        private static void WriteResultTable(List<IResultModel> results)
+        {
             string[,] ResultTable = new string[results.Count + 1, 7];
             ResultTable[0, 0] = "Room ID";
             ResultTable[0, 1] = "Started At";
@@ -476,9 +484,6 @@ namespace ConnectFour.App
                 }
             }
             Console.WriteLine(sb.ToString());
-            Console.WriteLine("Press any key to return to main menu...");
-            Console.ReadKey();
-            Console.Clear();
         }
 
         private static void DisplayBoard(IRoomModel room)
