@@ -72,26 +72,36 @@ namespace ConnectFour.Business.BLLs
             };
 
             room.Turns.Add(turn);
-            turnBLL.AddTurnToRoom(turn, (int)room.Id);
             room.CurrentTurnNum++;
+            room.ResultCode = DetermineResultCode(room, turn);
+            if (room.ResultCode != null)
+            {
+                UpdateRoomResultCode((int)room.Id, (int)room.ResultCode);
+            }
+            else
+            {
+                room.Message =
+                    $"Waiting on {room.Players[room.CurrentPlayerNum - 1].Name} to place a piece.";
+            }
+            turnBLL.AddTurnToRoom(turn, (int)room.Id);
+            return room;
+        }
 
+        private static int? DetermineResultCode(IRoomModel room, ITurnModel turn)
+        {
+            if (turn == null)
+            {
+                return null;
+            }
             if (room.CheckForWin(turn))
             {
-                room.ResultCode = room.GetPlayerNum(turn.Num);
-                UpdateRoomResultCode((int)room.Id, (int)room.ResultCode);
+                return room.GetPlayerNum(turn.Num);
             }
-
-            int totalPiecesToPlay = room.Board.GetLength(0) * room.Board.GetLength(1);
-            if (room.Turns.Count >= totalPiecesToPlay)
+            else if (room.Turns.Count >= room.Board.GetLength(0) * room.Board.GetLength(1))
             {
-                room.ResultCode = 0;
-                UpdateRoomResultCode((int)room.Id, (int)room.ResultCode);
-                return room;
+                return 0;
             }
-
-            room.Message =
-                $"Waiting on {room.Players[room.CurrentPlayerNum - 1].Name} to place a piece.";
-            return room;
+            return null;
         }
 
         public int InsertNewRoom()
@@ -174,50 +184,29 @@ namespace ConnectFour.Business.BLLs
 
         public IRoomModel UpdateWithLastTurn(IRoomModel room)
         {
-            ITurnModel turn = _turnBLL.GetLastTurnInRoom((int)room.Id);
+            ITurnModel lastTurn = _turnBLL.GetLastTurnInRoom((int)room.Id);
 
-            if (turn == null)
+            if (lastTurn == null && room.LocalPlayerNum == 1)
             {
-                if (room.LocalPlayerNum == 1)
-                {
-                    room.Message = "Where would you like to place a piece?";
-                    return room;
-                }
-                else
-                {
-                    room.Message =
-                        $"Waiting on {room.Players[room.CurrentPlayerNum - 1].Name} to place a piece.";
-                    return room;
-                }
+                room.Message = "Where would you like to place a piece?";
+                return room;
             }
-
-            if (room.Turns.Count != turn.Num)
+            if (lastTurn?.Num == room.CurrentTurnNum)
             {
-                if (room.CheckForWin(turn))
-                {
-                    room.ResultCode = room.GetPlayerNum(turn.Num);
-                }
-                else
-                {
-                    room.Message = "Where would you like to place a piece?";
-                }
-                room.Board[turn.RowNum - 1, turn.ColNum - 1] = room.CurrentPlayerNum;
+                room.Turns.Add(lastTurn);
                 room.CurrentTurnNum++;
-                room.Turns.Add(turn);
             }
-            else if (room.Turns.Count == turn.Num)
+            if (room.CurrentPlayerNum != room.LocalPlayerNum)
             {
                 room.Message =
                     $"Waiting on {room.Players[room.CurrentPlayerNum - 1].Name} to place a piece.";
                 return room;
             }
 
-            int totalPiecesToPlay = room.Board.GetLength(0) * room.Board.GetLength(1);
-            if (room.Turns.Count >= totalPiecesToPlay)
+            room.ResultCode = DetermineResultCode(room, lastTurn);
+            if (room.ResultCode == null)
             {
-                room.ResultCode = 0;
-                room.Message = string.Empty;
-                return room;
+                room.Message = "Where would you like to place a piece?";
             }
 
             return room;
