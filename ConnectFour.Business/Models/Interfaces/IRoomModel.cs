@@ -35,5 +35,16 @@ namespace ConnectFour.Business.Models.Interfaces
         int CurrentPlayerNum { get; }
         int LocalPlayerNum { get; set; }
         int GetPlayerNum(int turnNum);
+
+        /// <summary>
+        /// Gets the next row in the given column.
+        /// </summary>
+        /// <param name="colNum">The column number (1-based).</param>
+        /// <returns>The row number of the next row in the given column.</returns>
+        /// <exception cref="ArgumentException">
+        /// Thrown if the given <paramref name="colNum"/> is less than 1 or greater than 7, or
+        /// if the column is already full.
+        /// </exception>
+        int GetNextRowInCol(int colNum);
     }
 }

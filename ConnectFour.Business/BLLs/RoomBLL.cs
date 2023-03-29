@@ -52,24 +52,14 @@ namespace ConnectFour.Business.BLLs
                 return room;
             }
 
-            if (colNum < 1 || colNum > 7)
+            int rowNum;
+            try
             {
-                room.Message = "Please choose a column between 1 - 7";
-                return room;
+                rowNum = room.GetNextRowInCol(colNum);
             }
-
-            int turnsInColumnCount = 0;
-            foreach (TurnModel turnModel in room.Turns)
+            catch (ArgumentException e)
             {
-                if (turnModel.ColNum == colNum)
-                {
-                    turnsInColumnCount++;
-                }
-            }
-            int rowNum = room.Board.GetLength(0) - turnsInColumnCount;
-            if (rowNum < 1)
-            {
-                room.Message = "That Column is Full!";
+                room.Message = e.Message;
                 return room;
             }
 

@@ -82,5 +82,30 @@ namespace ConnectFour.Business.Models
 
             return false;
         }
+
+        public int GetNextRowInCol(int colNum)
+        {
+            if (colNum < 1 || colNum > Board.GetLength(1))
+            {
+                throw new ArgumentException(
+                    $"Please choose a column between 1 - {Board.GetLength(1)}"
+                );
+            }
+            int turnsInColumnCount = 0;
+            foreach (ITurnModel turnModel in Turns)
+            {
+                if (turnModel.ColNum == colNum)
+                {
+                    turnsInColumnCount++;
+                }
+            }
+            int rowNum = Board.GetLength(0) - turnsInColumnCount;
+            if (rowNum < 1)
+            {
+                throw new ArgumentException($"Column {colNum} is Full!");
+            }
+
+            return rowNum;
+        }
     }
 }
