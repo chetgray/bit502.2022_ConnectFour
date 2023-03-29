@@ -20,8 +20,8 @@ namespace ConnectFour.Data.Repositories
         public int InsertNewRoom()
         {
             Dictionary<string, object> parameters = new Dictionary<string, object>();
-            int roomId = (int)
-                _dal.GetValueFromStoredProcedure("spA_Room_InsertNewRoom", parameters);
+            int roomId = Convert.ToInt32(
+                _dal.GetValueFromStoredProcedure("spA_Room_InsertNewRoom", parameters));
 
             return roomId;
         }
