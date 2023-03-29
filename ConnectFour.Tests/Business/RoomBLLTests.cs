@@ -173,52 +173,10 @@ namespace ConnectFour.Tests.Business
             Assert.AreEqual(newPlayerName, resultRoom.Players[0].Name);
         }
 
+        [DataRow(0)]
+        [DataRow(8)]
         [TestMethod]
-        public void AddTurnToRoom_ReponseIsStringOfCharacters_ReturnRoomWithErrorMessage()
-        {
-            // Arrange
-            IRoomRepository repository = new RoomRepositoryStub();
-            IPlayerBLL playerBLL = new PlayerBLLStub();
-            ITurnBLL turnBLL = new TurnBLLStub();
-            IRoomBLL bll = new RoomBLL(repository, playerBLL, turnBLL);
-            IRoomModel room = new RoomModel
-            {
-                Id = 0,
-                CurrentTurnNum = 1,
-                LocalPlayerNum = 1,
-                Players = new PlayerModel[]
-                {
-                    new PlayerModel
-                    {
-                        Id = 0,
-                        Name = "testOne",
-                        Num = 1,
-                        Color = ConsoleColor.Red,
-                        Symbol = "1"
-                    },
-                    new PlayerModel
-                    {
-                        Id = 1,
-                        Name = "testTwo",
-                        Num = 2,
-                        Color = ConsoleColor.Yellow,
-                        Symbol = "2"
-                    }
-                }
-            };
-
-            // Act
-            IRoomModel result = bll.AddTurnToRoom("ILikeToTestAllTheCases", room);
-            // Assert
-            Assert.AreEqual("Please enter an integer for the column you would like to choose.", result.Message);
-            Assert.AreEqual(1, result.CurrentTurnNum);
-            Assert.AreEqual(1, result.CurrentTurnPlayersNum);
-        }
-
-        [DataRow("0")]
-        [DataRow("8")]
-        [TestMethod]
-        public void AddTurnToRoom_ReponseIsNotInRange_ReturnRoomWithErrorMessage(string ColumnChoice)
+        public void AddTurnToRoom_ReponseIsNotInRange_ReturnRoomWithErrorMessage(int ColumnChoice)
         {
             // Arrange
             IRoomRepository repository = new RoomRepositoryStub();
@@ -404,7 +362,7 @@ namespace ConnectFour.Tests.Business
             IRoomModel result = bll.GetLastTurnInRoom(room);
 
             // Assert
-            Assert.AreEqual("1", result.Board[5, 0]);
+            Assert.AreEqual(1, result.Board[5, 0]);
         }
 
         [TestMethod]

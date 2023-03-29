@@ -45,11 +45,6 @@ namespace ConnectFour.Business.BLLs
 
         public IRoomModel AddTurnToRoom(int colNum, IRoomModel room)
         {
-            if(colNum == 0)
-            {
-                return room;
-            }
-
             if (room.CurrentTurnPlayersNum != room.LocalPlayerNum)
             {
                 room.Message = $"It's Not Your Turn! Waiting on {room.Players[room.CurrentTurnPlayersNum - 1].Name} to place a piece.";
