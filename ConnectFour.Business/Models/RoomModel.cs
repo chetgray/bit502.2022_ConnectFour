@@ -9,7 +9,7 @@ namespace ConnectFour.Business.Models
     {
         public int? Id { get; set; }
         public DateTime CreationTime { get; set; } = DateTime.Now;
-        public int? CurrentTurnNum { get; set; }
+        public int CurrentTurnNum { get; set; }
         public int? ResultCode { get; set; }
 
         public IPlayerModel[] Players { get; set; } = new IPlayerModel[2];
@@ -22,7 +22,7 @@ namespace ConnectFour.Business.Models
 
         public int CurrentPlayerNum
         {
-            get { return GetPlayerNum((int)CurrentTurnNum); }
+            get { return GetPlayerNum(CurrentTurnNum); }
         }
 
         public int GetPlayerNum(int turnNum)

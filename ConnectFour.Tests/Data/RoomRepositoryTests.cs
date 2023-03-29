@@ -1,13 +1,12 @@
-﻿using ConnectFour.Data.DALs;
+﻿using System;
+using System.Data;
+
+using ConnectFour.Data.DTOs;
 using ConnectFour.Data.Repositories;
 using ConnectFour.Data.Repositories.Interfaces;
 using ConnectFour.Tests.TestDoubles;
-using ConnectFour.Data.DTOs;
 
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-
-using System;
-using System.Data;
 
 namespace ConnectFour.Tests.Data
 {
@@ -34,7 +33,7 @@ namespace ConnectFour.Tests.Data
             // Arrange
             DALStub dal = new DALStub { TestDataTable = CreateRoomTable() };
             DateTime creationTime = DateTime.Now;
-            dal.TestDataTable.Rows.Add(0, creationTime, null, null);
+            dal.TestDataTable.Rows.Add(0, creationTime, 1, null);
             dal.TestDataTable.Rows.Add(0, creationTime.AddMinutes(-30), 1, 1);
             dal.TestDataTable.Rows.Add(0, creationTime.AddMinutes(-999), 999, -999);
             IRoomRepository repository = new RoomRepository(dal);
@@ -45,17 +44,21 @@ namespace ConnectFour.Tests.Data
             // Assert
             Assert.AreEqual(0, actual.Id);
             Assert.AreEqual(creationTime, actual.CreationTime);
-            Assert.AreEqual(null, actual.CurrentTurnNumber);
+            Assert.AreEqual(1, actual.CurrentTurnNumber);
             Assert.AreEqual(null, actual.ResultCode);
         }
 
         [DataRow(3, 2, 1)]
-        [DataRow(-1, null, null)]
+        [DataRow(-1, 1, null)]
         [DataRow(1, 2, null)]
-        [DataRow(1, null, -1)]
+        [DataRow(1, 1, -1)]
         [DataRow(0, 0, 0)]
         [TestMethod]
-        public void GetRoomById_RoomExists_ReturnsRoom(int id, int? currentTurnNumber, int? resultCode)
+        public void GetRoomById_RoomExists_ReturnsRoom(
+            int id,
+            int? currentTurnNumber,
+            int? resultCode
+        )
         {
             // Arrange
             DALStub dal = new DALStub { TestDataTable = CreateRoomTable() };

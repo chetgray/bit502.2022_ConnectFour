@@ -21,7 +21,8 @@ namespace ConnectFour.Data.Repositories
         {
             Dictionary<string, object> parameters = new Dictionary<string, object>();
             int roomId = Convert.ToInt32(
-                _dal.GetValueFromStoredProcedure("spA_Room_InsertNewRoom", parameters));
+                _dal.GetValueFromStoredProcedure("spA_Room_InsertNewRoom", parameters)
+            );
 
             return roomId;
         }
@@ -73,14 +74,7 @@ namespace ConnectFour.Data.Repositories
                 roomDTO.Id = (int?)(row["RoomId"]);
             }
             roomDTO.CreationTime = (DateTime)row["RoomCreationTime"];
-            if (row.IsNull("RoomCurrentTurnNum"))
-            {
-                roomDTO.CurrentTurnNumber = null;
-            }
-            else
-            {
-                roomDTO.CurrentTurnNumber = (int?)row["RoomCurrentTurnNum"];
-            }
+            roomDTO.CurrentTurnNumber = (int)row["RoomCurrentTurnNum"];
             if (row.IsNull("RoomResultCode"))
             {
                 roomDTO.ResultCode = null;

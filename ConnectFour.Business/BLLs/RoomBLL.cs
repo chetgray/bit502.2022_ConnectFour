@@ -78,7 +78,7 @@ namespace ConnectFour.Business.BLLs
             {
                 ColNum = colNum,
                 RowNum = rowNum,
-                Num = (int)room.CurrentTurnNum
+                Num = room.CurrentTurnNum
             };
 
             room.Turns.Add(turn);
@@ -185,11 +185,6 @@ namespace ConnectFour.Business.BLLs
         public IRoomModel UpdateWithLastTurn(IRoomModel room)
         {
             ITurnModel turn = _turnBLL.GetLastTurnInRoom((int)room.Id);
-
-            if (room.CurrentTurnNum == null)
-            {
-                room.CurrentTurnNum = 1;
-            }
 
             if (turn == null)
             {

@@ -261,58 +261,6 @@ namespace ConnectFour.Tests.Business
         }
 
         [TestMethod]
-        public void GetLastTurnInRoom_RoomCurrentTurnNull_NewTurnAddedCurrentTurnPlayersNumTwo()
-        {
-            // Arrange
-            IRoomRepository repository = new RoomRepositoryStub();
-            IPlayerBLL playerBLL = new PlayerBLLStub();
-            DateTime currentTime = DateTime.Now;
-            ITurnBLL turnBLL = new TurnBLLStub
-            {
-                TestModel = new TurnModel
-                {
-                    Id = 0,
-                    Time = currentTime,
-                    RowNum = 5,
-                    ColNum = 1,
-                    Num = 1
-                }
-            };
-            IRoomBLL bll = new RoomBLL(repository, playerBLL, turnBLL);
-            IRoomModel room = new RoomModel
-            {
-                Id = 0,
-                CurrentTurnNum = null,
-                LocalPlayerNum = 2,
-                Players = new PlayerModel[]
-                {
-                    new PlayerModel
-                    {
-                        Id = 0,
-                        Name = "testOne",
-                        Num = 1,
-                        Color = ConsoleColor.Red,
-                        Symbol = "1"
-                    },
-                    new PlayerModel
-                    {
-                        Id = 1,
-                        Name = "testTwo",
-                        Num = 2,
-                        Color = ConsoleColor.Yellow,
-                        Symbol = "2"
-                    }
-                }
-            };
-
-            // Act
-            IRoomModel result = bll.UpdateWithLastTurn(room);
-
-            // Assert
-            Assert.AreEqual(2, result.CurrentPlayerNum);
-        }
-
-        [TestMethod]
         public void GetLastTurnInRoom_CheckBoardForNewTurnAdded_NewTurnAdded()
         {
             // Arrange
@@ -334,7 +282,7 @@ namespace ConnectFour.Tests.Business
             IRoomModel room = new RoomModel
             {
                 Id = 0,
-                CurrentTurnNum = null,
+                CurrentTurnNum = 1,
                 LocalPlayerNum = 2,
                 Players = new PlayerModel[]
                 {
