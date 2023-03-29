@@ -184,7 +184,9 @@ namespace ConnectFour.App
                         room.ResultCode = -1;
                         Console.Clear();
                         WriteTitle();
-                        Console.WriteLine("The room has been closed. Returning to the main menu.");
+                        Console.WriteLine(
+                            "The room has been closed. Returning to the main menu."
+                        );
                         Thread.Sleep(2000);
                         Console.Clear();
                         isWaiting = false;
@@ -203,15 +205,13 @@ namespace ConnectFour.App
                 Console.Write("             ");
                 WriteTitle();
                 DisplayBoard(room);
-                Console.Write($"\n     {room.Message}\n");
-                Console.ResetColor();
-
                 if (room.ResultCode != null)
                 {
                     HandleGameEnd(room);
                     return;
                 }
-
+                Console.Write($"\n     {room.Message}\n");
+                Console.ResetColor();
                 if (room.LocalPlayerNum == room.CurrentTurnPlayersNum)
                 {
                     Console.Write("\n     --> ");
@@ -224,7 +224,8 @@ namespace ConnectFour.App
                     }
                     catch (FormatException)
                     {
-                        room.Message = "Please enter an integer for the column you would like to choose.";
+                        room.Message =
+                            "Please enter an integer for the column you would like to choose.";
                         continue;
                     }
 
@@ -239,23 +240,21 @@ namespace ConnectFour.App
 
         private static void HandleGameEnd(IRoomModel roomModel)
         {
-            Console.Clear();
-            Console.Write("             ");
-            WriteTitle();
-            DisplayBoard(roomModel);
             if (roomModel.ResultCode == 0)
             {
                 WriteInColor($"\n     DRAW!!!", ConsoleColor.Blue);
             }
             else
             {
-                WriteInColor($"\n     {roomModel.Players[(int)roomModel.ResultCode - 1].Name} Wins! " +
-                    $"Last move was in Column {roomModel.Turns.Last().ColNum}.",
-                    roomModel.Players[(int)roomModel.ResultCode - 1].Color);
+                WriteInColor(
+                    $"\n     {roomModel.Players[(int)roomModel.ResultCode - 1].Name} Wins! "
+                        + $"Last move was in Column {roomModel.Turns.Last().ColNum}.",
+                    roomModel.Players[(int)roomModel.ResultCode - 1].Color
+                );
             }
             Console.ResetColor();
             Console.Write("\n     Press any key to return to the Main Menu.");
-            Console.ReadLine();
+            Console.ReadKey(intercept: true);
         }
 
         private static void JoinMultiPlayerGame()
