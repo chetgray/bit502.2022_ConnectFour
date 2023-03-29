@@ -45,9 +45,10 @@ namespace ConnectFour.Business.BLLs
 
         public IRoomModel AddTurnToRoom(int colNum, IRoomModel room)
         {
-            if (room.CurrentTurnPlayersNum != room.LocalPlayerNum)
+            if (room.CurrentPlayerNum != room.LocalPlayerNum)
             {
-                room.Message = $"It's Not Your Turn! Waiting on {room.Players[room.CurrentTurnPlayersNum - 1].Name} to place a piece.";
+                room.Message =
+                    $"It's Not Your Turn! Waiting on {room.Players[room.CurrentPlayerNum - 1].Name} to place a piece.";
                 return room;
             }
 
@@ -86,7 +87,7 @@ namespace ConnectFour.Business.BLLs
 
             if (room.CheckForWin(turn))
             {
-                room.ResultCode = ((turn.Num - 1) % room.Players.Length) + 1;
+                room.ResultCode = room.GetPlayerNum(turn.Num);
                 UpdateRoomResultCode((int)room.Id, (int)room.ResultCode);
             }
 
@@ -97,7 +98,8 @@ namespace ConnectFour.Business.BLLs
                 return room;
             }
 
-            room.Message = $"Waiting on {room.Players[room.CurrentTurnPlayersNum - 1].Name} to place a piece.";
+            room.Message =
+                $"Waiting on {room.Players[room.CurrentPlayerNum - 1].Name} to place a piece.";
             return room;
         }
 
@@ -197,7 +199,8 @@ namespace ConnectFour.Business.BLLs
                 }
                 else
                 {
-                    room.Message = $"Waiting on {room.Players[room.CurrentTurnPlayersNum - 1].Name} to place a piece.";
+                    room.Message =
+                        $"Waiting on {room.Players[room.CurrentPlayerNum - 1].Name} to place a piece.";
                     return room;
                 }
             }
@@ -206,19 +209,20 @@ namespace ConnectFour.Business.BLLs
             {
                 if (room.CheckForWin(turn))
                 {
-                    room.ResultCode = ((turn.Num - 1) % room.Players.Length) + 1;
+                    room.ResultCode = room.GetPlayerNum(turn.Num);
                 }
                 else
                 {
                     room.Message = "Where would you like to place a piece?";
                 }
-                room.Board[turn.RowNum - 1, turn.ColNum - 1] = room.CurrentTurnPlayersNum;
+                room.Board[turn.RowNum - 1, turn.ColNum - 1] = room.CurrentPlayerNum;
                 room.CurrentTurnNum++;
                 room.Turns.Add(turn);
             }
             else if (room.Turns.Count == turn.Num)
             {
-                room.Message = $"Waiting on {room.Players[room.CurrentTurnPlayersNum - 1].Name} to place a piece.";
+                room.Message =
+                    $"Waiting on {room.Players[room.CurrentPlayerNum - 1].Name} to place a piece.";
                 return room;
             }
 
@@ -271,7 +275,7 @@ namespace ConnectFour.Business.BLLs
             int playerNum;
             if (roomModel.Players[0] == null && roomModel.Players[1] == null)
             {
-                playerNum = new Random().Next(1, 3); 
+                playerNum = new Random().Next(1, 3);
             }
             else
             {
@@ -318,7 +322,7 @@ namespace ConnectFour.Business.BLLs
                     Thread.Sleep(5000);
                 }
 
-                if (roomModel.CurrentTurnPlayersNum == roomModel.LocalPlayerNum)
+                if (roomModel.CurrentPlayerNum == roomModel.LocalPlayerNum)
                 {
                     isWaiting = false;
                 }

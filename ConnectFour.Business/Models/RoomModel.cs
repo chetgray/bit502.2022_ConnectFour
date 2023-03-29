@@ -20,12 +20,14 @@ namespace ConnectFour.Business.Models
 
         public string Message { get; set; }
 
-        public int CurrentTurnPlayersNum
+        public int CurrentPlayerNum
         {
-            get
-            {
-                return (((int)CurrentTurnNum - 1) % 2) + 1;
-            }
+            get { return GetPlayerNum((int)CurrentTurnNum); }
+        }
+
+        public int GetPlayerNum(int turnNum)
+        {
+            return ((turnNum - 1) % Players.Length) + 1;
         }
 
         public int LocalPlayerNum { get; set; }
@@ -38,7 +40,7 @@ namespace ConnectFour.Business.Models
                 return false;
             }
 
-            int playerNum = ((turn.Num - 1) % Players.Length) + 1;
+            int playerNum = GetPlayerNum(turn.Num);
 
             // Check for four-in-a-row in each direction.
             foreach (

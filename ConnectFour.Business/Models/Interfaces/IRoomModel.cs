@@ -7,7 +7,7 @@ namespace ConnectFour.Business.Models.Interfaces
     {
         int? Id { get; set; }
         DateTime CreationTime { get; set; }
-        int? CurrentTurnNum { get; set; }
+        int CurrentTurnNum { get; set; }
         int? ResultCode { get; set; }
 
         IPlayerModel[] Players { get; }
@@ -32,7 +32,8 @@ namespace ConnectFour.Business.Models.Interfaces
         /// <param name="turn">The <see cref="ITurnModel"/> to check.</param>
         bool CheckForWin(ITurnModel turn);
 
-        int CurrentTurnPlayersNum { get; }
+        int CurrentPlayerNum { get; }
         int LocalPlayerNum { get; set; }
+        int GetPlayerNum(int turnNum);
     }
 }

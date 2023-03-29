@@ -104,7 +104,7 @@ namespace ConnectFour.Tests.Business
 
             // Act
             IRoomModel resultRoom = bll.AddPlayerToRoom(newPlayerName, 1);
-            
+
             // Assert
             Assert.AreEqual(2, resultRoom.Players.Length);
             Assert.IsTrue(resultRoom.Vacancy);
@@ -176,7 +176,9 @@ namespace ConnectFour.Tests.Business
         [DataRow(0)]
         [DataRow(8)]
         [TestMethod]
-        public void AddTurnToRoom_ReponseIsNotInRange_ReturnRoomWithErrorMessage(int ColumnChoice)
+        public void AddTurnToRoom_ReponseIsNotInRange_ReturnRoomWithErrorMessage(
+            int ColumnChoice
+        )
         {
             // Arrange
             IRoomRepository repository = new RoomRepositoryStub();
@@ -214,7 +216,7 @@ namespace ConnectFour.Tests.Business
             // Assert
             Assert.AreEqual("Please choose a column between 1 - 7", result.Message);
             Assert.AreEqual(2, result.CurrentTurnNum);
-            Assert.AreEqual(2, result.CurrentTurnPlayersNum);
+            Assert.AreEqual(2, result.CurrentPlayerNum);
         }
 
         [TestMethod]
@@ -224,10 +226,7 @@ namespace ConnectFour.Tests.Business
             IRoomRepository repository = new RoomRepositoryStub();
             IPlayerBLL playerBLL = new PlayerBLLStub();
             DateTime currentTime = DateTime.Now;
-            ITurnBLL turnBLL = new TurnBLLStub
-            {
-                TestModel = null
-            };
+            ITurnBLL turnBLL = new TurnBLLStub { TestModel = null };
             IRoomBLL bll = new RoomBLL(repository, playerBLL, turnBLL);
             IRoomModel room = new RoomModel
             {
@@ -258,7 +257,7 @@ namespace ConnectFour.Tests.Business
             // Act
             IRoomModel result = bll.GetLastTurnInRoom(room);
             // Assert
-            Assert.AreEqual(1, result.CurrentTurnPlayersNum);
+            Assert.AreEqual(1, result.CurrentPlayerNum);
         }
 
         [TestMethod]
@@ -310,7 +309,7 @@ namespace ConnectFour.Tests.Business
             IRoomModel result = bll.GetLastTurnInRoom(room);
 
             // Assert
-            Assert.AreEqual(2, result.CurrentTurnPlayersNum);
+            Assert.AreEqual(2, result.CurrentPlayerNum);
         }
 
         [TestMethod]
@@ -519,7 +518,7 @@ namespace ConnectFour.Tests.Business
             IRoomModel result = bll.LetThemPlay(room);
 
             // Assert
-            Assert.AreEqual(2, result.CurrentTurnPlayersNum);
+            Assert.AreEqual(2, result.CurrentPlayerNum);
         }
     }
 }

@@ -161,7 +161,7 @@ namespace ConnectFour.App
                 }
                 Console.Write($"\n     {room.Message}\n");
                 Console.ResetColor();
-                if (room.LocalPlayerNum == room.CurrentTurnPlayersNum)
+                if (room.LocalPlayerNum == room.CurrentPlayerNum)
                 {
                     Console.Write("\n     --> ");
                     string response = Console.ReadLine();
@@ -180,7 +180,7 @@ namespace ConnectFour.App
 
                     room = rBLL.AddTurnToRoom(colNum, room);
                 }
-                else if (room.LocalPlayerNum != room.CurrentTurnPlayersNum)
+                else if (room.LocalPlayerNum != room.CurrentPlayerNum)
                 {
                     room = rBLL.LetThemPlay(room);
                 }
