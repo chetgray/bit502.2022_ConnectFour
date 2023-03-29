@@ -9,18 +9,53 @@ namespace ConnectFour.Data.DALs
     {
         private readonly string _connectionString;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="DAL"/> class with the passed <paramref
+        /// name="connectionString">connection string</paramref>.
+        /// </summary>
+        /// <param name="connectionString">
+        /// The connection string to use for any <see cref="SqlConnection">SQL
+        /// connection</see>s.
+        /// </param>
+        /// <exception cref="ArgumentNullException">
+        /// Thrown when the passed <paramref name="connectionString">connection
+        /// string</paramref> is <c><see langword="null">null</see></c>.
+        /// </exception>
         internal DAL(string connectionString)
         {
             _connectionString =
                 connectionString ?? throw new ArgumentNullException(nameof(connectionString));
         }
 
-        public DataTable ExecuteStoredProcedure(
+        /// <inheritdoc/>
+        public void ExecuteStoredProcedure(
             string storedProcedureName,
             Dictionary<string, object> parameters
         )
         {
-            DataTable dataTable = new DataTable();
+            using (SqlConnection connection = new SqlConnection(_connectionString))
+            using (
+                SqlCommand command = new SqlCommand(storedProcedureName, connection)
+                {
+                    CommandType = CommandType.StoredProcedure,
+                }
+            )
+            {
+                connection.Open();
+                foreach (KeyValuePair<string, object> parameter in parameters)
+                {
+                    command.Parameters.AddWithValue(parameter.Key, parameter.Value);
+                }
+                command.ExecuteNonQuery();
+            }
+        }
+
+        public DataTable GetTableFromStoredProcedure(
+            string storedProcedureName,
+            Dictionary<string, object> parameters
+        )
+        {
+            DataTable resultTable = new DataTable();
 
             using (SqlConnection connection = new SqlConnection(_connectionString))
             using (
@@ -39,30 +74,31 @@ namespace ConnectFour.Data.DALs
                 // Get the last DataTable in the result DataSet
                 DataSet dataSet = new DataSet();
                 adapter.Fill(dataSet);
-                dataTable = dataSet.Tables[dataSet.Tables.Count - 1];
+                resultTable = dataSet.Tables[dataSet.Tables.Count - 1];
             }
 
-            return dataTable;
+            return resultTable;
         }
-        public object InsertDataViaStoredProcedure(string storedProcedureName, Dictionary<string, object> parameters)
+
+        public object GetValueFromStoredProcedure(
+            string storedProcedureName,
+            Dictionary<string, object> parameters
+        )
         {
-            try
-            {
-                using (SqlConnection connection = new SqlConnection(_connectionString))
+            using (SqlConnection connection = new SqlConnection(_connectionString))
+            using (
+                SqlCommand command = new SqlCommand(storedProcedureName, connection)
                 {
-                    connection.Open();
-                    SqlCommand cmd = new SqlCommand(storedProcedureName, connection);
-                    cmd.CommandType = CommandType.StoredProcedure;
-                    foreach (var param in parameters)
-                    {
-                        cmd.Parameters.Add(new SqlParameter(param.Key, param.Value));
-                    }
-                    return cmd.ExecuteScalar();
+                    CommandType = CommandType.StoredProcedure
                 }
-            }
-            catch (Exception)
+            )
             {
-                throw;
+                connection.Open();
+                foreach (KeyValuePair<string, object> parameter in parameters)
+                {
+                    command.Parameters.AddWithValue(parameter.Key, parameter.Value);
+                }
+                return command.ExecuteScalar();
             }
         }
     }

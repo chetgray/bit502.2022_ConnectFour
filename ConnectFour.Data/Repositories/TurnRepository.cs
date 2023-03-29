@@ -22,7 +22,10 @@ namespace ConnectFour.Data.Repositories
             {
                 { "@RoomId", roomId }
             };
-            DataTable dataTable = _dal.ExecuteStoredProcedure("dbo.spA_Turn_GetLastTurnInRoom", paramDictionary);
+            DataTable dataTable = _dal.GetTableFromStoredProcedure(
+                "dbo.spA_Turn_GetLastTurnInRoom",
+                paramDictionary
+            );
             if (dataTable.Rows.Count == 0)
             {
                 return null;

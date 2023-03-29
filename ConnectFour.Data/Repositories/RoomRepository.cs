@@ -20,15 +20,16 @@ namespace ConnectFour.Data.Repositories
         public int InsertNewRoom()
         {
             Dictionary<string, object> parameters = new Dictionary<string, object>();
-            DataTable dataTable = _dal.ExecuteStoredProcedure("spA_Room_InsertNewRoom", parameters);
+            int roomId = (int)
+                _dal.GetValueFromStoredProcedure("spA_Room_InsertNewRoom", parameters);
 
-            return Convert.ToInt32(dataTable.Rows[0][0]);
+            return roomId;
         }
 
         public List<ResultDTO> GetAllFinished()
         {
             Dictionary<string, object> parameters = new Dictionary<string, object>();
-            DataTable resultTable = _dal.ExecuteStoredProcedure(
+            DataTable resultTable = _dal.GetTableFromStoredProcedure(
                 "dbo.spA_Room_GetAllFinished",
                 parameters
             );
@@ -40,12 +41,15 @@ namespace ConnectFour.Data.Repositories
         {
             Dictionary<string, object> paramDictionary = new Dictionary<string, object>();
             paramDictionary.Add("@RoomId", roomId);
-            DataTable dataTable = _dal.ExecuteStoredProcedure("dbo.spA_Room_GetRoomById", paramDictionary);
+            DataTable dataTable = _dal.GetTableFromStoredProcedure(
+                "dbo.spA_Room_GetRoomById",
+                paramDictionary
+            );
             if (dataTable.Rows.Count == 0)
             {
                 return null;
             }
-            return ConvertToDto(dataTable.Rows[0]);           
+            return ConvertToDto(dataTable.Rows[0]);
         }
 
         public void UpdateRoomResultCode(int roomId, int resultCode)
@@ -54,7 +58,7 @@ namespace ConnectFour.Data.Repositories
             paramDictionary.Add("@RoomId", roomId);
             paramDictionary.Add("@RoomResultCode", resultCode);
 
-            _dal.InsertDataViaStoredProcedure("dbo.spA_Room_UpdateRoomResultCode", paramDictionary);
+            _dal.ExecuteStoredProcedure("dbo.spA_Room_UpdateRoomResultCode", paramDictionary);
         }
 
         internal RoomDTO ConvertToDto(DataRow row)
