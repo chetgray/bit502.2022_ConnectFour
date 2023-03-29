@@ -59,57 +59,6 @@ namespace ConnectFour.App
                         break;
                 }
             }
-
-            IRoomModel testRoom = new RoomModel
-            {
-                Id = 100,
-                CurrentTurnNum = 4,
-                Players = new IPlayerModel[]
-                {
-                    new PlayerModel
-                    {
-                        Id = 1,
-                        Name = "Aaa",
-                        Symbol = "A",
-                        Color = ConsoleColor.Red
-                    },
-                    new PlayerModel
-                    {
-                        Id = 2,
-                        Name = "Bbb",
-                        Symbol = "B",
-                        Color = ConsoleColor.Yellow
-                    }
-                },
-                Turns = new List<ITurnModel>
-                {
-                    new TurnModel
-                    {
-                        Id = 1,
-                        ColNum = 1,
-                        RowNum = 6,
-                        Num = 1
-                    },
-                    new TurnModel
-                    {
-                        Id = 2,
-                        ColNum = 2,
-                        RowNum = 6,
-                        Num = 2
-                    },
-                    new TurnModel
-                    {
-                        Id = 3,
-                        ColNum = 1,
-                        RowNum = 5,
-                        Num = 3
-                    }
-                }
-            };
-
-            DisplayBoard(testRoom);
-
-            Console.ReadKey();
         }
 
         private static void HostNewGame()
