@@ -193,34 +193,46 @@ namespace ConnectFour.App
             }
         }
 
-        private static void GamePlayLoop(IRoomModel roomModel, IRoomBLL rBLL)
+        private static void GamePlayLoop(IRoomModel room, IRoomBLL rBLL)
         {
             bool isPlaying = true;
-            roomModel = rBLL.GetLastTurnInRoom(roomModel);
+            room = rBLL.GetLastTurnInRoom(room);
             while (isPlaying)
             {
                 Console.Clear();
                 Console.Write("             ");
                 WriteTitle();
-                DisplayBoard(roomModel);
-                Console.Write($"\n     {roomModel.Message}\n");
+                DisplayBoard(room);
+                Console.Write($"\n     {room.Message}\n");
                 Console.ResetColor();
 
-                if (roomModel.ResultCode != null)
+                if (room.ResultCode != null)
                 {
-                    HandleGameEnd(roomModel);
+                    HandleGameEnd(room);
                     return;
                 }
 
-                if (roomModel.LocalPlayerNum == roomModel.CurrentTurnPlayersNum)
+                if (room.LocalPlayerNum == room.CurrentTurnPlayersNum)
                 {
                     Console.Write("\n     --> ");
                     string response = Console.ReadLine();
-                    roomModel = rBLL.AddTurnToRoom(response, roomModel);
+
+                    int colNum;
+                    try
+                    {
+                        colNum = int.Parse(response);
+                    }
+                    catch (FormatException)
+                    {
+                        room.Message = "Please enter an integer for the column you would like to choose.";
+                        continue;
+                    }
+
+                    room = rBLL.AddTurnToRoom(colNum, room);
                 }
-                else if (roomModel.LocalPlayerNum != roomModel.CurrentTurnPlayersNum)
+                else if (room.LocalPlayerNum != room.CurrentTurnPlayersNum)
                 {
-                    roomModel = rBLL.LetThemPlay(roomModel);
+                    room = rBLL.LetThemPlay(room);
                 }
             }
         }

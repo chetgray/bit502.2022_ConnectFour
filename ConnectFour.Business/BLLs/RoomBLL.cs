@@ -43,26 +43,20 @@ namespace ConnectFour.Business.BLLs
             _turnBLL = turnBLL ?? throw new ArgumentNullException(nameof(turnBLL));
         }
 
-        public IRoomModel AddTurnToRoom(string colNum, IRoomModel room)
+        public IRoomModel AddTurnToRoom(int colNum, IRoomModel room)
         {
+            if(colNum == 0)
+            {
+                return room;
+            }
+
             if (room.CurrentTurnPlayersNum != room.LocalPlayerNum)
             {
                 room.Message = $"It's Not Your Turn! Waiting on {room.Players[room.CurrentTurnPlayersNum - 1].Name} to place a piece.";
                 return room;
             }
 
-            int turnColNum;
-            try
-            {
-                turnColNum = int.Parse(colNum);
-            }
-            catch
-            {
-                room.Message = "Please enter an integer for the column you would like to choose.";
-                return room;
-            }
-
-            if (turnColNum < 1 || turnColNum > 7)
+            if (colNum < 1 || colNum > 7)
             {
                 room.Message = "Please choose a column between 1 - 7";
                 return room;
@@ -71,7 +65,7 @@ namespace ConnectFour.Business.BLLs
             int turnsInColumnCount = 0;
             foreach (TurnModel turnModel in room.Turns)
             {
-                if (turnModel.ColNum == turnColNum)
+                if (turnModel.ColNum == colNum)
                 {
                     turnsInColumnCount++;
                 }
@@ -86,7 +80,7 @@ namespace ConnectFour.Business.BLLs
             TurnBLL turnBLL = new TurnBLL();
             TurnModel turn = new TurnModel
             {
-                ColNum = turnColNum,
+                ColNum = colNum,
                 RowNum = rowNum,
                 Num = (int)room.CurrentTurnNum
             };
