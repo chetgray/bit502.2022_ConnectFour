@@ -255,7 +255,7 @@ namespace ConnectFour.Tests.Business
             };
 
             // Act
-            IRoomModel result = bll.GetLastTurnInRoom(room);
+            IRoomModel result = bll.UpdateWithLastTurn(room);
             // Assert
             Assert.AreEqual(1, result.CurrentPlayerNum);
         }
@@ -306,7 +306,7 @@ namespace ConnectFour.Tests.Business
             };
 
             // Act
-            IRoomModel result = bll.GetLastTurnInRoom(room);
+            IRoomModel result = bll.UpdateWithLastTurn(room);
 
             // Assert
             Assert.AreEqual(2, result.CurrentPlayerNum);
@@ -358,7 +358,7 @@ namespace ConnectFour.Tests.Business
             };
 
             // Act
-            IRoomModel result = bll.GetLastTurnInRoom(room);
+            IRoomModel result = bll.UpdateWithLastTurn(room);
 
             // Assert
             Assert.AreEqual(1, result.Board[5, 0]);

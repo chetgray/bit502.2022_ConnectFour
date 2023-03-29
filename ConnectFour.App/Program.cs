@@ -147,7 +147,7 @@ namespace ConnectFour.App
         private static void GamePlayLoop(IRoomModel room, IRoomBLL rBLL)
         {
             bool isPlaying = true;
-            room = rBLL.GetLastTurnInRoom(room);
+            room = rBLL.UpdateWithLastTurn(room);
             while (isPlaying)
             {
                 Console.Clear();

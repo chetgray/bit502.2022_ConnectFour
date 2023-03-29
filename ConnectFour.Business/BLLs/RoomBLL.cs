@@ -95,6 +95,7 @@ namespace ConnectFour.Business.BLLs
             if (room.Turns.Count >= totalPiecesToPlay)
             {
                 room.ResultCode = 0;
+                UpdateRoomResultCode((int)room.Id, (int)room.ResultCode);
                 return room;
             }
 
@@ -181,7 +182,7 @@ namespace ConnectFour.Business.BLLs
             }
         }
 
-        public IRoomModel GetLastTurnInRoom(IRoomModel room)
+        public IRoomModel UpdateWithLastTurn(IRoomModel room)
         {
             ITurnModel turn = _turnBLL.GetLastTurnInRoom((int)room.Id);
 
@@ -310,7 +311,7 @@ namespace ConnectFour.Business.BLLs
             while (isWaiting)
             {
                 int turnNum = roomModel.Turns.Count;
-                GetLastTurnInRoom(roomModel);
+                UpdateWithLastTurn(roomModel);
 
                 if (roomModel.ResultCode != null)
                 {

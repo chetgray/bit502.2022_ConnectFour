@@ -13,7 +13,7 @@ namespace ConnectFour.Business.BLLs.Interfaces
 
         List<IResultModel> GetAllFinished();
 
-        IRoomModel GetLastTurnInRoom(IRoomModel roomModel);
+        IRoomModel UpdateWithLastTurn(IRoomModel roomModel);
 
         /// <summary>
         /// Gets a <see cref="IRoomModel"/> by its <paramref name="roomId"/>.
