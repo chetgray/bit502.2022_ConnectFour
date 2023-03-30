@@ -267,16 +267,17 @@ namespace ConnectFour.Tests.Business
             IRoomRepository repository = new RoomRepositoryStub();
             IPlayerBLL playerBLL = new PlayerBLLStub();
             DateTime currentTime = DateTime.Now;
+            ITurnModel turnModel = new TurnModel
+            {
+                Id = 0,
+                Time = currentTime,
+                RowNum = 6,
+                ColNum = 1,
+                Num = 1
+            };
             ITurnBLL turnBLL = new TurnBLLStub
             {
-                TestModel = new TurnModel
-                {
-                    Id = 0,
-                    Time = currentTime,
-                    RowNum = 6,
-                    ColNum = 1,
-                    Num = 1
-                }
+                TestModel = turnModel
             };
             IRoomBLL bll = new RoomBLL(repository, playerBLL, turnBLL);
             IRoomModel room = new RoomModel
@@ -309,7 +310,7 @@ namespace ConnectFour.Tests.Business
             IRoomModel result = bll.UpdateWithLastTurn(room);
 
             // Assert
-            Assert.AreEqual(1, result.Board[5, 0]);
+            Assert.IsTrue(result.Turns.Contains(turnModel));
         }
 
         [TestMethod]
@@ -432,7 +433,7 @@ namespace ConnectFour.Tests.Business
                     Time = currentTime,
                     RowNum = 5,
                     ColNum = 1,
-                    Num = 2
+                    Num = 1
                 }
             };
             IRoomBLL bll = new RoomBLL(repository, playerBLL, turnBLL);

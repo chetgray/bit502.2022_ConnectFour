@@ -1,6 +1,7 @@
 ﻿using System;
 
 using ConnectFour.Business.BLLs.Interfaces;
+using ConnectFour.Business.Models;
 using ConnectFour.Business.Models.Interfaces;
 using ConnectFour.Data.Repositories;
 using ConnectFour.Data.Repositories.Interfaces;
@@ -27,10 +28,22 @@ namespace ConnectFour.Business.BLLs
         public NPCRoomBLL(IRoomRepository repository, IPlayerBLL playerBLL, ITurnBLL turnBLL) : base(repository, playerBLL, turnBLL)
         {
         }
-        public override IRoomModel LetThemPlay(IRoomModel roomModel)
+        public override IRoomModel LetThemPlay(IRoomModel room)
         {
-            //Call logic here to handle computers turn.
-            throw new NotImplementedException();
+            int colNum = 1;
+            //Get turn (colNum) from Jess's method or could receive a turnModel
+            int rowNum = room.GetNextRowInCol(colNum);
+
+            TurnModel turn = new TurnModel
+            {
+                ColNum = colNum,
+                RowNum = rowNum,
+                Num = room.CurrentTurnNum
+            };
+            _turnBLL.AddTurnToRoom(turn, (int)room.Id);
+
+            base.LetThemPlay(room);
+            return room;
         }
     }
 }
