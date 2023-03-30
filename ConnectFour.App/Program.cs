@@ -44,8 +44,7 @@ namespace ConnectFour.App
                         JoinMultiPlayerGame();
                         break;
                     case "4":
-                        RoomBLL rBLL = new RoomBLL();
-                        DisplayResults(rBLL.GetAllFinished());
+                        DisplayAllResults();
                         break;
                     case "5":
                         isChoosing = false;
@@ -341,8 +340,10 @@ namespace ConnectFour.App
             return sb.ToString();
         }
 
-        private static void DisplayResults(List<IResultModel> results)
+        private static void DisplayAllResults()
         {
+            RoomBLL rBLL = new RoomBLL();
+            List<IResultModel> results = rBLL.GetAllFinished();
             Console.Clear();
             if (results.Count == 0)
             {
