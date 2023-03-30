@@ -230,7 +230,7 @@ namespace ConnectFour.Business.BLLs
             return winnerName;
         }
 
-        public IRoomModel AddPlayerToRoom(string localPlayerName, int roomId)
+        public virtual IRoomModel AddPlayerToRoom(string localPlayerName, int roomId)
         {
             IRoomModel roomModel = GetRoomById(roomId);
             if (roomModel == null)

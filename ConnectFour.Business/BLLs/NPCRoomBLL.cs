@@ -32,5 +32,12 @@ namespace ConnectFour.Business.BLLs
             //Call logic here to handle computers turn.
             throw new NotImplementedException();
         }
+
+        public override IRoomModel AddPlayerToRoom(string localPlayerName, int roomId)
+        {
+            IRoomModel room = base.AddPlayerToRoom("Randy", roomId);
+            room = base.AddPlayerToRoom(localPlayerName, roomId);
+            return room;
+        }
     }
 }
