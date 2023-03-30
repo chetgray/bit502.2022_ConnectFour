@@ -60,6 +60,7 @@
     <Compile Include="TestDoubles\DALStub.cs" />
     <Compile Include="TestDoubles\PlayerBLLStub.cs" />
     <Compile Include="TestDoubles\RoomRepositoryStub.cs" />
+    <Compile Include="TestDoubles\TurnBLLStub.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

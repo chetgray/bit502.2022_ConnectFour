@@ -21,7 +21,7 @@ namespace ConnectFour.Data.Repositories
             paramDictionary.Add("@PlayerName", dto.Name);
             paramDictionary.Add("@RoomId", dto.RoomId);
             paramDictionary.Add("@PlayerNum", dto.Num);
-            DataTable dataTable = _dal.ExecuteStoredProcedure(
+            DataTable dataTable = _dal.GetTableFromStoredProcedure(
                 "dbo.spA_Player_AddPlayerToRoom",
                 paramDictionary
             );
@@ -32,7 +32,7 @@ namespace ConnectFour.Data.Repositories
         {
             Dictionary<string, object> paramDictionary = new Dictionary<string, object>();
             paramDictionary.Add("@RoomId", roomId);
-            DataTable dataTable = _dal.ExecuteStoredProcedure(
+            DataTable dataTable = _dal.GetTableFromStoredProcedure(
                 "dbo.spA_Player_GetPlayersInRoom",
                 paramDictionary
             );

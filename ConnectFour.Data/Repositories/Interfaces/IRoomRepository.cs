@@ -1,5 +1,6 @@
-﻿using ConnectFour.Data.DTOs;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+
+using ConnectFour.Data.DTOs;
 
 namespace ConnectFour.Data.Repositories.Interfaces
 {
@@ -8,5 +9,7 @@ namespace ConnectFour.Data.Repositories.Interfaces
         int InsertNewRoom();
         List<ResultDTO> GetAllFinished();
         RoomDTO GetRoomById(int roomId);
+
+        void UpdateRoomResultCode(int roomId, int resultCode);
     }
 }

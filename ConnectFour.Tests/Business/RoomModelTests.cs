@@ -1,4 +1,6 @@
-﻿using ConnectFour.Business.Models;
+﻿using System;
+
+using ConnectFour.Business.Models;
 
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -284,6 +286,90 @@ namespace ConnectFour.Tests.Business
 
             // Assert
             Assert.IsFalse(result);
+        }
+
+        [TestMethod]
+        [DataRow(-1)]
+        [DataRow(0)]
+        [DataRow(8)]
+        public void GetNextRowInCol_OutOfRange_ThrowsArgumentException(int colNum)
+        {
+            // Arrange
+            RoomModel room = new RoomModel();
+
+            // Act & Assert
+            Assert.ThrowsException<ArgumentException>(
+                () => room.GetNextRowInCol(colNum),
+                "Please choose a column between 1 - 7"
+            );
+        }
+
+        [TestMethod]
+        public void GetNextRowInCol_ColumnFull_ThrowsArgumentException()
+        {
+            // Arrange
+            int colNum = 1;
+            RoomModel room = new RoomModel()
+            {
+                Board = new int[,]
+                { //                        index / RowNum
+                    { 2, 0, 0, 0, 0, 0, 0 }, // 0 / 1
+                    { 1, 0, 0, 0, 0, 0, 0 }, // 1 / 2
+                    { 2, 0, 0, 0, 0, 0, 0 }, // 2 / 3
+                    { 1, 0, 0, 0, 0, 0, 0 }, // 3 / 4
+                    { 2, 0, 0, 0, 0, 0, 0 }, // 4 / 5
+                    { 1, 0, 0, 0, 0, 0, 0 }, // 5 / 6
+                    //0, 1, 2, 3, 4, 5, 6 - index
+                    //1, 2, 3, 4, 5, 6, 7 - ColNum
+                }
+            };
+            for (int rowNum = 1; rowNum <= 6; rowNum++)
+            {
+                room.Turns.Add(new TurnModel { RowNum = rowNum, ColNum = colNum, });
+            }
+
+            // Act & Assert
+            Assert.ThrowsException<ArgumentException>(
+                () => room.GetNextRowInCol(colNum),
+                $"Column {colNum} is Full!"
+            );
+        }
+
+        [TestMethod]
+        [DataRow(0)]
+        [DataRow(1)]
+        [DataRow(2)]
+        [DataRow(3)]
+        [DataRow(4)]
+        [DataRow(5)]
+        public void GetNextRowInCol_ColumnNotFull_ReturnsNextCol(int fullRowCount)
+        {
+            // Arrange
+            int colNum = 1;
+            RoomModel room = new RoomModel()
+            {
+                Board = new int[,]
+                { //                        index / RowNum
+                    { 0, 0, 0, 0, 0, 0, 0 }, // 0 / 1
+                    { 0, 0, 0, 0, 0, 0, 0 }, // 1 / 2
+                    { 0, 0, 0, 0, 0, 0, 0 }, // 2 / 3
+                    { 0, 0, 0, 0, 0, 0, 0 }, // 3 / 4
+                    { 0, 0, 0, 0, 0, 0, 0 }, // 4 / 5
+                    { 1, 0, 0, 0, 0, 0, 0 }, // 5 / 6
+                    //0, 1, 2, 3, 4, 5, 6 - index
+                    //1, 2, 3, 4, 5, 6, 7 - ColNum
+                }
+            };
+            for (int rowNum = 1; rowNum <= fullRowCount; rowNum++)
+            {
+                room.Turns.Add(new TurnModel { RowNum = rowNum, ColNum = colNum, });
+            }
+
+            // Act
+            int actualResultRowNum = room.GetNextRowInCol(colNum);
+
+            // Assert
+            Assert.AreEqual(6 - fullRowCount, actualResultRowNum);
         }
     }
 }

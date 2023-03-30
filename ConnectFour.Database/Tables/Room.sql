@@ -2,6 +2,6 @@
 (
 	[Id] INT NOT NULL PRIMARY KEY IDENTITY, 
     [CreationTime] DATETIME2(0) NULL, 
-    [CurrentTurnNum] INT NULL, 
+    [CurrentTurnNum] INT NOT NULL, 
     [ResultCode] INT NULL
 )

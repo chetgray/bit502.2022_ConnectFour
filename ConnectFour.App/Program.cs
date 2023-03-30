@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading;
+
 using ConnectFour.Business.BLLs;
 using ConnectFour.Business.BLLs.Interfaces;
 using ConnectFour.Business.Models;
@@ -58,57 +59,6 @@ namespace ConnectFour.App
                         break;
                 }
             }
-
-            IRoomModel testRoom = new RoomModel
-            {
-                Id = 100,
-                CurrentTurnNum = 4,
-                Players = new IPlayerModel[]
-                {
-                    new PlayerModel
-                    {
-                        Id = 1,
-                        Name = "Aaa",
-                        Symbol = "A",
-                        Color = ConsoleColor.Red
-                    },
-                    new PlayerModel
-                    {
-                        Id = 2,
-                        Name = "Bbb",
-                        Symbol = "B",
-                        Color = ConsoleColor.Yellow
-                    }
-                },
-                Turns = new List<ITurnModel>
-                {
-                    new TurnModel
-                    {
-                        Id = 1,
-                        ColNum = 1,
-                        RowNum = 6,
-                        Num = 1
-                    },
-                    new TurnModel
-                    {
-                        Id = 2,
-                        ColNum = 2,
-                        RowNum = 6,
-                        Num = 2
-                    },
-                    new TurnModel
-                    {
-                        Id = 3,
-                        ColNum = 1,
-                        RowNum = 5,
-                        Num = 3
-                    }
-                }
-            };
-
-            DisplayBoard(testRoom);
-
-            Console.ReadKey();
         }
 
         private static void HostNewGame()
@@ -131,6 +81,7 @@ namespace ConnectFour.App
 
             IRoomBLL rBLL = new RoomBLL();
             IRoomModel room = rBLL.AddPlayerToRoom(_localPlayerName, rBLL.InsertNewRoom());
+            int localPlayerNum = room.LocalPlayerNum;
 
             if (room.Players[0] == null)
             {
@@ -149,6 +100,7 @@ namespace ConnectFour.App
             {
                 Thread.Sleep(2000);
                 room = rBLL.GetRoomById((int)room.Id);
+                room.LocalPlayerNum = localPlayerNum;
 
                 if (!room.Vacancy)
                 {
@@ -170,7 +122,7 @@ namespace ConnectFour.App
                     Console.WriteLine("\nPress any key to continue to the game.");
                     Console.ReadKey();
 
-                    //Sending to main menu until gameplay loop has been implemented
+                    GamePlayLoop(room, rBLL);
                     Console.Clear();
                 }
 
@@ -181,13 +133,77 @@ namespace ConnectFour.App
                         room.ResultCode = -1;
                         Console.Clear();
                         WriteTitle();
-                        Console.WriteLine("The room has been closed. Returning to the main menu.");
+                        Console.WriteLine(
+                            "The room has been closed. Returning to the main menu."
+                        );
                         Thread.Sleep(2000);
                         Console.Clear();
                         isWaiting = false;
                     }
                 }
             }
+        }
+
+        private static void GamePlayLoop(IRoomModel room, IRoomBLL rBLL)
+        {
+            bool isPlaying = true;
+            room = rBLL.UpdateWithLastTurn(room);
+            while (isPlaying)
+            {
+                Console.Clear();
+                Console.Write("             ");
+                WriteTitle();
+                DisplayBoard(room);
+                if (room.ResultCode != null)
+                {
+                    HandleGameEnd(room);
+                    return;
+                }
+                Console.Write($"\n     {room.Message}\n");
+                Console.ResetColor();
+                if (room.LocalPlayerNum == room.CurrentPlayerNum)
+                {
+                    Console.Write("\n     --> ");
+                    string response = Console.ReadLine();
+
+                    int colNum;
+                    try
+                    {
+                        colNum = int.Parse(response);
+                    }
+                    catch (FormatException)
+                    {
+                        room.Message =
+                            "Please enter an integer for the column you would like to choose.";
+                        continue;
+                    }
+
+                    room = rBLL.AddTurnToRoom(colNum, room);
+                }
+                else if (room.LocalPlayerNum != room.CurrentPlayerNum)
+                {
+                    room = rBLL.LetThemPlay(room);
+                }
+            }
+        }
+
+        private static void HandleGameEnd(IRoomModel roomModel)
+        {
+            if (roomModel.ResultCode == 0)
+            {
+                WriteInColor($"\n     DRAW!!!", ConsoleColor.Blue);
+            }
+            else
+            {
+                WriteInColor(
+                    $"\n     {roomModel.Players[(int)roomModel.ResultCode - 1].Name} Wins! "
+                        + $"Last move was in Column {roomModel.Turns.Last().ColNum}.",
+                    roomModel.Players[(int)roomModel.ResultCode - 1].Color
+                );
+            }
+            Console.ResetColor();
+            Console.Write("\n     Press any key to return to the Main Menu.");
+            Console.ReadKey(intercept: true);
         }
 
         private static void JoinMultiPlayerGame()
@@ -206,6 +222,7 @@ namespace ConnectFour.App
                     return;
                 }
             }
+            IRoomBLL rBLL = new RoomBLL();
             while (isJoining)
             {
                 Console.Clear();
@@ -230,7 +247,6 @@ namespace ConnectFour.App
                         "Please enter an integer ID. To quit trying to join a room press the escape(Esc) key.";
                     continue;
                 }
-                IRoomBLL rBLL = new RoomBLL();
                 try
                 {
                     room = rBLL.AddPlayerToRoom(_localPlayerName, roomId);
@@ -247,7 +263,7 @@ namespace ConnectFour.App
             Console.WriteLine(room.Message);
             Console.Write("Press any key to continue . . . ");
             Console.ReadKey(intercept: false);
-            // TODO: Call gameplay loop with the roomModel and playerNum
+            GamePlayLoop(room, rBLL);
         }
 
         private static string GetPlayerName()

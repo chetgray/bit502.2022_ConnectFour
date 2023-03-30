@@ -9,7 +9,7 @@ namespace ConnectFour.Business.Models
     {
         public int? Id { get; set; }
         public DateTime CreationTime { get; set; } = DateTime.Now;
-        public int? CurrentTurnNum { get; set; }
+        public int CurrentTurnNum { get; set; }
         public int? ResultCode { get; set; }
 
         public IPlayerModel[] Players { get; set; } = new IPlayerModel[2];
@@ -20,6 +20,18 @@ namespace ConnectFour.Business.Models
 
         public string Message { get; set; }
 
+        public int CurrentPlayerNum
+        {
+            get { return GetPlayerNum(CurrentTurnNum); }
+        }
+
+        public int GetPlayerNum(int turnNum)
+        {
+            return ((turnNum - 1) % Players.Length) + 1;
+        }
+
+        public int LocalPlayerNum { get; set; }
+
         public bool CheckForWin(ITurnModel turn)
         {
             // Bail if the turn's cell is already occupied.
@@ -28,7 +40,7 @@ namespace ConnectFour.Business.Models
                 return false;
             }
 
-            int playerNum = ((turn.Num - 1) % Players.Length) + 1;
+            int playerNum = GetPlayerNum(turn.Num);
 
             // Check for four-in-a-row in each direction.
             foreach (
@@ -69,6 +81,31 @@ namespace ConnectFour.Business.Models
             }
 
             return false;
+        }
+
+        public int GetNextRowInCol(int colNum)
+        {
+            if (colNum < 1 || colNum > Board.GetLength(1))
+            {
+                throw new ArgumentException(
+                    $"Please choose a column between 1 - {Board.GetLength(1)}"
+                );
+            }
+            int turnsInColumnCount = 0;
+            foreach (ITurnModel turnModel in Turns)
+            {
+                if (turnModel.ColNum == colNum)
+                {
+                    turnsInColumnCount++;
+                }
+            }
+            int rowNum = Board.GetLength(0) - turnsInColumnCount;
+            if (rowNum < 1)
+            {
+                throw new ArgumentException($"Column {colNum} is Full!");
+            }
+
+            return rowNum;
         }
     }
 }

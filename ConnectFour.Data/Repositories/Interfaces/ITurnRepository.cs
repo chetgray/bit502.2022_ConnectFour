@@ -1,6 +1,10 @@
-﻿namespace ConnectFour.Data.Repositories.Interfaces
+﻿using ConnectFour.Data.DTOs;
+
+namespace ConnectFour.Data.Repositories.Interfaces
 {
-    internal interface ITurnRepository
+    public interface ITurnRepository
     {
+        TurnDTO GetLastTurnInRoom(int roomId);
+        void AddTurnToRoom(TurnDTO dto);
     }
 }
