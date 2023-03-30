@@ -40,9 +40,8 @@ namespace ConnectFour.Business.BLLs
                 RowNum = rowNum,
                 Num = room.CurrentTurnNum
             };
-            _turnBLL.AddTurnToRoom(turn, (int)room.Id);
 
-            base.LetThemPlay(room);
+            AddTurnToRoom(turn, room);
             return room;
         }
     }

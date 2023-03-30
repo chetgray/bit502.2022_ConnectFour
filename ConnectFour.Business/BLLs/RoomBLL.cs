@@ -43,7 +43,7 @@ namespace ConnectFour.Business.BLLs
             _turnBLL = turnBLL ?? throw new ArgumentNullException(nameof(turnBLL));
         }
 
-        public IRoomModel AddTurnToRoom(int colNum, IRoomModel room)
+        public IRoomModel TryAddTurnToRoom(int colNum, IRoomModel room)
         {
             if (room.CurrentPlayerNum != room.LocalPlayerNum)
             {
@@ -63,7 +63,6 @@ namespace ConnectFour.Business.BLLs
                 return room;
             }
 
-            TurnBLL turnBLL = new TurnBLL();
             TurnModel turn = new TurnModel
             {
                 ColNum = colNum,
@@ -71,6 +70,11 @@ namespace ConnectFour.Business.BLLs
                 Num = room.CurrentTurnNum
             };
 
+            return AddTurnToRoom(turn, room);
+        }
+
+        protected IRoomModel AddTurnToRoom(ITurnModel turn, IRoomModel room)
+        {
             room.Turns.Add(turn);
             room.CurrentTurnNum++;
             room.ResultCode = DetermineResultCode(room, turn);
@@ -83,7 +87,7 @@ namespace ConnectFour.Business.BLLs
                 room.Message =
                     $"Waiting on {room.Players[room.CurrentPlayerNum - 1].Name} to place a piece.";
             }
-            turnBLL.AddTurnToRoom(turn, (int)room.Id);
+            _turnBLL.AddTurnToRoom(turn, (int)room.Id);
             return room;
         }
 

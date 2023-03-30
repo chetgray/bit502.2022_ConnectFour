@@ -212,7 +212,7 @@ namespace ConnectFour.Tests.Business
             };
 
             // Act
-            IRoomModel result = bll.AddTurnToRoom(ColumnChoice, room);
+            IRoomModel result = bll.TryAddTurnToRoom(ColumnChoice, room);
             // Assert
             Assert.AreEqual("Please choose a column between 1 - 7", result.Message);
             Assert.AreEqual(2, result.CurrentTurnNum);
