@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 using ConnectFour.Business.BLLs;
@@ -220,6 +221,32 @@ namespace ConnectFour.Tests.Business
         }
 
         [TestMethod]
+        public void ConvertToResultModel_PlayerNamesTheSame()
+        {
+            // Arrange
+            IPlayerModel[] players = new IPlayerModel[]
+            {
+                new PlayerModel { Num = 1, Name = "Player One" },
+                new PlayerModel { Num = 2, Name = "Player Two" },
+            };
+            IRoomModel room = new RoomModel
+            {
+                Id = 1,
+                Players = players,
+                Turns = new List<ITurnModel> { new TurnModel() },
+            };
+
+            // Act
+            IResultModel result = RoomBLL.ConvertToResultModel(room);
+
+            // Assert
+            Assert.AreEqual(players.Length, result.Players.Length);
+            for (int i = 0; i < players.Length; i++)
+            {
+                Assert.AreEqual(players[i].Name, result.Players[i]);
+            }
+        }
+
         public void GetLastTurnInRoom_RoomCurrentTurnNumOne_NewTurnRecievedIsNull()
         {
             // Arrange

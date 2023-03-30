@@ -142,6 +142,33 @@ namespace ConnectFour.Business.BLLs
             return resultModel;
         }
 
+        public static IResultModel ConvertToResultModel(IRoomModel room)
+        {
+            Dictionary<int, string> playerNameDictionary = room.Players.ToDictionary(
+                p => p.Num,
+                p => p.Name
+            );
+            string[] playerNames = new string[playerNameDictionary.Count];
+            foreach (KeyValuePair<int, string> playerName in playerNameDictionary)
+            {
+                playerNames[playerName.Key - 1] =
+                    playerName.Value.Length <= 15
+                        ? playerName.Value
+                        : $"{playerName.Value.Substring(0, 15)}...";
+            }
+            IResultModel result = new ResultModel
+            {
+                RoomId = (int)room.Id,
+                CreationTime = room.CreationTime,
+                Duration = GetGameDuration(room.Turns.Last().Time - room.CreationTime),
+                Players = playerNames,
+                ResultCode = room.ResultCode,
+                WinnerName = DetermineWinner(room.ResultCode, playerNameDictionary),
+                LastTurnNum = room.CurrentTurnNum.ToString(),
+            };
+            return result;
+        }
+
         private static string GetGameDuration(TimeSpan duration)
         {
             int days = (int)duration.TotalDays;
