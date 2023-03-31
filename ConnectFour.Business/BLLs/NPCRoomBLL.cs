@@ -39,7 +39,7 @@ namespace ConnectFour.Business.BLLs
         {
             List<(int, int)> validPlays = new List<(int, int)>();
 
-            for (int i = 1; i >= 7; i++)
+            for (int i = 1; i <= 7; i++)
             {
                 try
                 {
