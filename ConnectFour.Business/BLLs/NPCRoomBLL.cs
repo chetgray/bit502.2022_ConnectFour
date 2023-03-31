@@ -32,6 +32,7 @@ namespace ConnectFour.Business.BLLs
         {
             ITurnModel turn = RandyTakesATurn(room);
             room = AddTurnToRoom(turn, room);
+            room.Message = "Where would you like to place a piece?";
             return room;
         }
 

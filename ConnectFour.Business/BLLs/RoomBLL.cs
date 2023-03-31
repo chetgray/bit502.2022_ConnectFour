@@ -70,7 +70,10 @@ namespace ConnectFour.Business.BLLs
                 Num = room.CurrentTurnNum
             };
 
-            return AddTurnToRoom(turn, room);
+            room = AddTurnToRoom(turn, room);
+            room.Message = 
+                $"Waiting on {room.Players[room.CurrentPlayerNum - 1].Name} to place a piece.";
+            return room;
         }
 
         protected IRoomModel AddTurnToRoom(ITurnModel turn, IRoomModel room)
@@ -81,11 +84,6 @@ namespace ConnectFour.Business.BLLs
             if (room.ResultCode != null)
             {
                 UpdateRoomResultCode((int)room.Id, (int)room.ResultCode);
-            }
-            else
-            {
-                room.Message =
-                    $"Waiting on {room.Players[room.CurrentPlayerNum - 1].Name} to place a piece.";
             }
             _turnBLL.AddTurnToRoom(turn, (int)room.Id);
             return room;
