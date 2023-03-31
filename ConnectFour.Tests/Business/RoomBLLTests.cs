@@ -247,6 +247,28 @@ namespace ConnectFour.Tests.Business
             }
         }
 
+        [TestMethod]
+        public void ConvertToResultModel_NoTurns_NoDuration()
+        {
+            // Arrange
+            IRoomModel room = new RoomModel
+            {
+                Id = 1,
+                Players = new IPlayerModel[]
+                {
+                    new PlayerModel { Num = 1, Name = "Player One" },
+                    new PlayerModel { Num = 2, Name = "Player Two" },
+                },
+            };
+
+            // Act
+            IResultModel result = RoomBLL.ConvertToResultModel(room);
+
+            // Assert
+            Assert.AreEqual("0 Minute", result.Duration);
+        }
+
+        [TestMethod]
         public void GetLastTurnInRoom_RoomCurrentTurnNumOne_NewTurnRecievedIsNull()
         {
             // Arrange

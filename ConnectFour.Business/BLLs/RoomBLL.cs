@@ -156,11 +156,14 @@ namespace ConnectFour.Business.BLLs
                         ? playerName.Value
                         : $"{playerName.Value.Substring(0, 15)}...";
             }
+            TimeSpan durationTimeSpan = room.Turns.Any()
+                ? room.Turns.Last().Time - room.CreationTime
+                : DateTime.Now - room.CreationTime;
             IResultModel result = new ResultModel
             {
                 RoomId = (int)room.Id,
                 CreationTime = room.CreationTime,
-                Duration = GetGameDuration(room.Turns.Last().Time - room.CreationTime),
+                Duration = GetGameDuration(durationTimeSpan),
                 Players = playerNames,
                 ResultCode = room.ResultCode,
                 WinnerName = DetermineWinner(room.ResultCode, playerNameDictionary),
