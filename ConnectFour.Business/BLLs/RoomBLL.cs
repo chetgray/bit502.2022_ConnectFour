@@ -153,28 +153,21 @@ namespace ConnectFour.Business.BLLs
                 p => p.Num,
                 p => p.Name
             );
-            string[] playerNames = new string[playerNameDictionary.Count];
-            foreach (KeyValuePair<int, string> playerName in playerNameDictionary)
+            ResultDTO resultDto = new ResultDTO
             {
-                playerNames[playerName.Key - 1] =
-                    playerName.Value.Length <= 15
-                        ? playerName.Value
-                        : $"{playerName.Value.Substring(0, 15)}...";
-            }
-            TimeSpan durationTimeSpan = room.Turns.Any()
-                ? room.Turns.Last().Time - room.CreationTime
-                : DateTime.Now - room.CreationTime;
-            IResultModel result = new ResultModel
-            {
-                RoomId = (int)room.Id,
+                RoomId = room.Id,
                 CreationTime = room.CreationTime,
-                Duration = GetGameDuration(durationTimeSpan),
-                Players = playerNames,
+                Players = playerNameDictionary,
                 ResultCode = room.ResultCode,
-                WinnerName = DetermineWinner(room.ResultCode, playerNameDictionary),
-                LastTurnNum = room.CurrentTurnNum.ToString(),
             };
-            return result;
+            if (room.Turns.Any())
+            {
+                ITurnModel lastTurn = room.Turns.Last();
+                resultDto.LastTurnTime = lastTurn.Time;
+                resultDto.LastTurnNum = lastTurn.Num;
+            }
+            IResultModel resultModel = ConvertToResultModel(resultDto);
+            return resultModel;
         }
 
         private static string GetGameDuration(TimeSpan duration)
