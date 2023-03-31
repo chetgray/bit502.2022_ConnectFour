@@ -1,5 +1,6 @@
 ﻿using System;
-
+using System.Collections.Generic;
+using System.Linq;
 using ConnectFour.Business.BLLs.Interfaces;
 using ConnectFour.Business.Models;
 using ConnectFour.Business.Models.Interfaces;
@@ -34,16 +35,35 @@ namespace ConnectFour.Business.BLLs
             throw new NotImplementedException();
         }
 
+        public List<(int, int)> GetValidPlays(IRoomModel room)
+        {
+            List<(int, int)> validPlays = new List<(int, int)>();
+
+            for (int i = 1; i >= 7; i++)
+            {
+                try
+                {
+                    int rowNum = room.GetNextRowInCol(i);
+                    validPlays.Add((rowNum, i));
+                }
+                catch (ArgumentException)
+                {
+                    continue;
+                }
+            }
+
+            return validPlays;
+        }
+
         public TurnModel RandyTakesATurn(IRoomModel room)
         {
+            List<(int, int)> validPlays = GetValidPlays(room);
             Random random = new Random();
-            int colNum = random.Next(1, 8);
-            int rowNum = room.GetNextRowInCol(colNum);
-
+            (int rowNum, int colNum) play = validPlays.ElementAt(random.Next(0, validPlays.Count));
             TurnModel turn = new TurnModel
             {
-                ColNum = colNum,
-                RowNum = rowNum,
+                ColNum = play.colNum,
+                RowNum = play.rowNum,
                 Num = room.CurrentTurnNum
             };
 
