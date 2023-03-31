@@ -285,13 +285,6 @@ namespace ConnectFour.App
             string opponentName = (room.LocalPlayerNum == 1) ? room.Players[1].Name : room.Players[0].Name;
 
             Console.WriteLine($"       Room ID: {room.Id}");
-            Console.WriteLine("\nWaiting for opponent...");
-            Console.WriteLine("\nPress escape to return to the main menu.");
-
-            Thread.Sleep(2000);
-            Console.Clear();
-
-            Console.WriteLine($"       Room ID: {room.Id}");
             Console.WriteLine($"\n{opponentName} has joined!");
             Console.WriteLine("\nPress any key to continue to the game.");
             Console.ReadKey();
