@@ -201,6 +201,10 @@ namespace ConnectFour.App
                 );
             }
             Console.ResetColor();
+            Console.WriteLine("\n");
+            WriteResultTable(
+                new List<IResultModel> { RoomBLL.ConvertToResultModel(roomModel) }
+            );
             Console.Write("\n     Press any key to return to the Main Menu.");
             Console.ReadKey(intercept: true);
         }
