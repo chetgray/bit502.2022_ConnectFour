@@ -280,7 +280,7 @@ namespace ConnectFour.App
             Console.Clear();
             WriteTitle();
 
-            NPCRoomBLL rBLL = new NPCRoomBLL();
+            IRoomBLL rBLL = new NPCRoomBLL();
             IRoomModel room = rBLL.AddPlayerToRoom(_localPlayerName, rBLL.InsertNewRoom());
             string opponentName = (room.LocalPlayerNum == 1) ? room.Players[1].Name : room.Players[0].Name;
 
