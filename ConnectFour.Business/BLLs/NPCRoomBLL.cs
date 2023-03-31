@@ -30,19 +30,14 @@ namespace ConnectFour.Business.BLLs
         }
         public override IRoomModel LetThemPlay(IRoomModel room)
         {
-            int colNum = 1;
-            //Get turn (colNum) from Jess's method or could receive a turnModel
-            int rowNum = room.GetNextRowInCol(colNum);
-
-            TurnModel turn = new TurnModel
-            {
-                ColNum = colNum,
-                RowNum = rowNum,
-                Num = room.CurrentTurnNum
-            };
-
-            AddTurnToRoom(turn, room);
+            ITurnModel turn = RandyTakesATurn(room);
+            room = AddTurnToRoom(turn, room);
             return room;
+        }
+
+        public ITurnModel RandyTakesATurn(IRoomModel room)
+        {
+            throw new NotImplementedException();
         }
     }
 }
