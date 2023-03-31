@@ -221,7 +221,20 @@ namespace ConnectFour.Tests.Business
         }
 
         [TestMethod]
-        public void ConvertToResultModel_PlayerNamesTheSame()
+        public void ConvertToResultModel_DtoHasNullTurnFields_ModelHasDurationUntilNow()
+        {
+            // Arrange
+            ResultDTO dto = new ResultDTO { CreationTime = DateTime.Now.AddDays(-1) };
+
+            // Act
+            ResultModel model = RoomBLL.ConvertToResultModel(dto);
+
+            // Assert
+            Assert.AreEqual("1 Day", model.Duration);
+        }
+
+        [TestMethod]
+        public void ConvertToResultModel_RoomAndResultHaveSamePlayerNames()
         {
             // Arrange
             IPlayerModel[] players = new IPlayerModel[]
@@ -248,7 +261,7 @@ namespace ConnectFour.Tests.Business
         }
 
         [TestMethod]
-        public void ConvertToResultModel_NoTurns_NoDuration()
+        public void ConvertToResultModel_RoomHasNoTurns_ResultHasDurationUntilNow()
         {
             // Arrange
             IRoomModel room = new RoomModel
@@ -259,13 +272,14 @@ namespace ConnectFour.Tests.Business
                     new PlayerModel { Num = 1, Name = "Player One" },
                     new PlayerModel { Num = 2, Name = "Player Two" },
                 },
+                CreationTime = DateTime.Now.AddDays(-1),
             };
 
             // Act
             IResultModel result = RoomBLL.ConvertToResultModel(room);
 
             // Assert
-            Assert.AreEqual("0 Minute", result.Duration);
+            Assert.AreEqual("1 Day", result.Duration);
         }
 
         [TestMethod]

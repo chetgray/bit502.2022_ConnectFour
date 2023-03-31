@@ -86,7 +86,7 @@ namespace ConnectFour.Data.Repositories
             return roomDTO;
         }
 
-        private static IEnumerable<ResultDTO> ConvertTableToResultDtos(DataTable table)
+        internal static IEnumerable<ResultDTO> ConvertTableToResultDtos(DataTable table)
         {
             Dictionary<int, ResultDTO> resultDtos = new Dictionary<int, ResultDTO>();
             foreach (DataRow row in table.Rows)
@@ -94,17 +94,21 @@ namespace ConnectFour.Data.Repositories
                 int roomId = (int)row["RoomId"];
                 if (!resultDtos.ContainsKey(roomId))
                 {
-                    resultDtos.Add(
-                        roomId,
-                        new ResultDTO
-                        {
-                            RoomId = roomId,
-                            CreationTime = (DateTime)row["RoomCreationTime"],
-                            ResultCode = (int)row["RoomResultCode"],
-                            LastTurnTime = (DateTime)row["TurnTime"],
-                            LastTurnNum = (int)row["TurnNum"]
-                        }
-                    );
+                    ResultDTO resultDto = new ResultDTO
+                    {
+                        RoomId = roomId,
+                        CreationTime = (DateTime)row["RoomCreationTime"],
+                        ResultCode = (int)row["RoomResultCode"]
+                    };
+                    if (!row.IsNull("TurnTime"))
+                    {
+                        resultDto.LastTurnTime = (DateTime)row["TurnTime"];
+                    }
+                    if (!row.IsNull("TurnNum"))
+                    {
+                        resultDto.LastTurnNum = (int)row["TurnNum"];
+                    }
+                    resultDtos.Add(roomId, resultDto);
                 }
                 resultDtos[roomId].Players.Add(
                     (int)row["PlayerNum"],

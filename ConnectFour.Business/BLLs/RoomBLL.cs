@@ -120,25 +120,30 @@ namespace ConnectFour.Business.BLLs
             return resultModels;
         }
 
-        private ResultModel ConvertToResultModel(ResultDTO dto)
+        internal static ResultModel ConvertToResultModel(ResultDTO dto)
         {
-            ResultModel resultModel = new ResultModel();
-            resultModel.RoomId = dto.RoomId;
-            resultModel.CreationTime = dto.CreationTime;
-            resultModel.Duration = GetGameDuration(dto.LastTurnTime - resultModel.CreationTime);
             string[] playerNames = new string[dto.Players.Count];
             foreach (KeyValuePair<int, string> player in dto.Players)
             {
-                playerNames[player.Key - 1] = player.Value;
-                if (player.Value.Length > 15)
-                {
-                    playerNames[player.Key - 1] = $"{player.Value.Substring(0, 15)}...";
-                }
+                playerNames[player.Key - 1] =
+                    player.Value.Length <= 15
+                        ? player.Value
+                        : $"{player.Value.Substring(0, 15)}...";
             }
-            resultModel.Players = playerNames;
-            resultModel.ResultCode = dto.ResultCode;
-            resultModel.WinnerName = DetermineWinner(dto.ResultCode, dto.Players);
-            resultModel.LastTurnNum = dto.LastTurnNum.ToString();
+            TimeSpan durationTimeSpan =
+                dto.LastTurnTime != null
+                    ? (DateTime)dto.LastTurnTime - dto.CreationTime
+                    : DateTime.Now - dto.CreationTime;
+            ResultModel resultModel = new ResultModel
+            {
+                RoomId = dto.RoomId,
+                CreationTime = dto.CreationTime,
+                Duration = GetGameDuration(durationTimeSpan),
+                Players = playerNames,
+                ResultCode = dto.ResultCode,
+                WinnerName = DetermineWinner(dto.ResultCode, dto.Players),
+                LastTurnNum = dto.LastTurnNum.ToString()
+            };
             return resultModel;
         }
 
