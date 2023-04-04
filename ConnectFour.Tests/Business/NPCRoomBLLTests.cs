@@ -20,7 +20,7 @@ namespace ConnectFour.Tests.Business
         [DataRow(6)]
         [DataRow(7)]
         [TestMethod]
-        public void GetValidPlay_LastOpenColumn_LastOpenSpace(int colNum)
+        public void GetValidPlay_LastOpenColumn_LastOpenSpaceReturned(int colNum)
         {
             // Arrange
             IRoomModel room = new RoomModel()
