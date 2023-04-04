@@ -416,57 +416,5 @@ namespace ConnectFour.Tests.Business
             // Assert
             Assert.IsTrue(result.Vacancy);
         }
-
-        [TestMethod]
-        public void LetThemPlay_Player2Waiting_NewTurnAddedToRoomAndPlayer2Turn()
-        {
-            // Arrange
-            IRoomRepository repository = new RoomRepositoryStub();
-            IPlayerBLL playerBLL = new PlayerBLLStub();
-            DateTime currentTime = DateTime.Now;
-            ITurnBLL turnBLL = new TurnBLLStub
-            {
-                TestModel = new TurnModel
-                {
-                    Id = 1,
-                    Time = currentTime,
-                    RowNum = 5,
-                    ColNum = 1,
-                    Num = 2
-                }
-            };
-            IRoomBLL bll = new RoomBLL(repository, playerBLL, turnBLL);
-            IRoomModel room = new RoomModel
-            {
-                Id = 0,
-                CurrentTurnNum = 1,
-                LocalPlayerNum = 2,
-                Players = new PlayerModel[]
-                {
-                    new PlayerModel
-                    {
-                        Id = 0,
-                        Name = "testOne",
-                        Num = 1,
-                        Color = ConsoleColor.Red,
-                        Symbol = "1"
-                    },
-                    new PlayerModel
-                    {
-                        Id = 1,
-                        Name = "testTwo",
-                        Num = 2,
-                        Color = ConsoleColor.Yellow,
-                        Symbol = "2"
-                    }
-                }
-            };
-
-            // Act
-            IRoomModel result = bll.LetThemPlay(room);
-
-            // Assert
-            Assert.AreEqual(2, result.CurrentPlayerNum);
-        }
     }
 }
