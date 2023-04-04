@@ -71,7 +71,7 @@ namespace ConnectFour.Business.BLLs
             };
 
             room = AddTurnToRoom(turn, room);
-            room.Message = 
+            room.Message =
                 $"Waiting on {room.Players[room.CurrentPlayerNum - 1].Name} to place a piece.";
             return room;
         }
@@ -125,12 +125,9 @@ namespace ConnectFour.Business.BLLs
         internal static ResultModel ConvertToResultModel(ResultDTO dto)
         {
             string[] playerNames = new string[dto.Players.Count];
-            foreach (KeyValuePair<int, string> player in dto.Players)
+            foreach (KeyValuePair<int, string> playerNumName in dto.Players)
             {
-                playerNames[player.Key - 1] =
-                    player.Value.Length <= 15
-                        ? player.Value
-                        : $"{player.Value.Substring(0, 15)}...";
+                playerNames[playerNumName.Key - 1] = playerNumName.Value;
             }
             TimeSpan durationTimeSpan =
                 dto.LastTurnTime != null
