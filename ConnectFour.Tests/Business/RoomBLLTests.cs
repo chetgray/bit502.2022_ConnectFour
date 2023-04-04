@@ -310,7 +310,15 @@ namespace ConnectFour.Tests.Business
             IRoomModel result = bll.UpdateWithLastTurn(room);
 
             // Assert
-            Assert.IsTrue(result.Turns.Contains(turnModel));
+            Assert.IsTrue(
+                result.Turns.Exists(
+                    turn =>
+                        turn.Num == turnModel.Num
+                        && turn.Time == turnModel.Time
+                        && turn.RowNum == turnModel.RowNum
+                        && turn.ColNum == turnModel.ColNum
+                )
+            );
         }
 
         [TestMethod]
