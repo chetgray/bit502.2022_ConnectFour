@@ -35,6 +35,13 @@ namespace ConnectFour.Business.BLLs
             throw new NotImplementedException();
         }
 
+        public override IRoomModel AddPlayerToRoom(string localPlayerName, int roomId)
+        {
+            IRoomModel room = base.AddPlayerToRoom("Randy", roomId);
+            room = base.AddPlayerToRoom(localPlayerName, roomId);
+            return room;
+        }
+
         public List<(int, int)> GetValidPlays(IRoomModel room)
         {
             List<(int, int)> validPlays = new List<(int, int)>();
