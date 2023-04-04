@@ -261,7 +261,7 @@ namespace ConnectFour.Tests.Business
         }
 
         [TestMethod]
-        public void GetLastTurnInRoom_CheckBoardForNewTurnAdded_NewTurnAdded()
+        public void GetLastTurnInRoom_TurnBLLProvidesNewTurn_RoomContainsNewTurnData()
         {
             // Arrange
             IRoomRepository repository = new RoomRepositoryStub();
