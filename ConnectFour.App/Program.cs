@@ -580,7 +580,7 @@ namespace ConnectFour.App
                         break;
 
                     case 3:
-                        Console.Write($"    Player 1: ");
+                        Console.Write($"    Player 2: ");
                         Console.ForegroundColor = room.Players[1].Color;
                         Console.Write(room.Players[1].Name);
                         Console.ResetColor();

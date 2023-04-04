@@ -294,7 +294,7 @@ namespace ConnectFour.Business.BLLs
 
                 if (turnNum == roomModel.Turns.Count)
                 {
-                    Thread.Sleep(5000);
+                    Thread.Sleep(2000);
                 }
 
                 if (roomModel.CurrentPlayerNum == roomModel.LocalPlayerNum)

@@ -51,6 +51,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App\ProgramTests.cs" />
+    <Compile Include="Business\NPCRoomBLLTests.cs" />
     <Compile Include="Business\RoomBLLTests.cs" />
     <Compile Include="Business\PlayerBLLTests.cs" />
     <Compile Include="Business\RoomModelTests.cs" />
