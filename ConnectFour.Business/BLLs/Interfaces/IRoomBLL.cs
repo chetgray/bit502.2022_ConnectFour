@@ -9,7 +9,7 @@ namespace ConnectFour.Business.BLLs.Interfaces
         int InsertNewRoom();
         IRoomModel AddPlayerToRoom(string localPlayerName, int roomId);
 
-        IRoomModel AddTurnToRoom(int colNum, IRoomModel room);
+        IRoomModel TryAddTurnToRoom(int colNum, IRoomModel room);
 
         List<IResultModel> GetAllFinished();
 
