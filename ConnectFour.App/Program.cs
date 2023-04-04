@@ -178,7 +178,7 @@ namespace ConnectFour.App
                         continue;
                     }
 
-                    room = rBLL.AddTurnToRoom(colNum, room);
+                    room = rBLL.TryAddTurnToRoom(colNum, room);
                 }
                 else if (room.LocalPlayerNum != room.CurrentPlayerNum)
                 {

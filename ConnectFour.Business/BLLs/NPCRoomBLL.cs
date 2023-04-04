@@ -29,10 +29,12 @@ namespace ConnectFour.Business.BLLs
         public NPCRoomBLL(IRoomRepository repository, IPlayerBLL playerBLL, ITurnBLL turnBLL) : base(repository, playerBLL, turnBLL)
         {
         }
-        public override IRoomModel LetThemPlay(IRoomModel roomModel)
+        public override IRoomModel LetThemPlay(IRoomModel room)
         {
-            //Call logic here to handle computers turn.
-            throw new NotImplementedException();
+            ITurnModel turn = RandyTakesATurn(room);
+            room = AddTurnToRoom(turn, room);
+            room.Message = "Where would you like to place a piece?";
+            return room;
         }
 
         public override IRoomModel AddPlayerToRoom(string localPlayerName, int roomId)

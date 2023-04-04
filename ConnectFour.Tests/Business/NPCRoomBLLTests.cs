@@ -1,4 +1,7 @@
-﻿using ConnectFour.Business.BLLs;
+﻿using System;
+using System.Collections.Generic;
+
+using ConnectFour.Business.BLLs;
 using ConnectFour.Business.BLLs.Interfaces;
 using ConnectFour.Business.Models;
 using ConnectFour.Business.Models.Interfaces;
@@ -72,6 +75,152 @@ namespace ConnectFour.Tests.Business
 
             // Assert
             Assert.AreEqual(turn.ColNum, colNum);
+        }
+
+        [TestMethod]
+        public void GetValidPlays_NoPlaysOnBoard_GetsAllPossiblePlays()
+        { 
+            // Arrange
+            IRoomModel room = new RoomModel()
+            {
+                Board = new int[,]
+                { 
+                // index / RowNum
+                { 0, 0, 0, 0, 0, 0, 0 }, // 0 / 1
+                { 0, 0, 0, 0, 0, 0, 0 }, // 1 / 2
+                { 0, 0, 0, 0, 0, 0, 0 }, // 2 / 3
+                { 0, 0, 0, 0, 0, 0, 0 }, // 3 / 4
+                { 0, 0, 0, 0, 0, 0, 0 }, // 4 / 5
+                { 0, 0, 0, 0, 0, 0, 0 }, // 5 / 6 
+                //0, 1, 2, 3, 4, 5, 6 - index 
+                //1, 2, 3, 4, 5, 6, 7 - ColNum
+                }
+            }; 
+
+            // Act
+            IRoomRepository repository = new RoomRepositoryStub(); 
+            IPlayerBLL playerBLL = new PlayerBLLStub(); 
+            ITurnBLL turnBLL = new TurnBLLStub(); 
+            NPCRoomBLL bll = new NPCRoomBLL(repository, playerBLL, turnBLL); 
+            List<(int, int)> possiblePlays = bll.GetValidPlays(room);
+            
+            // Assert
+            Assert.AreEqual(7, possiblePlays.Count); 
+        }
+
+            [TestMethod]
+        public void LetThemPlay_Player1TurnNPC2Waiting_Player1TakesTurnBeforeNPCTakesTurnAfter()
+        {
+            // Arrange
+            IRoomRepository repository = new RoomRepositoryStub();
+            IPlayerBLL playerBLL = new PlayerBLLStub();
+            DateTime currentTime = DateTime.Now;
+            ITurnBLL turnBLL = new TurnBLLStub
+            {
+                TestModel = new TurnModel
+                {
+                    Id = 1,
+                    Time = currentTime,
+                    RowNum = 5,
+                    ColNum = 1,
+                    Num = 2
+                }
+            };
+            IRoomBLL bll = new NPCRoomBLL(repository, playerBLL, turnBLL);
+            IRoomModel room = new RoomModel
+            {
+                Id = 0,
+                CurrentTurnNum = 2,
+                LocalPlayerNum = 1,
+                Turns =
+                        {
+                            new TurnModel
+                            {
+                                Id = 1,
+                                Time = currentTime,
+                                RowNum = 6,
+                                ColNum = 1,
+                                Num = 1
+                            }
+                        },
+                Players = new PlayerModel[]
+                {
+                            new PlayerModel
+                            {
+                                Id = 0,
+                                Name = "testPlayer",
+                                Num = 1,
+                                Color = ConsoleColor.Red,
+                                Symbol = "1"
+                            },
+                            new PlayerModel
+                            {
+                                Id = 1,
+                                Name = "testNPC",
+                                Num = 2,
+                                Color = ConsoleColor.Yellow,
+                                Symbol = "2"
+                            }
+                }
+            };
+        
+            // Act
+            IRoomModel result = bll.LetThemPlay(room);
+        
+            // Assert
+            Assert.AreEqual(1, result.CurrentPlayerNum);
+        }
+        
+        [TestMethod]
+        public void LetThemPlay_NPC1TurnPlayer2Waiting_NPCTakesTurnPlayer1CurrentTurn()
+        {
+            // Arrange
+            IRoomRepository repository = new RoomRepositoryStub();
+            IPlayerBLL playerBLL = new PlayerBLLStub();
+            DateTime currentTime = DateTime.Now;
+            ITurnBLL turnBLL = new TurnBLLStub
+            {
+                TestModel = new TurnModel
+                {
+                    Id = 1,
+                    Time = currentTime,
+                    RowNum = 6,
+                    ColNum = 1,
+                    Num = 1
+                }
+            };
+            IRoomBLL bll = new NPCRoomBLL(repository, playerBLL, turnBLL);
+            IRoomModel room = new RoomModel
+            {
+                Id = 0,
+                CurrentTurnNum = 1,
+                LocalPlayerNum = 2,
+                Players = new PlayerModel[]
+                {
+                            new PlayerModel
+                            {
+                                Id = 0,
+                                Name = "testPlayer",
+                                Num = 2,
+                                Color = ConsoleColor.Red,
+                                Symbol = "1"
+                            },
+                            new PlayerModel
+                            {
+                                Id = 1,
+                                Name = "testNPC",
+                                Num = 1,
+                                Color = ConsoleColor.Yellow,
+                                Symbol = "2"
+                            }
+                }
+            };
+        
+            // Act
+            IRoomModel result = bll.LetThemPlay(room);
+        
+            // Assert
+            Assert.AreEqual(2, result.CurrentPlayerNum);
         }
     }
 }

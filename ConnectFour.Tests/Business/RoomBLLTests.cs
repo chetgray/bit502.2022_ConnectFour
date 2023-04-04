@@ -212,7 +212,7 @@ namespace ConnectFour.Tests.Business
             };
 
             // Act
-            IRoomModel result = bll.AddTurnToRoom(ColumnChoice, room);
+            IRoomModel result = bll.TryAddTurnToRoom(ColumnChoice, room);
             // Assert
             Assert.AreEqual("Please choose a column between 1 - 7", result.Message);
             Assert.AreEqual(2, result.CurrentTurnNum);
@@ -261,22 +261,23 @@ namespace ConnectFour.Tests.Business
         }
 
         [TestMethod]
-        public void GetLastTurnInRoom_CheckBoardForNewTurnAdded_NewTurnAdded()
+        public void GetLastTurnInRoom_TurnBLLProvidesNewTurn_RoomContainsNewTurnData()
         {
             // Arrange
             IRoomRepository repository = new RoomRepositoryStub();
             IPlayerBLL playerBLL = new PlayerBLLStub();
             DateTime currentTime = DateTime.Now;
+            ITurnModel turnModel = new TurnModel
+            {
+                Id = 0,
+                Time = currentTime,
+                RowNum = 6,
+                ColNum = 1,
+                Num = 1
+            };
             ITurnBLL turnBLL = new TurnBLLStub
             {
-                TestModel = new TurnModel
-                {
-                    Id = 0,
-                    Time = currentTime,
-                    RowNum = 6,
-                    ColNum = 1,
-                    Num = 1
-                }
+                TestModel = turnModel
             };
             IRoomBLL bll = new RoomBLL(repository, playerBLL, turnBLL);
             IRoomModel room = new RoomModel
@@ -309,7 +310,15 @@ namespace ConnectFour.Tests.Business
             IRoomModel result = bll.UpdateWithLastTurn(room);
 
             // Assert
-            Assert.AreEqual(1, result.Board[5, 0]);
+            Assert.IsTrue(
+                result.Turns.Exists(
+                    turn =>
+                        turn.Num == turnModel.Num
+                        && turn.Time == turnModel.Time
+                        && turn.RowNum == turnModel.RowNum
+                        && turn.ColNum == turnModel.ColNum
+                )
+            );
         }
 
         [TestMethod]
@@ -432,7 +441,7 @@ namespace ConnectFour.Tests.Business
                     Time = currentTime,
                     RowNum = 5,
                     ColNum = 1,
-                    Num = 2
+                    Num = 1
                 }
             };
             IRoomBLL bll = new RoomBLL(repository, playerBLL, turnBLL);
