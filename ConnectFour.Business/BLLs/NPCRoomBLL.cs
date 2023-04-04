@@ -37,11 +37,6 @@ namespace ConnectFour.Business.BLLs
             return room;
         }
 
-        public ITurnModel RandyTakesATurn(IRoomModel room)
-        {
-            throw new NotImplementedException();
-        }
-
         public List<(int, int)> GetValidPlays(IRoomModel room)
         {
             List<(int, int)> validPlays = new List<(int, int)>();

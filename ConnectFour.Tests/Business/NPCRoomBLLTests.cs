@@ -23,6 +23,7 @@ namespace ConnectFour.Tests.Business
         [DataRow(5)]
         [DataRow(6)]
         [DataRow(7)]
+        [TestMethod]
         public void GetValidPlay_LastOpenColumn_LastOpenSpaceReturned(int colNum)
         {
             // Arrange
@@ -47,13 +48,6 @@ namespace ConnectFour.Tests.Business
                 {
                     room.Board[0, i - 1] = (i % 2) + 1;
                 }
-            };
-
-            // Act
-            IRoomModel result = bll.LetThemPlay(room);
-
-            // Assert
-            Assert.AreEqual(1, result.CurrentPlayerNum);
             }
 
             for (int row = 0; row < room.Board.GetLength(0); row++)
@@ -72,7 +66,6 @@ namespace ConnectFour.Tests.Business
                     }
                 }
             }
-            };
 
             // Act
             IRoomRepository repository = new RoomRepositoryStub();
