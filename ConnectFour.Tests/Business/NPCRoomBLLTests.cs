@@ -1,11 +1,10 @@
 ﻿using System;
-using System.Linq;
+using System.Collections.Generic;
 
 using ConnectFour.Business.BLLs;
 using ConnectFour.Business.BLLs.Interfaces;
 using ConnectFour.Business.Models;
 using ConnectFour.Business.Models.Interfaces;
-using ConnectFour.Data.DTOs;
 using ConnectFour.Data.Repositories.Interfaces;
 using ConnectFour.Tests.TestDoubles;
 
@@ -79,6 +78,37 @@ namespace ConnectFour.Tests.Business
         }
 
         [TestMethod]
+        public void GetValidPlays_NoPlaysOnBoard_GetsAllPossiblePlays()
+        { 
+            // Arrange
+            IRoomModel room = new RoomModel()
+            {
+                Board = new int[,]
+                { 
+                // index / RowNum
+                { 0, 0, 0, 0, 0, 0, 0 }, // 0 / 1
+                { 0, 0, 0, 0, 0, 0, 0 }, // 1 / 2
+                { 0, 0, 0, 0, 0, 0, 0 }, // 2 / 3
+                { 0, 0, 0, 0, 0, 0, 0 }, // 3 / 4
+                { 0, 0, 0, 0, 0, 0, 0 }, // 4 / 5
+                { 0, 0, 0, 0, 0, 0, 0 }, // 5 / 6 
+                //0, 1, 2, 3, 4, 5, 6 - index 
+                //1, 2, 3, 4, 5, 6, 7 - ColNum
+                }
+            }; 
+
+            // Act
+            IRoomRepository repository = new RoomRepositoryStub(); 
+            IPlayerBLL playerBLL = new PlayerBLLStub(); 
+            ITurnBLL turnBLL = new TurnBLLStub(); 
+            NPCRoomBLL bll = new NPCRoomBLL(repository, playerBLL, turnBLL); 
+            List<(int, int)> possiblePlays = bll.GetValidPlays(room);
+            
+            // Assert
+            Assert.AreEqual(7, possiblePlays.Count); 
+        }
+
+            [TestMethod]
         public void LetThemPlay_Player1TurnNPC2Waiting_Player1TakesTurnBeforeNPCTakesTurnAfter()
         {
             // Arrange
