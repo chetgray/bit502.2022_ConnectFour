@@ -64,14 +64,11 @@
   <PropertyGroup>
     <PreBuildEvent>@echo off
 
-      echo Configuring ConnectionStrings.config pre-build event ...
-      if exist "$(ProjectDir)ConnectionStrings.config" del /F / Q
-      "$(ProjectDir)ConnectionStrings.config"
-      copy /Y "$(ProjectDir)ConnectionStrings.$(ConfigurationName).config"
-      "$(ProjectDir)ConnectionStrings.config"
-      echo "$(ProjectDir)ConnectionStrings.$(ConfigurationName).config" copied to
-      "$(ProjectDir)ConnectionStrings.config"
+echo Configuring ConnectionStrings.config pre-build event ...
+if exist "$(ProjectDir)ConnectionStrings.config" del /F / Q "$(ProjectDir)ConnectionStrings.config"
+copy /Y "$(ProjectDir)ConnectionStrings.$(ConfigurationName).config" "$(ProjectDir)ConnectionStrings.config"
+echo "$(ProjectDir)ConnectionStrings.$(ConfigurationName).config" copied to "$(ProjectDir)ConnectionStrings.config"
 
-      echo Pre-build event finished</PreBuildEvent>
+echo Pre-build event finished</PreBuildEvent>
   </PropertyGroup>
 </Project>
