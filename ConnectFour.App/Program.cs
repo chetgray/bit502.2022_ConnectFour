@@ -411,7 +411,7 @@ namespace ConnectFour.App
             {
                 resultTable[r, 0] = results[r - 1].RoomId.ToString();
                 resultTable[r, 1] = results[r - 1].CreationTime.ToString("MM/dd/yyyy hh:mm tt");
-                resultTable[r, 2] = GetGameDuration(results[r - 1].Duration);
+                resultTable[r, 2] = results[r - 1].Duration.ToTruncatedString(1);
                 resultTable[r, 3] =
                     results[r - 1].Players[0].Length <= maxPlayerNameLength
                         ? results[r - 1].Players[0]
@@ -486,44 +486,50 @@ namespace ConnectFour.App
             }
         }
 
-        internal static string GetGameDuration(TimeSpan duration)
+        /// <summary>
+        /// Converts the value of the this <see cref="TimeSpan"/> object to a truncated string
+        /// representation.
+        /// </summary>
+        /// <param name="unitCount">
+        /// The number of units to include in the string representation.
+        /// </param>
+        /// <returns>
+        /// A truncated string representation of this <see cref="TimeSpan"/> object, with only
+        /// the largest <paramref name="unitCount"/> number of units included.
+        /// </returns>
+        /// <exception cref="ArgumentOutOfRangeException">
+        /// Thrown when <paramref name="unitCount"/> is less than 1.
+        /// </exception>
+        internal static string ToTruncatedString(this TimeSpan timeSpan, int unitCount)
         {
-            int days = (int)duration.TotalDays;
-            int hours = (int)duration.TotalHours;
-            int minutes = (int)duration.TotalMinutes;
-            if (days >= 1)
+            if (unitCount < 1)
             {
-                if (days > 1)
-                {
-                    return $"{days} Days";
-                }
-                else
-                {
-                    return $"{days} Day";
-                }
+                throw new ArgumentOutOfRangeException(nameof(unitCount));
             }
-            else if (hours >= 1)
+            StringBuilder sb = new StringBuilder();
+            if (timeSpan.TotalDays >= 1)
             {
-                if (hours > 1)
-                {
-                    return $"{hours} Hours";
-                }
-                else
-                {
-                    return $"{hours} Hour";
-                }
+                sb.Append(timeSpan.Days)
+                    .Append(" Day")
+                    .Append(timeSpan.Days == 1 ? "" : "s")
+                    .Append(unitCount > 1 ? " " : "");
+                unitCount--;
             }
-            else
+            if (timeSpan.TotalHours >= 1 && unitCount > 0)
             {
-                if (minutes > 1)
-                {
-                    return $"{minutes} Minutes";
-                }
-                else
-                {
-                    return $"{minutes} Minute";
-                }
+                sb.Append(timeSpan.Hours)
+                    .Append(" Hour")
+                    .Append(timeSpan.Hours == 1 ? "" : "s")
+                    .Append(unitCount > 1 ? " " : "");
+                unitCount--;
             }
+            if (unitCount > 0)
+            {
+                sb.Append(timeSpan.Minutes)
+                    .Append(" Minute")
+                    .Append(timeSpan.Minutes == 1 ? "" : "s");
+            }
+            return sb.ToString();
         }
 
         private static void DisplayBoard(IRoomModel room)
