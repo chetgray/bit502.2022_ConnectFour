@@ -177,7 +177,7 @@ namespace ConnectFour.Tests.Business
         [DataRow(0)]
         [DataRow(8)]
         [TestMethod]
-        public void AddTurnToRoom_ReponseIsNotInRange_ReturnRoomWithErrorMessage(
+        public void TryAddTurnToRoom_ReponseIsNotInRange_ReturnRoomWithErrorMessage(
             int ColumnChoice
         )
         {
@@ -291,12 +291,11 @@ namespace ConnectFour.Tests.Business
         }
 
         [TestMethod]
-        public void GetLastTurnInRoom_RoomCurrentTurnNumOne_NewTurnRecievedIsNull()
+        public void UpdateWithLatestTurn_RoomCurrentTurnNumOne_NewTurnRecievedIsNull()
         {
             // Arrange
             IRoomRepository repository = new RoomRepositoryStub();
             IPlayerBLL playerBll = new PlayerBLLStub();
-            DateTime currentTime = DateTime.Now;
             ITurnBLL turnBll = new TurnBLLStub { TestModel = null };
             IRoomBLL bll = new RoomBLL(repository, playerBll, turnBll);
             IRoomModel room = new RoomModel
@@ -311,7 +310,6 @@ namespace ConnectFour.Tests.Business
                         Id = 0,
                         Name = "testOne",
                         Num = 1,
-                        Color = ConsoleColor.Red,
                         Symbol = "1"
                     },
                     new PlayerModel
@@ -319,20 +317,19 @@ namespace ConnectFour.Tests.Business
                         Id = 1,
                         Name = "testTwo",
                         Num = 2,
-                        Color = ConsoleColor.Yellow,
                         Symbol = "2"
                     }
                 }
             };
 
             // Act
-            IRoomModel result = bll.UpdateWithLastTurn(room);
+            IRoomModel result = bll.UpdateWithLatestTurn(room);
             // Assert
             Assert.AreEqual(1, result.CurrentPlayerNum);
         }
 
         [TestMethod]
-        public void GetLastTurnInRoom_TurnBLLProvidesNewTurn_RoomContainsNewTurnData()
+        public void UpdateWithLatestTurn_TurnBLLProvidesNewTurn_RoomContainsNewTurnData()
         {
             // Arrange
             IRoomRepository repository = new RoomRepositoryStub();
@@ -375,7 +372,7 @@ namespace ConnectFour.Tests.Business
             };
 
             // Act
-            IRoomModel result = bll.UpdateWithLastTurn(room);
+            IRoomModel result = bll.UpdateWithLatestTurn(room);
 
             // Assert
             Assert.IsTrue(
@@ -495,7 +492,7 @@ namespace ConnectFour.Tests.Business
         }
 
         [TestMethod]
-        public void LetThemPlay_Player2Waiting_NewTurnAddedToRoomAndPlayer2Turn()
+        public void WaitForOpponentToPlay_Player2Waiting_NewTurnAddedToRoomAndPlayer2Turn()
         {
             // Arrange
             IRoomRepository repository = new RoomRepositoryStub();
@@ -540,7 +537,7 @@ namespace ConnectFour.Tests.Business
             };
 
             // Act
-            IRoomModel result = bll.LetThemPlay(room);
+            IRoomModel result = bll.WaitForOpponentToPlay(room);
 
             // Assert
             Assert.AreEqual(2, result.CurrentPlayerNum);

@@ -35,16 +35,16 @@ namespace ConnectFour.App
                 switch (userResponse)
                 {
                     case "1":
-                        LocalGameAgainstAI();
+                        HandleNpcGame();
                         break;
                     case "2":
-                        HostNewGame();
+                        HandleHostingGame();
                         break;
                     case "3":
-                        JoinMultiPlayerGame();
+                        HandleJoiningGame();
                         break;
                     case "4":
-                        DisplayAllResults();
+                        HandleDisplayingResults();
                         break;
                     case "5":
                         isChoosing = false;
@@ -60,7 +60,7 @@ namespace ConnectFour.App
             }
         }
 
-        private static void HostNewGame()
+        private static void HandleHostingGame()
         {
             IPlayerModel localPlayer = new PlayerModel();
             bool isWaiting = true;
@@ -79,10 +79,7 @@ namespace ConnectFour.App
             WriteTitle();
 
             IRoomBLL roomBll = new RoomBLL();
-            IRoomModel room = roomBll.AddPlayerToRoom(
-                _localPlayerName,
-                roomBll.InsertNewRoom()
-            );
+            IRoomModel room = roomBll.AddPlayerToRoom(_localPlayerName, roomBll.AddNewRoom());
             int localPlayerNum = room.LocalPlayerNum;
 
             if (room.Players[0] == null)
@@ -100,7 +97,7 @@ namespace ConnectFour.App
 
             while (isWaiting)
             {
-                Thread.Sleep(2000);
+                Thread.Sleep(1000);
                 room = roomBll.GetRoomById((int)room.Id);
                 room.LocalPlayerNum = localPlayerNum;
 
@@ -149,16 +146,16 @@ namespace ConnectFour.App
         private static void GamePlayLoop(IRoomModel room, IRoomBLL roomBll)
         {
             bool isPlaying = true;
-            room = roomBll.UpdateWithLastTurn(room);
+            room = roomBll.UpdateWithLatestTurn(room);
             while (isPlaying)
             {
                 Console.Clear();
                 Console.Write("             ");
                 WriteTitle();
-                DisplayBoard(room);
+                WriteBoard(room);
                 if (room.ResultCode != null)
                 {
-                    HandleGameEnd(room);
+                    GameEnd(room);
                     return;
                 }
                 Console.Write($"\n     {room.Message}\n");
@@ -183,12 +180,12 @@ namespace ConnectFour.App
                 }
                 else if (room.LocalPlayerNum != room.CurrentPlayerNum)
                 {
-                    room = roomBll.LetThemPlay(room);
+                    room = roomBll.WaitForOpponentToPlay(room);
                 }
             }
         }
 
-        private static void HandleGameEnd(IRoomModel roomModel)
+        private static void GameEnd(IRoomModel roomModel)
         {
             if (roomModel.ResultCode == 0)
             {
@@ -210,7 +207,7 @@ namespace ConnectFour.App
             Console.ReadKey(intercept: true);
         }
 
-        private static void JoinMultiPlayerGame()
+        private static void HandleJoiningGame()
         {
             IRoomModel room = new RoomModel();
             //initializes variables for the line that the user will be writing at with these two ints
@@ -269,7 +266,7 @@ namespace ConnectFour.App
             GamePlayLoop(room, roomBll);
         }
 
-        private static void LocalGameAgainstAI()
+        private static void HandleNpcGame()
         {
             if (_localPlayerName?.Length == 0)
             {
@@ -284,10 +281,7 @@ namespace ConnectFour.App
             WriteTitle();
 
             IRoomBLL roomBll = new NPCRoomBLL();
-            IRoomModel room = roomBll.AddPlayerToRoom(
-                _localPlayerName,
-                roomBll.InsertNewRoom()
-            );
+            IRoomModel room = roomBll.AddPlayerToRoom(_localPlayerName, roomBll.AddNewRoom());
             string opponentName =
                 (room.LocalPlayerNum == 1) ? room.Players[1].Name : room.Players[0].Name;
 
@@ -374,7 +368,7 @@ namespace ConnectFour.App
             return sb.ToString();
         }
 
-        private static void DisplayAllResults()
+        private static void HandleDisplayingResults()
         {
             RoomBLL roomBll = new RoomBLL();
             List<IResultModel> results = roomBll.GetAllFinished();
@@ -533,7 +527,7 @@ namespace ConnectFour.App
             return sb.ToString();
         }
 
-        private static void DisplayBoard(IRoomModel room)
+        private static void WriteBoard(IRoomModel room)
         {
             const string noPiece = "     ";
             string p1Piece = $"░ {room.Players[0].Symbol} ░";
