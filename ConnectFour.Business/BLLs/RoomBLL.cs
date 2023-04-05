@@ -83,7 +83,7 @@ namespace ConnectFour.Business.BLLs
             room.ResultCode = DetermineResultCode(room, turn);
             if (room.ResultCode != null)
             {
-                UpdateRoomResultCode((int)room.Id, (int)room.ResultCode);
+                SetRoomResultCode((int)room.Id, (int)room.ResultCode);
             }
             _turnBll.AddTurnToRoom(turn, (int)room.Id);
             return room;
@@ -95,9 +95,9 @@ namespace ConnectFour.Business.BLLs
             {
                 return null;
             }
-            if (room.CheckForWin(turn))
+            if (room.WillTurnWin(turn))
             {
-                return room.GetPlayerNum(turn.Num);
+                return room.DeterminePlayerNum(turn.Num);
             }
             else if (room.Turns.Count >= room.Board.GetLength(0) * room.Board.GetLength(1))
             {
@@ -106,15 +106,15 @@ namespace ConnectFour.Business.BLLs
             return null;
         }
 
-        public int InsertNewRoom()
+        public int AddNewRoom()
         {
-            return _repository.InsertNewRoom();
+            return _repository.AddNewRoom();
         }
 
         public List<IResultModel> GetAllFinished()
         {
             List<IResultModel> models = new List<IResultModel>();
-            List<ResultDTO> dtos = _repository.GetAllFinished();
+            List<ResultDTO> dtos = _repository.GetAllFinishedResults();
             for (int i = 0; i < dtos.Count; i++)
             {
                 models.Add(ConvertToResultModel(dtos[i]));
@@ -141,7 +141,7 @@ namespace ConnectFour.Business.BLLs
                 Players = playerNames,
                 ResultCode = dto.ResultCode,
                 WinnerName = DetermineWinner(dto.ResultCode, dto.Players),
-                LastTurnNum = dto.LastTurnNum.ToString()
+                LastTurnNum = dto.LastTurnNum
             };
             return model;
         }
@@ -169,9 +169,9 @@ namespace ConnectFour.Business.BLLs
             return resultModel;
         }
 
-        public IRoomModel UpdateWithLastTurn(IRoomModel room)
+        public IRoomModel UpdateWithLatestTurn(IRoomModel room)
         {
-            ITurnModel lastTurn = _turnBll.GetLastTurnInRoom((int)room.Id);
+            ITurnModel lastTurn = _turnBll.GetLatestTurnInRoom((int)room.Id);
 
             if (lastTurn == null && room.LocalPlayerNum == 1)
             {
@@ -261,13 +261,13 @@ namespace ConnectFour.Business.BLLs
             return room;
         }
 
-        public virtual IRoomModel LetThemPlay(IRoomModel roomModel)
+        public virtual IRoomModel WaitForOpponentToPlay(IRoomModel roomModel)
         {
             bool isWaiting = true;
             while (isWaiting)
             {
                 int turnNum = roomModel.Turns.Count;
-                UpdateWithLastTurn(roomModel);
+                UpdateWithLatestTurn(roomModel);
 
                 if (roomModel.ResultCode != null)
                 {
@@ -276,7 +276,7 @@ namespace ConnectFour.Business.BLLs
 
                 if (turnNum == roomModel.Turns.Count)
                 {
-                    Thread.Sleep(2000);
+                    Thread.Sleep(1000);
                 }
 
                 if (roomModel.CurrentPlayerNum == roomModel.LocalPlayerNum)
@@ -287,9 +287,9 @@ namespace ConnectFour.Business.BLLs
             return roomModel;
         }
 
-        private void UpdateRoomResultCode(int roomId, int resultCode)
+        private void SetRoomResultCode(int roomId, int resultCode)
         {
-            _repository.UpdateRoomResultCode(roomId, resultCode);
+            _repository.SetRoomResultCode(roomId, resultCode);
         }
 
         internal RoomDTO ConvertToDto(IRoomModel model)

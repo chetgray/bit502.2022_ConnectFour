@@ -35,16 +35,16 @@ namespace ConnectFour.App
                 switch (userResponse)
                 {
                     case "1":
-                        LocalGameAgainstAI();
+                        HandleNpcGame();
                         break;
                     case "2":
-                        HostNewGame();
+                        HandleHostingGame();
                         break;
                     case "3":
-                        JoinMultiPlayerGame();
+                        HandleJoiningGame();
                         break;
                     case "4":
-                        DisplayAllResults();
+                        HandleDisplayingResults();
                         break;
                     case "5":
                         isChoosing = false;
@@ -60,7 +60,7 @@ namespace ConnectFour.App
             }
         }
 
-        private static void HostNewGame()
+        private static void HandleHostingGame()
         {
             IPlayerModel localPlayer = new PlayerModel();
             bool isWaiting = true;
@@ -79,10 +79,7 @@ namespace ConnectFour.App
             WriteTitle();
 
             IRoomBLL roomBll = new RoomBLL();
-            IRoomModel room = roomBll.AddPlayerToRoom(
-                _localPlayerName,
-                roomBll.InsertNewRoom()
-            );
+            IRoomModel room = roomBll.AddPlayerToRoom(_localPlayerName, roomBll.AddNewRoom());
             int localPlayerNum = room.LocalPlayerNum;
 
             if (room.Players[0] == null)
@@ -100,7 +97,7 @@ namespace ConnectFour.App
 
             while (isWaiting)
             {
-                Thread.Sleep(2000);
+                Thread.Sleep(1000);
                 room = roomBll.GetRoomById((int)room.Id);
                 room.LocalPlayerNum = localPlayerNum;
 
@@ -149,20 +146,19 @@ namespace ConnectFour.App
         private static void GamePlayLoop(IRoomModel room, IRoomBLL roomBll)
         {
             bool isPlaying = true;
-            room = roomBll.UpdateWithLastTurn(room);
+            room = roomBll.UpdateWithLatestTurn(room);
             while (isPlaying)
             {
                 Console.Clear();
                 Console.Write("             ");
                 WriteTitle();
-                DisplayBoard(room);
+                WriteBoard(room);
                 if (room.ResultCode != null)
                 {
-                    HandleGameEnd(room);
+                    GameEnd(room);
                     return;
                 }
                 Console.Write($"\n     {room.Message}\n");
-                Console.ResetColor();
                 if (room.LocalPlayerNum == room.CurrentPlayerNum)
                 {
                     Console.Write("\n     --> ");
@@ -184,12 +180,12 @@ namespace ConnectFour.App
                 }
                 else if (room.LocalPlayerNum != room.CurrentPlayerNum)
                 {
-                    room = roomBll.LetThemPlay(room);
+                    room = roomBll.WaitForOpponentToPlay(room);
                 }
             }
         }
 
-        private static void HandleGameEnd(IRoomModel roomModel)
+        private static void GameEnd(IRoomModel roomModel)
         {
             if (roomModel.ResultCode == 0)
             {
@@ -203,7 +199,6 @@ namespace ConnectFour.App
                     roomModel.Players[(int)roomModel.ResultCode - 1].Color
                 );
             }
-            Console.ResetColor();
             Console.WriteLine("\n");
             WriteResultTable(
                 new List<IResultModel> { RoomBLL.ConvertToResultModel(roomModel) }
@@ -212,7 +207,7 @@ namespace ConnectFour.App
             Console.ReadKey(intercept: true);
         }
 
-        private static void JoinMultiPlayerGame()
+        private static void HandleJoiningGame()
         {
             IRoomModel room = new RoomModel();
             //initializes variables for the line that the user will be writing at with these two ints
@@ -236,7 +231,6 @@ namespace ConnectFour.App
                 Console.WriteLine("What is the Room Id you would like to join?");
                 Console.Write("--> ");
                 WriteInColor($"\n\n{room.Message}", ConsoleColor.Red);
-                Console.ResetColor();
                 string userInput = GetUserInput(inputLineWidth, inputLineFromTopLine);
                 if (userInput == null)
                 {
@@ -272,7 +266,7 @@ namespace ConnectFour.App
             GamePlayLoop(room, roomBll);
         }
 
-        private static void LocalGameAgainstAI()
+        private static void HandleNpcGame()
         {
             if (_localPlayerName?.Length == 0)
             {
@@ -287,10 +281,7 @@ namespace ConnectFour.App
             WriteTitle();
 
             IRoomBLL roomBll = new NPCRoomBLL();
-            IRoomModel room = roomBll.AddPlayerToRoom(
-                _localPlayerName,
-                roomBll.InsertNewRoom()
-            );
+            IRoomModel room = roomBll.AddPlayerToRoom(_localPlayerName, roomBll.AddNewRoom());
             string opponentName =
                 (room.LocalPlayerNum == 1) ? room.Players[1].Name : room.Players[0].Name;
 
@@ -315,7 +306,6 @@ namespace ConnectFour.App
                 Console.Write("What is your name?\n");
                 Console.Write("--> ");
                 WriteInColor($"\n\n{message}", ConsoleColor.Red);
-                Console.ResetColor();
                 _localPlayerName = GetUserInput(inputLineWidth, inputLineFromTopLine);
                 if (_localPlayerName != null && string.IsNullOrWhiteSpace(_localPlayerName))
                 {
@@ -378,7 +368,7 @@ namespace ConnectFour.App
             return sb.ToString();
         }
 
-        private static void DisplayAllResults()
+        private static void HandleDisplayingResults()
         {
             IRoomBLL roomBll = new RoomBLL();
             List<IResultModel> results = roomBll.GetAllFinished();
@@ -432,7 +422,7 @@ namespace ConnectFour.App
                     results[r - 1].WinnerName.Length <= maxPlayerNameLength
                         ? results[r - 1].WinnerName
                         : $"{results[r - 1].WinnerName.Substring(0, maxPlayerNameLength - 3)}...";
-                resultTable[r, 6] = results[r - 1].LastTurnNum;
+                resultTable[r, 6] = results[r - 1].LastTurnNum.ToString();
                 // update column widths if necessary
                 for (int c = 0; c < resultTable.GetLength(1); c++)
                 {
@@ -537,7 +527,7 @@ namespace ConnectFour.App
             return sb.ToString();
         }
 
-        private static void DisplayBoard(IRoomModel room)
+        private static void WriteBoard(IRoomModel room)
         {
             const string noPiece = "     ";
             string p1Piece = $"░ {room.Players[0].Symbol} ░";
@@ -569,33 +559,28 @@ namespace ConnectFour.App
                 }
             }
 
-            Console.ForegroundColor = ConsoleColor.DarkBlue;
-            Console.WriteLine("\n    ╔═════╦═════╦═════╦═════╦═════╦═════╦═════╗");
+            WriteInColor("\n    ╔═════╦═════╦═════╦═════╦═════╦═════╦═════╗\n", ConsoleColor.DarkBlue);
 
             for (int r = 0; r < room.Board.GetLength(0); r++)
             {
                 Console.Write("    ");
                 for (int c = 0; c < room.Board.GetLength(1); c++)
                 {
-                    Console.Write("║");
+                    WriteInColor("║", ConsoleColor.DarkBlue);
                     if (room.Board[r, c] == 1)
                     {
-                        Console.ForegroundColor = room.Players[0].Color;
-                        Console.Write(p1Piece);
+                        WriteInColor(p1Piece, room.Players[0].Color);
                     }
                     else if (room.Board[r, c] == 2)
                     {
-                        Console.ForegroundColor = room.Players[1].Color;
-                        Console.Write(p2Piece);
+                        WriteInColor(p2Piece, room.Players[1].Color);
                     }
                     else
                     {
                         Console.Write(noPiece);
                     }
-                    Console.ForegroundColor = ConsoleColor.DarkBlue;
                 }
-                Console.Write("║");
-                Console.ResetColor();
+                WriteInColor("║", ConsoleColor.DarkBlue);
                 switch (r)
                 {
                     case 1:
@@ -603,17 +588,13 @@ namespace ConnectFour.App
                         break;
 
                     case 2:
-                        Console.Write("    Player 1: ");
-                        Console.ForegroundColor = room.Players[0].Color;
-                        Console.Write(room.Players[0].Name);
-                        Console.ResetColor();
+                        Console.Write($"    Player 1: ");
+                        WriteInColor(room.Players[0].Name, room.Players[0].Color);
                         break;
 
                     case 3:
-                        Console.Write("    Player 2: ");
-                        Console.ForegroundColor = room.Players[1].Color;
-                        Console.Write(room.Players[1].Name);
-                        Console.ResetColor();
+                        Console.Write($"    Player 2: ");
+                        WriteInColor(room.Players[1].Name, room.Players[1].Color);
                         break;
 
                     case 4:
@@ -633,15 +614,12 @@ namespace ConnectFour.App
 
                         if (room.CurrentTurnNum % 2 == 0)
                         {
-                            Console.ForegroundColor = room.Players[1].Color;
-                            Console.Write(room.Players[1].Name);
+                            WriteInColor(room.Players[1].Name, room.Players[1].Color);
                         }
                         else
                         {
-                            Console.ForegroundColor = room.Players[0].Color;
-                            Console.Write(room.Players[0].Name);
+                            WriteInColor(room.Players[0].Name, room.Players[0].Color);
                         }
-                        Console.ForegroundColor = ConsoleColor.DarkBlue;
                         break;
 
                     default:
@@ -650,13 +628,10 @@ namespace ConnectFour.App
 
                 if (r != 5)
                 {
-                    Console.ForegroundColor = ConsoleColor.DarkBlue;
-                    Console.WriteLine("\n    ╠═════╬═════╬═════╬═════╬═════╬═════╬═════╣");
+                    WriteInColor("\n    ╠═════╬═════╬═════╬═════╬═════╬═════╬═════╣\n", ConsoleColor.DarkBlue);
                 }
             }
-
-            Console.WriteLine("\n    ╚═════╩═════╩═════╩═════╩═════╩═════╩═════╝");
-            Console.ResetColor();
+            WriteInColor("\n    ╚═════╩═════╩═════╩═════╩═════╩═════╩═════╝\n", ConsoleColor.DarkBlue);
             Console.WriteLine("       1     2     3     4     5     6     7");
         }
 
@@ -668,13 +643,13 @@ namespace ConnectFour.App
             WriteInColor("NNE", ConsoleColor.DarkCyan);
             WriteInColor("C", ConsoleColor.DarkRed);
             WriteInColor("T4\n\n", ConsoleColor.DarkCyan);
-            Console.ResetColor();
         }
 
         private static void WriteInColor(string text, ConsoleColor color)
         {
             Console.ForegroundColor = color;
             Console.Write(text);
+            Console.ResetColor();
         }
     }
 }

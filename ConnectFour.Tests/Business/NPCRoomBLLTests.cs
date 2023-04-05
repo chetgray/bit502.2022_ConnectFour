@@ -23,7 +23,7 @@ namespace ConnectFour.Tests.Business
         [DataRow(6)]
         [DataRow(7)]
         [TestMethod]
-        public void GetValidPlay_LastOpenColumn_LastOpenSpaceReturned(int colNum)
+        public void RandyTakesATurn_LastOpenColumn_LastOpenSpaceReturned(int colNum)
         {
             // Arrange
             IRoomModel room = new RoomModel()
@@ -80,7 +80,7 @@ namespace ConnectFour.Tests.Business
         }
 
         [TestMethod]
-        public void GetValidPlays_NoPlaysOnBoard_GetsAllPossiblePlays()
+        public void GetValidPlays_NoPlaysOnBoard_AllColumnsValid()
         {
             // Arrange
             IRoomModel room = new RoomModel()
@@ -98,20 +98,20 @@ namespace ConnectFour.Tests.Business
                     //1, 2, 3, 4, 5, 6, 7 - ColNum
                 }
             };
-
-            // Act
             IRoomRepository repository = new RoomRepositoryStub();
             IPlayerBLL playerBll = new PlayerBLLStub();
             ITurnBLL turnBll = new TurnBLLStub();
             NPCRoomBLL bll = new NPCRoomBLL(repository, playerBll, turnBll);
-            List<(int, int)> possiblePlays = bll.GetValidPlays(room);
+
+            // Act
+            List<(int, int)> validPlays = bll.GetValidPlays(room);
 
             // Assert
-            Assert.AreEqual(7, possiblePlays.Count);
+            Assert.AreEqual(7, validPlays.Count);
         }
 
         [TestMethod]
-        public void LetThemPlay_Player1TurnNPC2Waiting_Player1TakesTurnBeforeNPCTakesTurnAfter()
+        public void WaitForOpponentToPlay_Player1TurnNPC2Waiting_Player1TakesTurnBeforeNPCTakesTurnAfter()
         {
             // Arrange
             IRoomRepository repository = new RoomRepositoryStub();
@@ -167,14 +167,14 @@ namespace ConnectFour.Tests.Business
             };
 
             // Act
-            IRoomModel result = bll.LetThemPlay(room);
+            IRoomModel result = bll.WaitForOpponentToPlay(room);
 
             // Assert
             Assert.AreEqual(1, result.CurrentPlayerNum);
         }
 
         [TestMethod]
-        public void LetThemPlay_NPC1TurnPlayer2Waiting_NPCTakesTurnPlayer1CurrentTurn()
+        public void WaitForOpponentToPlay_NPC1TurnPlayer2Waiting_NPCTakesTurnPlayer1CurrentTurn()
         {
             // Arrange
             IRoomRepository repository = new RoomRepositoryStub();
@@ -219,7 +219,7 @@ namespace ConnectFour.Tests.Business
             };
 
             // Act
-            IRoomModel result = bll.LetThemPlay(room);
+            IRoomModel result = bll.WaitForOpponentToPlay(room);
 
             // Assert
             Assert.AreEqual(2, result.CurrentPlayerNum);

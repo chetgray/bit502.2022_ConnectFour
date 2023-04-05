@@ -27,7 +27,7 @@ namespace ConnectFour.Business.BLLs
         public NPCRoomBLL(IRoomRepository repository, IPlayerBLL playerBll, ITurnBLL turnBll)
             : base(repository, playerBll, turnBll) { }
 
-        public override IRoomModel LetThemPlay(IRoomModel room)
+        public override IRoomModel WaitForOpponentToPlay(IRoomModel room)
         {
             ITurnModel turn = RandyTakesATurn(room);
             room = AddTurnToRoom(turn, room);

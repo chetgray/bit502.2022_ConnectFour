@@ -32,15 +32,15 @@ namespace ConnectFour.Business.BLLs
             _repository = repository ?? throw new ArgumentNullException(nameof(repository));
         }
 
-        public ITurnModel GetLastTurnInRoom(int roomId)
+        public ITurnModel GetLatestTurnInRoom(int roomId)
         {
-            TurnDTO dto = _repository.GetLastTurnInRoom(roomId);
+            TurnDTO dto = _repository.GetLatestTurnInRoom(roomId);
             return ConvertToModel(dto);
         }
 
         public void AddTurnToRoom(ITurnModel model, int roomId)
         {
-            TurnDTO dto = ConvertToDTO(model);
+            TurnDTO dto = ConvertToDto(model);
             dto.RoomId = roomId;
             _repository.AddTurnToRoom(dto);
         }
@@ -62,7 +62,7 @@ namespace ConnectFour.Business.BLLs
             return model;
         }
 
-        private TurnDTO ConvertToDTO(ITurnModel model)
+        private TurnDTO ConvertToDto(ITurnModel model)
         {
             TurnDTO dto = new TurnDTO
             {

@@ -8,15 +8,15 @@ using ConnectFour.Data.Repositories.Interfaces;
 
 namespace ConnectFour.Data.Repositories
 {
-    public class TurnRepository : BaseRepository, ITurnRepository
+    public class TurnRepository : RepositoryBase, ITurnRepository
     {
-        /// <inheritdoc cref="BaseRepository()"/>
+        /// <inheritdoc cref="RepositoryBase()"/>
         public TurnRepository() { }
 
         /// <inheritdoc/>
         public TurnRepository(IDAL dal) : base(dal) { }
 
-        public TurnDTO GetLastTurnInRoom(int roomId)
+        public TurnDTO GetLatestTurnInRoom(int roomId)
         {
             Dictionary<string, object> paramDictionary = new Dictionary<string, object>
             {

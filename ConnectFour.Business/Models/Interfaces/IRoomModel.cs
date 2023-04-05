@@ -30,11 +30,11 @@ namespace ConnectFour.Business.Models.Interfaces
         /// <see langword="true"/> if the <paramref name="turn"/> will result in a win, otherwise <see langword="false"/>.
         /// </returns>
         /// <param name="turn">The <see cref="ITurnModel"/> to check.</param>
-        bool CheckForWin(ITurnModel turn);
+        bool WillTurnWin(ITurnModel turn);
 
         int CurrentPlayerNum { get; }
         int LocalPlayerNum { get; set; }
-        int GetPlayerNum(int turnNum);
+        int DeterminePlayerNum(int turnNum);
 
         /// <summary>
         /// Gets the next row in the given column.

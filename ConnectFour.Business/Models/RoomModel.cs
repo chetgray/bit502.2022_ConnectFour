@@ -20,16 +20,16 @@ namespace ConnectFour.Business.Models
 
         public string Message { get; set; }
 
-        public int CurrentPlayerNum => GetPlayerNum(CurrentTurnNum);
+        public int CurrentPlayerNum => DeterminePlayerNum(CurrentTurnNum);
 
-        public int GetPlayerNum(int turnNum)
+        public int DeterminePlayerNum(int turnNum)
         {
             return ((turnNum - 1) % Players.Length) + 1;
         }
 
         public int LocalPlayerNum { get; set; }
 
-        public bool CheckForWin(ITurnModel turn)
+        public bool WillTurnWin(ITurnModel turn)
         {
             // Bail if the turn's cell is already occupied.
             if (Board[turn.RowNum - 1, turn.ColNum - 1] != 0)
@@ -37,7 +37,7 @@ namespace ConnectFour.Business.Models
                 return false;
             }
 
-            int playerNum = GetPlayerNum(turn.Num);
+            int playerNum = DeterminePlayerNum(turn.Num);
 
             // Check for four-in-a-row in each direction.
             foreach (
@@ -89,9 +89,9 @@ namespace ConnectFour.Business.Models
                 );
             }
             int turnsInColumnCount = 0;
-            foreach (ITurnModel turnModel in Turns)
+            foreach (ITurnModel turn in Turns)
             {
-                if (turnModel.ColNum == colNum)
+                if (turn.ColNum == colNum)
                 {
                     turnsInColumnCount++;
                 }

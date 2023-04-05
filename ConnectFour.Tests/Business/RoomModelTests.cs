@@ -10,7 +10,7 @@ namespace ConnectFour.Tests.Business
     public class RoomModelTests
     {
         [TestMethod]
-        public void CheckForWin_FourInARowInterruptedByOpponent_WontWin()
+        public void WillTurnWin_FourInARowInterruptedByOpponent_WontWin()
         {
             // Arrange
             IRoomModel room = new RoomModel()
@@ -35,7 +35,7 @@ namespace ConnectFour.Tests.Business
             };
 
             // Act
-            bool result = room.CheckForWin(turn);
+            bool result = room.WillTurnWin(turn);
 
             // Assert
             Assert.IsFalse(result);
@@ -59,7 +59,7 @@ namespace ConnectFour.Tests.Business
         [DataRow(4, 1)]
         [DataRow(4, 2)]
         [DataRow(4, 3)]
-        public void CheckForWin_FourthPieceDiagonalAscending_WillWin(
+        public void WillTurnWin_FourthPieceDiagonalAscending_WillWin(
             int runStartColNum,
             int positionWithinRun
         )
@@ -88,7 +88,7 @@ namespace ConnectFour.Tests.Business
             }
 
             // Act
-            bool result = room.CheckForWin(turn);
+            bool result = room.WillTurnWin(turn);
 
             // Assert
             Assert.IsTrue(result);
@@ -112,7 +112,7 @@ namespace ConnectFour.Tests.Business
         [DataRow(4, 1)]
         [DataRow(4, 2)]
         [DataRow(4, 3)]
-        public void CheckForWin_FourthPieceDiagonalDescending_WillWin(
+        public void WillTurnWin_FourthPieceDiagonalDescending_WillWin(
             int runStartColNum,
             int positionWithinRun
         )
@@ -141,7 +141,7 @@ namespace ConnectFour.Tests.Business
             }
 
             // Act
-            bool result = room.CheckForWin(turn);
+            bool result = room.WillTurnWin(turn);
 
             // Assert
             Assert.IsTrue(result);
@@ -165,7 +165,7 @@ namespace ConnectFour.Tests.Business
         [DataRow(4, 1)]
         [DataRow(4, 2)]
         [DataRow(4, 3)]
-        public void CheckForWin_FourthPieceHorizontal_WillWin(
+        public void WillTurnWin_FourthPieceHorizontal_WillWin(
             int runStartColNum,
             int positionWithinRun
         )
@@ -190,7 +190,7 @@ namespace ConnectFour.Tests.Business
             }
 
             // Act
-            bool result = room.CheckForWin(turn);
+            bool result = room.WillTurnWin(turn);
 
             // Assert
             Assert.IsTrue(result);
@@ -198,7 +198,7 @@ namespace ConnectFour.Tests.Business
 
         // ↑
         [TestMethod]
-        public void CheckForWin_FourthPieceUp_WillWin()
+        public void WillTurnWin_FourthPieceUp_WillWin()
         {
             // Arrange
             IRoomModel room = new RoomModel()
@@ -223,14 +223,14 @@ namespace ConnectFour.Tests.Business
             };
 
             // Act
-            bool result = room.CheckForWin(turn);
+            bool result = room.WillTurnWin(turn);
 
             // Assert
             Assert.IsTrue(result);
         }
 
         [TestMethod]
-        public void CheckForWin_PieceCompletesOpponentsFourInARow_WontWin()
+        public void WillTurnWin_PieceCompletesOpponentsFourInARow_WontWin()
         {
             // Arrange
             IRoomModel room = new RoomModel()
@@ -255,7 +255,7 @@ namespace ConnectFour.Tests.Business
             };
 
             // Act
-            bool result = room.CheckForWin(turn);
+            bool result = room.WillTurnWin(turn);
 
             // Assert
             Assert.IsFalse(result);
@@ -264,7 +264,7 @@ namespace ConnectFour.Tests.Business
         [TestMethod]
         [DataRow(1, 1, 1, 1)]
         [DataRow(4, 3, 2, 1)]
-        public void CheckForWin_PlayInOccupiedCell_WontWin(
+        public void WillTurnWin_PlayInOccupiedCell_WontWin(
             int rowNum,
             int colNum,
             int existingPieceNum,
@@ -282,7 +282,7 @@ namespace ConnectFour.Tests.Business
             };
 
             // Act
-            bool result = room.CheckForWin(turn);
+            bool result = room.WillTurnWin(turn);
 
             // Assert
             Assert.IsFalse(result);
