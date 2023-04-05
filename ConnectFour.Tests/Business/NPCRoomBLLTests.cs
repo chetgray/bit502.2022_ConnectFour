@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 
 using ConnectFour.Business.BLLs;
@@ -221,6 +221,108 @@ namespace ConnectFour.Tests.Business
         
             // Assert
             Assert.AreEqual(2, result.CurrentPlayerNum);
+        }
+
+        [TestMethod]
+        public void OpheliaTakesATurn_BlockingPlayAvailable_ReturnsBlockingTurn()
+        {
+            // Arrange
+            IRoomModel room = new RoomModel
+            {
+                Board = new int[,]
+                {
+                    //                      index / RowNum
+                    { 0, 0, 0, 0, 0, 0, 0 }, // 0 / 1
+                    { 0, 0, 0, 0, 0, 0, 0 }, // 1 / 2
+                    { 0, 0, 0, 0, 0, 0, 0 }, // 2 / 3
+                    { 0, 0, 0, 0, 0, 0, 0 }, // 3 / 4
+                    { 0, 0, 0, 0, 0, 0, 0 }, // 4 / 5
+                    { 1, 1, 1, 0, 0, 0, 0 }, // 5 / 6
+                    //0, 1, 2, 3, 4, 5, 6 - index
+                    //1, 2, 3, 4, 5, 6, 7 - ColNum
+                },
+                CurrentTurnNum = 6,
+            };
+            for (int r = 0; r < room.Board.GetLength(0); r++)
+            {
+                for (int c = 0; c < room.Board.GetLength(1); c++)
+                {
+                    if (room.Board[r, c] != 0)
+                    {
+                        room.Turns.Add(
+                            new TurnModel
+                            {
+                                ColNum = c + 1,
+                                RowNum = r + 1,
+                                Num = room.Board[r, c]
+                            }
+                        );
+                    }
+                }
+            }
+            IRoomRepository repository = new RoomRepositoryStub();
+            IPlayerBLL playerBLL = new PlayerBLLStub();
+            ITurnBLL turnBLL = new TurnBLLStub();
+            NPCRoomBLL bll = new NPCRoomBLL(repository, playerBLL, turnBLL);
+            TurnModel expected = new TurnModel { RowNum = 6, ColNum = 4 };
+
+            // Act
+            TurnModel actual = bll.OpheliaTakesATurn(room);
+
+            // Assert
+            Assert.AreEqual(expected.RowNum, actual.RowNum);
+            Assert.AreEqual(expected.ColNum, actual.ColNum);
+        }
+
+        [TestMethod]
+        public void OpheliaTakesATurn_WinningPlayAvailable_ReturnsWinningTurn()
+        {
+            // Arrange
+            IRoomModel room = new RoomModel
+            {
+                Board = new int[,]
+                {
+                    //                      index / RowNum
+                    { 0, 0, 0, 0, 0, 0, 0 }, // 0 / 1
+                    { 0, 0, 0, 0, 0, 0, 0 }, // 1 / 2
+                    { 0, 0, 0, 0, 0, 0, 0 }, // 2 / 3
+                    { 1, 0, 0, 0, 0, 0, 0 }, // 3 / 4
+                    { 1, 0, 0, 0, 0, 0, 0 }, // 4 / 5
+                    { 1, 0, 0, 0, 0, 0, 0 }, // 5 / 6
+                    //0, 1, 2, 3, 4, 5, 6 - index
+                    //1, 2, 3, 4, 5, 6, 7 - ColNum
+                },
+                CurrentTurnNum = 7,
+            };
+            for (int r = 0; r < room.Board.GetLength(0); r++)
+            {
+                for (int c = 0; c < room.Board.GetLength(1); c++)
+                {
+                    if (room.Board[r, c] != 0)
+                    {
+                        room.Turns.Add(
+                            new TurnModel
+                            {
+                                ColNum = c + 1,
+                                RowNum = r + 1,
+                                Num = room.Board[r, c]
+                            }
+                        );
+                    }
+                }
+            }
+            IRoomRepository repository = new RoomRepositoryStub();
+            IPlayerBLL playerBLL = new PlayerBLLStub();
+            ITurnBLL turnBLL = new TurnBLLStub();
+            NPCRoomBLL bll = new NPCRoomBLL(repository, playerBLL, turnBLL);
+            TurnModel expected = new TurnModel { RowNum = 3, ColNum = 1 };
+
+            // Act
+            TurnModel actual = bll.OpheliaTakesATurn(room);
+
+            // Assert
+            Assert.AreEqual(expected.RowNum, actual.RowNum);
+            Assert.AreEqual(expected.ColNum, actual.ColNum);
         }
     }
 }
