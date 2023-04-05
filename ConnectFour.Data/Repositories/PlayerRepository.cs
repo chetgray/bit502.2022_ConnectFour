@@ -7,9 +7,9 @@ using ConnectFour.Data.Repositories.Interfaces;
 
 namespace ConnectFour.Data.Repositories
 {
-    public class PlayerRepository : BaseRepository, IPlayerRepository
+    public class PlayerRepository : RepositoryBase, IPlayerRepository
     {
-        /// <inheritdoc cref="BaseRepository()"/>
+        /// <inheritdoc cref="RepositoryBase()"/>
         public PlayerRepository() { }
 
         /// <inheritdoc/>

@@ -9,7 +9,7 @@ namespace ConnectFour.Tests.TestDoubles
 
         public void AddTurnToRoom(ITurnModel turn, int roomId) { }
 
-        ITurnModel ITurnBLL.GetLastTurnInRoom(int roomId)
+        ITurnModel ITurnBLL.GetLatestTurnInRoom(int roomId)
         {
             return TestModel;
         }

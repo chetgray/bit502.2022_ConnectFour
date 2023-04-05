@@ -6,10 +6,10 @@ namespace ConnectFour.Data.Repositories.Interfaces
 {
     public interface IRoomRepository
     {
-        int InsertNewRoom();
-        List<ResultDTO> GetAllFinished();
+        int AddNewRoom();
+        List<ResultDTO> GetAllFinishedResults();
         RoomDTO GetRoomById(int roomId);
 
-        void UpdateRoomResultCode(int roomId, int resultCode);
+        void SetRoomResultCode(int roomId, int resultCode);
     }
 }

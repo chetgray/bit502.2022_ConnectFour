@@ -9,15 +9,15 @@ using ConnectFour.Data.Repositories.Interfaces;
 
 namespace ConnectFour.Data.Repositories
 {
-    public class RoomRepository : BaseRepository, IRoomRepository
+    public class RoomRepository : RepositoryBase, IRoomRepository
     {
-        /// <inheritdoc cref="BaseRepository()"/>
+        /// <inheritdoc cref="RepositoryBase()"/>
         public RoomRepository() { }
 
         /// <inheritdoc/>
         public RoomRepository(IDAL dal) : base(dal) { }
 
-        public int InsertNewRoom()
+        public int AddNewRoom()
         {
             Dictionary<string, object> parameters = new Dictionary<string, object>();
             int roomId = Convert.ToInt32(
@@ -27,7 +27,7 @@ namespace ConnectFour.Data.Repositories
             return roomId;
         }
 
-        public List<ResultDTO> GetAllFinished()
+        public List<ResultDTO> GetAllFinishedResults()
         {
             Dictionary<string, object> parameters = new Dictionary<string, object>();
             DataTable resultTable = _dal.GetTableFromStoredProcedure(
@@ -55,7 +55,7 @@ namespace ConnectFour.Data.Repositories
             return ConvertToDto(dataTable.Rows[0]);
         }
 
-        public void UpdateRoomResultCode(int roomId, int resultCode)
+        public void SetRoomResultCode(int roomId, int resultCode)
         {
             Dictionary<string, object> paramDictionary = new Dictionary<string, object>
             {

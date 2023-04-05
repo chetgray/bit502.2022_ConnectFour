@@ -6,14 +6,14 @@ namespace ConnectFour.Business.BLLs.Interfaces
 {
     public interface IRoomBLL
     {
-        int InsertNewRoom();
+        int AddNewRoom();
         IRoomModel AddPlayerToRoom(string localPlayerName, int roomId);
 
         IRoomModel TryAddTurnToRoom(int colNum, IRoomModel room);
 
         List<IResultModel> GetAllFinished();
 
-        IRoomModel UpdateWithLastTurn(IRoomModel roomModel);
+        IRoomModel UpdateWithLatestTurn(IRoomModel roomModel);
 
         /// <summary>
         /// Gets a <see cref="IRoomModel"/> by its <paramref name="roomId"/>.
@@ -27,6 +27,6 @@ namespace ConnectFour.Business.BLLs.Interfaces
         /// </returns>
         IRoomModel GetRoomById(int roomId);
 
-        IRoomModel LetThemPlay(IRoomModel roomModel);
+        IRoomModel WaitForOpponentToPlay(IRoomModel roomModel);
     }
 }
