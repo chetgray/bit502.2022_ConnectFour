@@ -6,8 +6,6 @@ namespace ConnectFour.Tests.Business
     public class PlayerBLLTests
     {
         [TestMethod]
-        public void TestMethod1()
-        {
-        }
+        public void TestMethod1() { }
     }
 }

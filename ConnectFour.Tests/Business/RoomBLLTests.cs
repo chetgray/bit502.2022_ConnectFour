@@ -29,14 +29,14 @@ namespace ConnectFour.Tests.Business
             {
                 TestDto = new RoomDTO { Id = 1, ResultCode = resultCode }
             };
-            IPlayerBLL playerBLL = new PlayerBLLStub { TestModels = new IPlayerModel[2] };
-            ITurnBLL turnBLL = new TurnBLLStub();
-            IRoomBLL bll = new RoomBLL(repository, playerBLL, turnBLL);
+            IPlayerBLL playerBll = new PlayerBLLStub { TestModels = new IPlayerModel[2] };
+            ITurnBLL turnBll = new TurnBLLStub();
+            IRoomBLL bll = new RoomBLL(repository, playerBll, turnBll);
 
             // Act & Assert
             Assert.ThrowsException<ArgumentException>(
                 () => bll.AddPlayerToRoom(newPlayerName, 0),
-                $"Room Id 0 is already finished!"
+                "Room Id 0 is already finished!"
             );
         }
 
@@ -46,14 +46,14 @@ namespace ConnectFour.Tests.Business
             // Arrange
             const string newPlayerName = "New Player";
             IRoomRepository repository = new RoomRepositoryStub { TestDto = null };
-            IPlayerBLL playerBLL = new PlayerBLLStub();
-            ITurnBLL turnBLL = new TurnBLLStub();
-            IRoomBLL bll = new RoomBLL(repository, playerBLL, turnBLL);
+            IPlayerBLL playerBll = new PlayerBLLStub();
+            ITurnBLL turnBll = new TurnBLLStub();
+            IRoomBLL bll = new RoomBLL(repository, playerBll, turnBll);
 
             // Act & Assert
             Assert.ThrowsException<ArgumentException>(
                 () => bll.AddPlayerToRoom(newPlayerName, 0),
-                $"Room Id 0 does not match any open rooms."
+                "Room Id 0 does not match any open rooms."
             );
         }
 
@@ -66,7 +66,7 @@ namespace ConnectFour.Tests.Business
             {
                 TestDto = new RoomDTO { Id = 0 }
             };
-            IPlayerBLL playerBLL = new PlayerBLLStub
+            IPlayerBLL playerBll = new PlayerBLLStub
             {
                 TestModels = (
                     new IPlayerModel[]
@@ -76,13 +76,13 @@ namespace ConnectFour.Tests.Business
                     }
                 )
             };
-            ITurnBLL turnBLL = new TurnBLLStub();
-            IRoomBLL bll = new RoomBLL(repository, playerBLL, turnBLL);
+            ITurnBLL turnBll = new TurnBLLStub();
+            IRoomBLL bll = new RoomBLL(repository, playerBll, turnBll);
 
             // Act & Assert
             Assert.ThrowsException<ArgumentException>(
                 () => bll.AddPlayerToRoom(newPlayerName, 0),
-                $"Room Id 0 is full!"
+                "Room Id 0 is full!"
             );
         }
 
@@ -95,13 +95,13 @@ namespace ConnectFour.Tests.Business
             {
                 TestDto = new RoomDTO { Id = 1 }
             };
-            IPlayerBLL playerBLL = new PlayerBLLStub
+            IPlayerBLL playerBll = new PlayerBLLStub
             {
                 TestModel = new PlayerModel { Name = newPlayerName, Num = 2 },
                 TestModels = (new IPlayerModel[] { null, null })
             };
-            ITurnBLL turnBLL = new TurnBLLStub();
-            IRoomBLL bll = new RoomBLL(repository, playerBLL, turnBLL);
+            ITurnBLL turnBll = new TurnBLLStub();
+            IRoomBLL bll = new RoomBLL(repository, playerBll, turnBll);
 
             // Act
             IRoomModel resultRoom = bll.AddPlayerToRoom(newPlayerName, 1);
@@ -121,7 +121,7 @@ namespace ConnectFour.Tests.Business
             {
                 TestDto = new RoomDTO { Id = 0 }
             };
-            IPlayerBLL playerBLL = new PlayerBLLStub
+            IPlayerBLL playerBll = new PlayerBLLStub
             {
                 TestModel = new PlayerModel { Name = newPlayerName, Num = 2 },
                 TestModels = (
@@ -132,8 +132,8 @@ namespace ConnectFour.Tests.Business
                     }
                 )
             };
-            ITurnBLL turnBLL = new TurnBLLStub();
-            IRoomBLL bll = new RoomBLL(repository, playerBLL, turnBLL);
+            ITurnBLL turnBll = new TurnBLLStub();
+            IRoomBLL bll = new RoomBLL(repository, playerBll, turnBll);
 
             // Act
             IRoomModel resultRoom = bll.AddPlayerToRoom(newPlayerName, 0);
@@ -152,7 +152,7 @@ namespace ConnectFour.Tests.Business
             {
                 TestDto = new RoomDTO { Id = 0 }
             };
-            IPlayerBLL playerBLL = new PlayerBLLStub
+            IPlayerBLL playerBll = new PlayerBLLStub
             {
                 TestModel = new PlayerModel { Name = newPlayerName, Num = 1 },
                 TestModels = (
@@ -163,8 +163,8 @@ namespace ConnectFour.Tests.Business
                     }
                 )
             };
-            ITurnBLL turnBLL = new TurnBLLStub();
-            IRoomBLL bll = new RoomBLL(repository, playerBLL, turnBLL);
+            ITurnBLL turnBll = new TurnBLLStub();
+            IRoomBLL bll = new RoomBLL(repository, playerBll, turnBll);
 
             // Act
             IRoomModel resultRoom = bll.AddPlayerToRoom(newPlayerName, 0);
@@ -177,15 +177,15 @@ namespace ConnectFour.Tests.Business
         [DataRow(0)]
         [DataRow(8)]
         [TestMethod]
-        public void AddTurnToRoom_ReponseIsNotInRange_ReturnRoomWithErrorMessage(
+        public void TryAddTurnToRoom_ReponseIsNotInRange_ReturnRoomWithErrorMessage(
             int ColumnChoice
         )
         {
             // Arrange
             IRoomRepository repository = new RoomRepositoryStub();
-            IPlayerBLL playerBLL = new PlayerBLLStub();
-            ITurnBLL turnBLL = new TurnBLLStub();
-            IRoomBLL bll = new RoomBLL(repository, playerBLL, turnBLL);
+            IPlayerBLL playerBll = new PlayerBLLStub();
+            ITurnBLL turnBll = new TurnBLLStub();
+            IRoomBLL bll = new RoomBLL(repository, playerBll, turnBll);
             IRoomModel room = new RoomModel
             {
                 Id = 0,
@@ -229,7 +229,7 @@ namespace ConnectFour.Tests.Business
             TimeSpan expected = DateTime.Now - creationTime;
 
             // Act
-            ResultModel model = RoomBLL.ConvertToResultModel(dto);
+            IResultModel model = RoomBLL.ConvertToResultModel(dto);
             TimeSpan actual = model.Duration;
 
             // Assert
@@ -291,14 +291,13 @@ namespace ConnectFour.Tests.Business
         }
 
         [TestMethod]
-        public void GetLastTurnInRoom_RoomCurrentTurnNumOne_NewTurnRecievedIsNull()
+        public void UpdateWithLatestTurn_RoomCurrentTurnNumOne_NewTurnRecievedIsNull()
         {
             // Arrange
             IRoomRepository repository = new RoomRepositoryStub();
-            IPlayerBLL playerBLL = new PlayerBLLStub();
-            DateTime currentTime = DateTime.Now;
-            ITurnBLL turnBLL = new TurnBLLStub { TestModel = null };
-            IRoomBLL bll = new RoomBLL(repository, playerBLL, turnBLL);
+            IPlayerBLL playerBll = new PlayerBLLStub();
+            ITurnBLL turnBll = new TurnBLLStub { TestModel = null };
+            IRoomBLL bll = new RoomBLL(repository, playerBll, turnBll);
             IRoomModel room = new RoomModel
             {
                 Id = 0,
@@ -311,7 +310,6 @@ namespace ConnectFour.Tests.Business
                         Id = 0,
                         Name = "testOne",
                         Num = 1,
-                        Color = ConsoleColor.Red,
                         Symbol = "1"
                     },
                     new PlayerModel
@@ -319,24 +317,23 @@ namespace ConnectFour.Tests.Business
                         Id = 1,
                         Name = "testTwo",
                         Num = 2,
-                        Color = ConsoleColor.Yellow,
                         Symbol = "2"
                     }
                 }
             };
 
             // Act
-            IRoomModel result = bll.UpdateWithLastTurn(room);
+            IRoomModel result = bll.UpdateWithLatestTurn(room);
             // Assert
             Assert.AreEqual(1, result.CurrentPlayerNum);
         }
 
         [TestMethod]
-        public void GetLastTurnInRoom_TurnBLLProvidesNewTurn_RoomContainsNewTurnData()
+        public void UpdateWithLatestTurn_TurnBLLProvidesNewTurn_RoomContainsNewTurnData()
         {
             // Arrange
             IRoomRepository repository = new RoomRepositoryStub();
-            IPlayerBLL playerBLL = new PlayerBLLStub();
+            IPlayerBLL playerBll = new PlayerBLLStub();
             DateTime currentTime = DateTime.Now;
             ITurnModel turnModel = new TurnModel
             {
@@ -346,11 +343,8 @@ namespace ConnectFour.Tests.Business
                 ColNum = 1,
                 Num = 1
             };
-            ITurnBLL turnBLL = new TurnBLLStub
-            {
-                TestModel = turnModel
-            };
-            IRoomBLL bll = new RoomBLL(repository, playerBLL, turnBLL);
+            ITurnBLL turnBll = new TurnBLLStub { TestModel = turnModel };
+            IRoomBLL bll = new RoomBLL(repository, playerBll, turnBll);
             IRoomModel room = new RoomModel
             {
                 Id = 0,
@@ -378,7 +372,7 @@ namespace ConnectFour.Tests.Business
             };
 
             // Act
-            IRoomModel result = bll.UpdateWithLastTurn(room);
+            IRoomModel result = bll.UpdateWithLatestTurn(room);
 
             // Assert
             Assert.IsTrue(
@@ -397,9 +391,9 @@ namespace ConnectFour.Tests.Business
         {
             // Arrange
             IRoomRepository repository = new RoomRepositoryStub { TestDto = null };
-            IPlayerBLL playerBLL = new PlayerBLLStub();
-            ITurnBLL turnBLL = new TurnBLLStub();
-            IRoomBLL bll = new RoomBLL(repository, playerBLL, turnBLL);
+            IPlayerBLL playerBll = new PlayerBLLStub();
+            ITurnBLL turnBll = new TurnBLLStub();
+            IRoomBLL bll = new RoomBLL(repository, playerBll, turnBll);
 
             // ActG
             IRoomModel result = bll.GetRoomById(0);
@@ -414,7 +408,7 @@ namespace ConnectFour.Tests.Business
         {
             // Arrange
             IRoomRepository repository = new RoomRepositoryStub { TestDto = new RoomDTO() };
-            IPlayerBLL playerBLL = new PlayerBLLStub
+            IPlayerBLL playerBll = new PlayerBLLStub
             {
                 TestModels = new IPlayerModel[]
                 {
@@ -422,8 +416,8 @@ namespace ConnectFour.Tests.Business
                     new PlayerModel { Num = 2 }
                 }
             };
-            ITurnBLL turnBLL = new TurnBLLStub();
-            IRoomBLL bll = new RoomBLL(repository, playerBLL, turnBLL);
+            ITurnBLL turnBll = new TurnBLLStub();
+            IRoomBLL bll = new RoomBLL(repository, playerBll, turnBll);
 
             // Act
             IRoomModel result = bll.GetRoomById(0);
@@ -437,7 +431,7 @@ namespace ConnectFour.Tests.Business
         {
             // Arrange
             IRoomRepository repository = new RoomRepositoryStub { TestDto = new RoomDTO() };
-            IPlayerBLL playerBLL = new PlayerBLLStub
+            IPlayerBLL playerBll = new PlayerBLLStub
             {
                 TestModels = new IPlayerModel[]
                 {
@@ -445,8 +439,8 @@ namespace ConnectFour.Tests.Business
                     null
                 }
             };
-            ITurnBLL turnBLL = new TurnBLLStub();
-            IRoomBLL bll = new RoomBLL(repository, playerBLL, turnBLL);
+            ITurnBLL turnBll = new TurnBLLStub();
+            IRoomBLL bll = new RoomBLL(repository, playerBll, turnBll);
 
             // Act
             IRoomModel result = bll.GetRoomById(0);
@@ -460,7 +454,7 @@ namespace ConnectFour.Tests.Business
         {
             // Arrange
             IRoomRepository repository = new RoomRepositoryStub { TestDto = new RoomDTO() };
-            IPlayerBLL playerBLL = new PlayerBLLStub
+            IPlayerBLL playerBll = new PlayerBLLStub
             {
                 TestModels = new IPlayerModel[]
                 {
@@ -468,8 +462,8 @@ namespace ConnectFour.Tests.Business
                     new PlayerModel { Num = 2 }
                 }
             };
-            ITurnBLL turnBLL = new TurnBLLStub();
-            IRoomBLL bll = new RoomBLL(repository, playerBLL, turnBLL);
+            ITurnBLL turnBll = new TurnBLLStub();
+            IRoomBLL bll = new RoomBLL(repository, playerBll, turnBll);
 
             // Act
             IRoomModel result = bll.GetRoomById(0);
@@ -483,12 +477,12 @@ namespace ConnectFour.Tests.Business
         {
             // Arrange
             IRoomRepository repository = new RoomRepositoryStub { TestDto = new RoomDTO() };
-            IPlayerBLL playerBLL = new PlayerBLLStub
+            IPlayerBLL playerBll = new PlayerBLLStub
             {
                 TestModels = new IPlayerModel[] { null, null }
             };
-            ITurnBLL turnBLL = new TurnBLLStub();
-            IRoomBLL bll = new RoomBLL(repository, playerBLL, turnBLL);
+            ITurnBLL turnBll = new TurnBLLStub();
+            IRoomBLL bll = new RoomBLL(repository, playerBll, turnBll);
 
             // Act
             IRoomModel result = bll.GetRoomById(0);
@@ -498,13 +492,13 @@ namespace ConnectFour.Tests.Business
         }
 
         [TestMethod]
-        public void LetThemPlay_Player2Waiting_NewTurnAddedToRoomAndPlayer2Turn()
+        public void WaitForOpponentToPlay_Player2Waiting_NewTurnAddedToRoomAndPlayer2Turn()
         {
             // Arrange
             IRoomRepository repository = new RoomRepositoryStub();
-            IPlayerBLL playerBLL = new PlayerBLLStub();
+            IPlayerBLL playerBll = new PlayerBLLStub();
             DateTime currentTime = DateTime.Now;
-            ITurnBLL turnBLL = new TurnBLLStub
+            ITurnBLL turnBll = new TurnBLLStub
             {
                 TestModel = new TurnModel
                 {
@@ -515,7 +509,7 @@ namespace ConnectFour.Tests.Business
                     Num = 1
                 }
             };
-            IRoomBLL bll = new RoomBLL(repository, playerBLL, turnBLL);
+            IRoomBLL bll = new RoomBLL(repository, playerBll, turnBll);
             IRoomModel room = new RoomModel
             {
                 Id = 0,
@@ -543,7 +537,7 @@ namespace ConnectFour.Tests.Business
             };
 
             // Act
-            IRoomModel result = bll.LetThemPlay(room);
+            IRoomModel result = bll.WaitForOpponentToPlay(room);
 
             // Assert
             Assert.AreEqual(2, result.CurrentPlayerNum);

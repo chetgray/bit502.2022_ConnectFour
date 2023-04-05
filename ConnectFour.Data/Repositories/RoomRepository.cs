@@ -9,15 +9,15 @@ using ConnectFour.Data.Repositories.Interfaces;
 
 namespace ConnectFour.Data.Repositories
 {
-    public class RoomRepository : BaseRepository, IRoomRepository
+    public class RoomRepository : RepositoryBase, IRoomRepository
     {
-        /// <inheritdoc cref="BaseRepository()"/>
+        /// <inheritdoc cref="RepositoryBase()"/>
         public RoomRepository() { }
 
         /// <inheritdoc/>
         public RoomRepository(IDAL dal) : base(dal) { }
 
-        public int InsertNewRoom()
+        public int AddNewRoom()
         {
             Dictionary<string, object> parameters = new Dictionary<string, object>();
             int roomId = Convert.ToInt32(
@@ -27,7 +27,7 @@ namespace ConnectFour.Data.Repositories
             return roomId;
         }
 
-        public List<ResultDTO> GetAllFinished()
+        public List<ResultDTO> GetAllFinishedResults()
         {
             Dictionary<string, object> parameters = new Dictionary<string, object>();
             DataTable resultTable = _dal.GetTableFromStoredProcedure(
@@ -40,8 +40,10 @@ namespace ConnectFour.Data.Repositories
 
         public RoomDTO GetRoomById(int roomId)
         {
-            Dictionary<string, object> paramDictionary = new Dictionary<string, object>();
-            paramDictionary.Add("@RoomId", roomId);
+            Dictionary<string, object> paramDictionary = new Dictionary<string, object>
+            {
+                { "@RoomId", roomId }
+            };
             DataTable dataTable = _dal.GetTableFromStoredProcedure(
                 "dbo.spA_Room_GetRoomById",
                 paramDictionary
@@ -53,37 +55,27 @@ namespace ConnectFour.Data.Repositories
             return ConvertToDto(dataTable.Rows[0]);
         }
 
-        public void UpdateRoomResultCode(int roomId, int resultCode)
+        public void SetRoomResultCode(int roomId, int resultCode)
         {
-            Dictionary<string, object> paramDictionary = new Dictionary<string, object>();
-            paramDictionary.Add("@RoomId", roomId);
-            paramDictionary.Add("@RoomResultCode", resultCode);
+            Dictionary<string, object> paramDictionary = new Dictionary<string, object>
+            {
+                { "@RoomId", roomId },
+                { "@RoomResultCode", resultCode }
+            };
 
             _dal.ExecuteStoredProcedure("dbo.spA_Room_UpdateRoomResultCode", paramDictionary);
         }
 
         internal RoomDTO ConvertToDto(DataRow row)
         {
-            RoomDTO roomDTO = new RoomDTO();
-            if (row.IsNull("RoomId"))
+            RoomDTO roomDto = new RoomDTO()
             {
-                roomDTO.Id = null;
-            }
-            else
-            {
-                roomDTO.Id = (int?)(row["RoomId"]);
-            }
-            roomDTO.CreationTime = (DateTime)row["RoomCreationTime"];
-            roomDTO.CurrentTurnNumber = (int)row["RoomCurrentTurnNum"];
-            if (row.IsNull("RoomResultCode"))
-            {
-                roomDTO.ResultCode = null;
-            }
-            else
-            {
-                roomDTO.ResultCode = (int?)row["RoomResultCode"];
-            }
-            return roomDTO;
+                Id = row.IsNull("RoomId") ? null : (int?)(row["RoomId"]),
+                CreationTime = (DateTime)row["RoomCreationTime"],
+                CurrentTurnNumber = (int)row["RoomCurrentTurnNum"],
+                ResultCode = row.IsNull("RoomResultCode") ? null : (int?)row["RoomResultCode"]
+            };
+            return roomDto;
         }
 
         internal static IEnumerable<ResultDTO> ConvertTableToResultDtos(DataTable table)

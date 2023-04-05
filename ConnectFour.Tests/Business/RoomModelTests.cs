@@ -1,7 +1,7 @@
 ﻿using System;
 
 using ConnectFour.Business.Models;
-
+using ConnectFour.Business.Models.Interfaces;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace ConnectFour.Tests.Business
@@ -10,10 +10,10 @@ namespace ConnectFour.Tests.Business
     public class RoomModelTests
     {
         [TestMethod]
-        public void CheckForWin_FourInARowInterruptedByOpponent_WontWin()
+        public void WillTurnWin_FourInARowInterruptedByOpponent_WontWin()
         {
             // Arrange
-            RoomModel room = new RoomModel()
+            IRoomModel room = new RoomModel()
             {
                 Board = new int[,]
                 { //                        index / RowNum
@@ -27,7 +27,7 @@ namespace ConnectFour.Tests.Business
                     //1, 2, 3, 4, 5, 6, 7 - ColNum
                 }
             };
-            TurnModel turn = new TurnModel
+            ITurnModel turn = new TurnModel
             {
                 Num = 1,
                 RowNum = 6,
@@ -35,7 +35,7 @@ namespace ConnectFour.Tests.Business
             };
 
             // Act
-            bool result = room.CheckForWin(turn);
+            bool result = room.WillTurnWin(turn);
 
             // Assert
             Assert.IsFalse(result);
@@ -59,20 +59,20 @@ namespace ConnectFour.Tests.Business
         [DataRow(4, 1)]
         [DataRow(4, 2)]
         [DataRow(4, 3)]
-        public void CheckForWin_FourthPieceDiagonalAscending_WillWin(
+        public void WillTurnWin_FourthPieceDiagonalAscending_WillWin(
             int runStartColNum,
             int positionWithinRun
         )
         {
             // Arrange
-            int runStartRowNum = 6;
-            TurnModel turn = new TurnModel
+            const int runStartRowNum = 6;
+            ITurnModel turn = new TurnModel
             {
                 Num = 1,
                 RowNum = runStartRowNum - positionWithinRun,
                 ColNum = runStartColNum + positionWithinRun
             };
-            RoomModel room = new RoomModel();
+            IRoomModel room = new RoomModel();
             // Set up run, skipping the turn cell
             for (
                 int r = runStartRowNum - 1, c = runStartColNum - 1;
@@ -88,7 +88,7 @@ namespace ConnectFour.Tests.Business
             }
 
             // Act
-            bool result = room.CheckForWin(turn);
+            bool result = room.WillTurnWin(turn);
 
             // Assert
             Assert.IsTrue(result);
@@ -112,20 +112,20 @@ namespace ConnectFour.Tests.Business
         [DataRow(4, 1)]
         [DataRow(4, 2)]
         [DataRow(4, 3)]
-        public void CheckForWin_FourthPieceDiagonalDescending_WillWin(
+        public void WillTurnWin_FourthPieceDiagonalDescending_WillWin(
             int runStartColNum,
             int positionWithinRun
         )
         {
             // Arrange
-            int runStartRowNum = 1;
-            TurnModel turn = new TurnModel
+            const int runStartRowNum = 1;
+            ITurnModel turn = new TurnModel
             {
                 Num = 1,
                 RowNum = runStartRowNum + positionWithinRun,
                 ColNum = runStartColNum + positionWithinRun
             };
-            RoomModel room = new RoomModel();
+            IRoomModel room = new RoomModel();
             // Set up run, skipping the turn cell
             for (
                 int r = runStartRowNum - 1, c = runStartColNum - 1;
@@ -141,7 +141,7 @@ namespace ConnectFour.Tests.Business
             }
 
             // Act
-            bool result = room.CheckForWin(turn);
+            bool result = room.WillTurnWin(turn);
 
             // Assert
             Assert.IsTrue(result);
@@ -165,20 +165,20 @@ namespace ConnectFour.Tests.Business
         [DataRow(4, 1)]
         [DataRow(4, 2)]
         [DataRow(4, 3)]
-        public void CheckForWin_FourthPieceHorizontal_WillWin(
+        public void WillTurnWin_FourthPieceHorizontal_WillWin(
             int runStartColNum,
             int positionWithinRun
         )
         {
             // Arrange
             int rowNum = 6 - positionWithinRun;
-            TurnModel turn = new TurnModel
+            ITurnModel turn = new TurnModel
             {
                 Num = 1,
                 RowNum = rowNum,
                 ColNum = runStartColNum + positionWithinRun
             };
-            RoomModel room = new RoomModel();
+            IRoomModel room = new RoomModel();
             // Set up run, skipping the turn cell
             for (int c = runStartColNum - 1; c < runStartColNum + 4 - 1; c++)
             {
@@ -190,7 +190,7 @@ namespace ConnectFour.Tests.Business
             }
 
             // Act
-            bool result = room.CheckForWin(turn);
+            bool result = room.WillTurnWin(turn);
 
             // Assert
             Assert.IsTrue(result);
@@ -198,10 +198,10 @@ namespace ConnectFour.Tests.Business
 
         // ↑
         [TestMethod]
-        public void CheckForWin_FourthPieceUp_WillWin()
+        public void WillTurnWin_FourthPieceUp_WillWin()
         {
             // Arrange
-            RoomModel room = new RoomModel()
+            IRoomModel room = new RoomModel()
             {
                 Board = new int[,]
                 { //                        index / RowNum
@@ -215,7 +215,7 @@ namespace ConnectFour.Tests.Business
                     //1, 2, 3, 4, 5, 6, 7 - ColNum
                 }
             };
-            TurnModel turn = new TurnModel
+            ITurnModel turn = new TurnModel
             {
                 Num = 1,
                 RowNum = 3,
@@ -223,17 +223,17 @@ namespace ConnectFour.Tests.Business
             };
 
             // Act
-            bool result = room.CheckForWin(turn);
+            bool result = room.WillTurnWin(turn);
 
             // Assert
             Assert.IsTrue(result);
         }
 
         [TestMethod]
-        public void CheckForWin_PieceCompletesOpponentsFourInARow_WontWin()
+        public void WillTurnWin_PieceCompletesOpponentsFourInARow_WontWin()
         {
             // Arrange
-            RoomModel room = new RoomModel()
+            IRoomModel room = new RoomModel()
             {
                 Board = new int[,]
                 { //                        index / RowNum
@@ -247,7 +247,7 @@ namespace ConnectFour.Tests.Business
                     //1, 2, 3, 4, 5, 6, 7 - ColNum
                 }
             };
-            TurnModel turn = new TurnModel
+            ITurnModel turn = new TurnModel
             {
                 Num = 1,
                 RowNum = 6,
@@ -255,7 +255,7 @@ namespace ConnectFour.Tests.Business
             };
 
             // Act
-            bool result = room.CheckForWin(turn);
+            bool result = room.WillTurnWin(turn);
 
             // Assert
             Assert.IsFalse(result);
@@ -264,7 +264,7 @@ namespace ConnectFour.Tests.Business
         [TestMethod]
         [DataRow(1, 1, 1, 1)]
         [DataRow(4, 3, 2, 1)]
-        public void CheckForWin_PlayInOccupiedCell_WontWin(
+        public void WillTurnWin_PlayInOccupiedCell_WontWin(
             int rowNum,
             int colNum,
             int existingPieceNum,
@@ -272,9 +272,9 @@ namespace ConnectFour.Tests.Business
         )
         {
             // Arrange
-            RoomModel room = new RoomModel();
+            IRoomModel room = new RoomModel();
             room.Board[rowNum - 1, colNum - 1] = existingPieceNum;
-            TurnModel turn = new TurnModel
+            ITurnModel turn = new TurnModel
             {
                 Num = newPieceNum,
                 RowNum = rowNum,
@@ -282,7 +282,7 @@ namespace ConnectFour.Tests.Business
             };
 
             // Act
-            bool result = room.CheckForWin(turn);
+            bool result = room.WillTurnWin(turn);
 
             // Assert
             Assert.IsFalse(result);
@@ -295,7 +295,7 @@ namespace ConnectFour.Tests.Business
         public void GetNextRowInCol_OutOfRange_ThrowsArgumentException(int colNum)
         {
             // Arrange
-            RoomModel room = new RoomModel();
+            IRoomModel room = new RoomModel();
 
             // Act & Assert
             Assert.ThrowsException<ArgumentException>(
@@ -308,8 +308,8 @@ namespace ConnectFour.Tests.Business
         public void GetNextRowInCol_ColumnFull_ThrowsArgumentException()
         {
             // Arrange
-            int colNum = 1;
-            RoomModel room = new RoomModel()
+            const int colNum = 1;
+            IRoomModel room = new RoomModel()
             {
                 Board = new int[,]
                 { //                        index / RowNum
@@ -345,8 +345,8 @@ namespace ConnectFour.Tests.Business
         public void GetNextRowInCol_ColumnNotFull_ReturnsNextCol(int fullRowCount)
         {
             // Arrange
-            int colNum = 1;
-            RoomModel room = new RoomModel()
+            const int colNum = 1;
+            IRoomModel room = new RoomModel()
             {
                 Board = new int[,]
                 { //                        index / RowNum

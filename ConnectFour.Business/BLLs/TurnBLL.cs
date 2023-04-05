@@ -11,7 +11,7 @@ namespace ConnectFour.Business.BLLs
 {
     internal class TurnBLL : ITurnBLL
     {
-        private ITurnRepository _repository;
+        private readonly ITurnRepository _repository;
 
         /// <summary>
         /// Creates a <see cref="TurnBLL"/> instance with a default <see cref="TurnRepository"/>
@@ -32,30 +32,26 @@ namespace ConnectFour.Business.BLLs
             _repository = repository ?? throw new ArgumentNullException(nameof(repository));
         }
 
-        public ITurnModel GetLastTurnInRoom(int roomId)
+        public ITurnModel GetLatestTurnInRoom(int roomId)
         {
-            TurnRepository turnRepository = new TurnRepository();
-            TurnDTO turnDTO = turnRepository.GetLastTurnInRoom(roomId);
-            return ConvertToModel(turnDTO);
+            TurnDTO dto = _repository.GetLatestTurnInRoom(roomId);
+            return ConvertToModel(dto);
         }
 
-        public void AddTurnToRoom(ITurnModel turn, int roomId)
+        public void AddTurnToRoom(ITurnModel model, int roomId)
         {
-            TurnRepository turnRepository = new TurnRepository();
-
-            TurnDTO turnDTO = ConvertToDTO(turn);
-            turnDTO.RoomId = roomId;
-
-            turnRepository.AddTurnToRoom(turnDTO);
-
+            TurnDTO dto = ConvertToDto(model);
+            dto.RoomId = roomId;
+            _repository.AddTurnToRoom(dto);
         }
+
         private ITurnModel ConvertToModel(TurnDTO dto)
         {
             if (dto == null)
             {
                 return null;
             }
-            TurnModel model = new TurnModel
+            ITurnModel model = new TurnModel
             {
                 Id = dto.Id,
                 Time = dto.Time,
@@ -66,7 +62,7 @@ namespace ConnectFour.Business.BLLs
             return model;
         }
 
-        private TurnDTO ConvertToDTO(ITurnModel model)
+        private TurnDTO ConvertToDto(ITurnModel model)
         {
             TurnDTO dto = new TurnDTO
             {

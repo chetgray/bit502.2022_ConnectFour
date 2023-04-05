@@ -10,7 +10,7 @@ namespace ConnectFour.Tests.TestDoubles
         public RoomDTO TestDto { get; set; }
         public List<ResultDTO> TestResults { get; set; }
 
-        public List<ResultDTO> GetAllFinished()
+        public List<ResultDTO> GetAllFinishedResults()
         {
             return TestResults;
         }
@@ -20,13 +20,11 @@ namespace ConnectFour.Tests.TestDoubles
             return TestDto;
         }
 
-        public int InsertNewRoom()
+        public int AddNewRoom()
         {
             throw new System.NotImplementedException();
         }
 
-        public void UpdateRoomResultCode(int roomId, int resultCode)
-        {
-        }
+        public void SetRoomResultCode(int roomId, int resultCode) { }
     }
 }
