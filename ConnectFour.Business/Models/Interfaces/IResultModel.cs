@@ -10,6 +10,6 @@ namespace ConnectFour.Business.Models.Interfaces
         string[] Players { get; set; }
         int? ResultCode { get; set; }
         string WinnerName { get; set; }
-        string LastTurnNum { get; set; }
+        int? LastTurnNum { get; set; }
     }
 }

@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
+
 using ConnectFour.Business.BLLs.Interfaces;
 using ConnectFour.Business.Models;
 using ConnectFour.Business.Models.Interfaces;
@@ -15,21 +15,19 @@ namespace ConnectFour.Business.BLLs
         /// Creates an <see cref="NPCRoomBLL"/> instance with a default <see cref="RoomRepository"/>
         /// backend.
         /// </summary>
-        public NPCRoomBLL()
-        {
-        }
+        public NPCRoomBLL() { }
 
         /// <summary>
         /// Creates an <see cref="NPCRoomBLL"/> instance with the passed <paramref name="repository"/>,
-        /// <paramref name="playerBLL"/>, and <paramref name="turnBLL"/> as the backend.
+        /// <paramref name="playerBll"/>, and <paramref name="turnBll"/> as the backend.
         /// </summary>
         /// <param name="repository">The <see cref="IRoomRepository"/> to use in the backend.</param>
-        /// <param name="playerBLL">The <see cref="IPlayerBLL"/> to use in the backend.</param>
-        /// <param name="turnBLL">The <see cref="ITurnBLL"/> to use in the backend.</param>
-        public NPCRoomBLL(IRoomRepository repository, IPlayerBLL playerBLL, ITurnBLL turnBLL) : base(repository, playerBLL, turnBLL)
-        {
-        }
-        public override IRoomModel LetThemPlay(IRoomModel room)
+        /// <param name="playerBll">The <see cref="IPlayerBLL"/> to use in the backend.</param>
+        /// <param name="turnBll">The <see cref="ITurnBLL"/> to use in the backend.</param>
+        public NPCRoomBLL(IRoomRepository repository, IPlayerBLL playerBll, ITurnBLL turnBll)
+            : base(repository, playerBll, turnBll) { }
+
+        public override IRoomModel WaitForOpponentToPlay(IRoomModel room)
         {
             ITurnModel turn = RandyTakesATurn(room);
             room = AddTurnToRoom(turn, room);
@@ -63,16 +61,22 @@ namespace ConnectFour.Business.BLLs
 
             return validPlays;
         }
-
-        public TurnModel RandyTakesATurn(IRoomModel room)
+        /// <summary>
+        /// Random Randy takes a random turn, checking only if it's a valid play.
+        /// </summary>
+        /// <param name="room"></param>
+        /// <returns>
+        /// A <see cref="TurnModel"/> with the AI's play.
+        /// </returns>
+        public ITurnModel RandyTakesATurn(IRoomModel room)
         {
             List<(int, int)> validPlays = GetValidPlays(room);
             Random random = new Random();
-            (int rowNum, int colNum) play = validPlays.ElementAt(random.Next(0, validPlays.Count));
-            TurnModel turn = new TurnModel
+            (int rowNum, int colNum) = validPlays[random.Next(0, validPlays.Count)];
+            ITurnModel turn = new TurnModel
             {
-                ColNum = play.colNum,
-                RowNum = play.rowNum,
+                ColNum = colNum,
+                RowNum = rowNum,
                 Num = room.CurrentTurnNum
             };
 

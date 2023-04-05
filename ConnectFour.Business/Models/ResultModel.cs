@@ -12,6 +12,6 @@ namespace ConnectFour.Business.Models
         public string[] Players { get; set; }
         public int? ResultCode { get; set; }
         public string WinnerName { get; set; }
-        public string LastTurnNum { get; set; }
+        public int? LastTurnNum { get; set; }
     }
 }
