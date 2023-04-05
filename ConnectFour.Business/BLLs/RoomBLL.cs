@@ -137,7 +137,7 @@ namespace ConnectFour.Business.BLLs
             {
                 RoomId = dto.RoomId,
                 CreationTime = dto.CreationTime,
-                Duration = GetGameDuration(durationTimeSpan),
+                Duration = durationTimeSpan,
                 Players = playerNames,
                 ResultCode = dto.ResultCode,
                 WinnerName = DetermineWinner(dto.ResultCode, dto.Players),
@@ -167,46 +167,6 @@ namespace ConnectFour.Business.BLLs
             }
             IResultModel resultModel = ConvertToResultModel(resultDto);
             return resultModel;
-        }
-
-        private static string GetGameDuration(TimeSpan duration)
-        {
-            int days = (int)duration.TotalDays;
-            int hours = (int)duration.TotalHours;
-            int minutes = (int)duration.TotalMinutes;
-            if (days >= 1)
-            {
-                if (days > 1)
-                {
-                    return $"{days} Days";
-                }
-                else
-                {
-                    return $"{days} Day";
-                }
-            }
-            else if (hours >= 1)
-            {
-                if (hours > 1)
-                {
-                    return $"{hours} Hours";
-                }
-                else
-                {
-                    return $"{hours} Hour";
-                }
-            }
-            else
-            {
-                if (minutes > 1)
-                {
-                    return $"{minutes} Minutes";
-                }
-                else
-                {
-                    return $"{minutes} Minute";
-                }
-            }
         }
 
         public IRoomModel UpdateWithLastTurn(IRoomModel room)

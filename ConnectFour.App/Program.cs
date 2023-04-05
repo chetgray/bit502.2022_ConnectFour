@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -411,7 +411,7 @@ namespace ConnectFour.App
             {
                 resultTable[r, 0] = results[r - 1].RoomId.ToString();
                 resultTable[r, 1] = results[r - 1].CreationTime.ToString("MM/dd/yyyy hh:mm tt");
-                resultTable[r, 2] = results[r - 1].Duration;
+                resultTable[r, 2] = GetGameDuration(results[r - 1].Duration);
                 resultTable[r, 3] =
                     results[r - 1].Players[0].Length <= maxPlayerNameLength
                         ? results[r - 1].Players[0]
@@ -483,6 +483,46 @@ namespace ConnectFour.App
                 }
                 borderBuilder.Append(rightBorder);
                 Console.WriteLine(borderBuilder.ToString());
+            }
+        }
+
+        internal static string GetGameDuration(TimeSpan duration)
+        {
+            int days = (int)duration.TotalDays;
+            int hours = (int)duration.TotalHours;
+            int minutes = (int)duration.TotalMinutes;
+            if (days >= 1)
+            {
+                if (days > 1)
+                {
+                    return $"{days} Days";
+                }
+                else
+                {
+                    return $"{days} Day";
+                }
+            }
+            else if (hours >= 1)
+            {
+                if (hours > 1)
+                {
+                    return $"{hours} Hours";
+                }
+                else
+                {
+                    return $"{hours} Hour";
+                }
+            }
+            else
+            {
+                if (minutes > 1)
+                {
+                    return $"{minutes} Minutes";
+                }
+                else
+                {
+                    return $"{minutes} Minute";
+                }
             }
         }
 

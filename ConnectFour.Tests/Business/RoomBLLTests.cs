@@ -224,13 +224,17 @@ namespace ConnectFour.Tests.Business
         public void ConvertToResultModel_DtoHasNullTurnFields_ModelHasDurationUntilNow()
         {
             // Arrange
-            ResultDTO dto = new ResultDTO { CreationTime = DateTime.Now.AddDays(-1) };
+            DateTime creationTime = DateTime.Now.AddDays(-1);
+            ResultDTO dto = new ResultDTO { CreationTime = creationTime };
+            TimeSpan expected = DateTime.Now - creationTime;
 
             // Act
             ResultModel model = RoomBLL.ConvertToResultModel(dto);
+            TimeSpan actual = model.Duration;
 
             // Assert
-            Assert.AreEqual("1 Day", model.Duration);
+            // Within 0.5 second tolerance
+            Assert.IsTrue(Math.Abs(expected.TotalSeconds - actual.TotalSeconds) < 0.5);
         }
 
         [TestMethod]
@@ -264,6 +268,7 @@ namespace ConnectFour.Tests.Business
         public void ConvertToResultModel_RoomHasNoTurns_ResultHasDurationUntilNow()
         {
             // Arrange
+            DateTime creationTime = DateTime.Now.AddDays(-1);
             IRoomModel room = new RoomModel
             {
                 Id = 1,
@@ -272,14 +277,17 @@ namespace ConnectFour.Tests.Business
                     new PlayerModel { Num = 1, Name = "Player One" },
                     new PlayerModel { Num = 2, Name = "Player Two" },
                 },
-                CreationTime = DateTime.Now.AddDays(-1),
+                CreationTime = creationTime,
             };
+            TimeSpan expected = DateTime.Now - creationTime;
 
             // Act
             IResultModel result = RoomBLL.ConvertToResultModel(room);
+            TimeSpan actual = result.Duration;
 
             // Assert
-            Assert.AreEqual("1 Day", result.Duration);
+            // Within 0.5 second tolerance
+            Assert.IsTrue(Math.Abs(expected.TotalSeconds - actual.TotalSeconds) < 0.5);
         }
 
         [TestMethod]
