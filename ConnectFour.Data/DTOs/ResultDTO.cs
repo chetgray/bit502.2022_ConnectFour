@@ -9,7 +9,7 @@ namespace ConnectFour.Data.DTOs
         public DateTime CreationTime { get; set; }
         public Dictionary<int, string> Players { get; set; } = new Dictionary<int, string>();
         public int? ResultCode { get; set; }
-        public DateTime LastTurnTime { get; set; }
+        public DateTime? LastTurnTime { get; set; }
         public int? LastTurnNum { get; set; }
     }
 }

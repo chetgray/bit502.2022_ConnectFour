@@ -6,7 +6,7 @@ namespace ConnectFour.Business.Models.Interfaces
     {
         int? RoomId { get; set; }
         DateTime CreationTime { get; set; }
-        string Duration { get; set; }
+        TimeSpan Duration { get; set; }
         string[] Players { get; set; }
         int? ResultCode { get; set; }
         string WinnerName { get; set; }

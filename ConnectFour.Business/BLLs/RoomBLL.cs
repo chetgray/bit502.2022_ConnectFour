@@ -71,7 +71,7 @@ namespace ConnectFour.Business.BLLs
             };
 
             room = AddTurnToRoom(turn, room);
-            room.Message = 
+            room.Message =
                 $"Waiting on {room.Players[room.CurrentPlayerNum - 1].Name} to place a piece.";
             return room;
         }
@@ -122,66 +122,51 @@ namespace ConnectFour.Business.BLLs
             return resultModels;
         }
 
-        private ResultModel ConvertToResultModel(ResultDTO dto)
+        internal static ResultModel ConvertToResultModel(ResultDTO dto)
         {
-            ResultModel resultModel = new ResultModel();
-            resultModel.RoomId = dto.RoomId;
-            resultModel.CreationTime = dto.CreationTime;
-            resultModel.Duration = GetGameDuration(dto.LastTurnTime - resultModel.CreationTime);
             string[] playerNames = new string[dto.Players.Count];
-            foreach (KeyValuePair<int, string> player in dto.Players)
+            foreach (KeyValuePair<int, string> playerNumName in dto.Players)
             {
-                playerNames[player.Key - 1] = player.Value;
-                if (player.Value.Length > 15)
-                {
-                    playerNames[player.Key - 1] = $"{player.Value.Substring(0, 15)}...";
-                }
+                playerNames[playerNumName.Key - 1] = playerNumName.Value;
             }
-            resultModel.Players = playerNames;
-            resultModel.ResultCode = dto.ResultCode;
-            resultModel.WinnerName = DetermineWinner(dto.ResultCode, dto.Players);
-            resultModel.LastTurnNum = dto.LastTurnNum.ToString();
+            TimeSpan durationTimeSpan =
+                dto.LastTurnTime != null
+                    ? (DateTime)dto.LastTurnTime - dto.CreationTime
+                    : DateTime.Now - dto.CreationTime;
+            ResultModel resultModel = new ResultModel
+            {
+                RoomId = dto.RoomId,
+                CreationTime = dto.CreationTime,
+                Duration = durationTimeSpan,
+                Players = playerNames,
+                ResultCode = dto.ResultCode,
+                WinnerName = DetermineWinner(dto.ResultCode, dto.Players),
+                LastTurnNum = dto.LastTurnNum.ToString()
+            };
             return resultModel;
         }
 
-        private static string GetGameDuration(TimeSpan duration)
+        public static IResultModel ConvertToResultModel(IRoomModel room)
         {
-            int days = (int)duration.TotalDays;
-            int hours = (int)duration.TotalHours;
-            int minutes = (int)duration.TotalMinutes;
-            if (days >= 1)
+            Dictionary<int, string> playerNameDictionary = room.Players.ToDictionary(
+                p => p.Num,
+                p => p.Name
+            );
+            ResultDTO resultDto = new ResultDTO
             {
-                if (days > 1)
-                {
-                    return $"{days} Days";
-                }
-                else
-                {
-                    return $"{days} Day";
-                }
-            }
-            else if (hours >= 1)
+                RoomId = room.Id,
+                CreationTime = room.CreationTime,
+                Players = playerNameDictionary,
+                ResultCode = room.ResultCode,
+            };
+            if (room.Turns.Any())
             {
-                if (hours > 1)
-                {
-                    return $"{hours} Hours";
-                }
-                else
-                {
-                    return $"{hours} Hour";
-                }
+                ITurnModel lastTurn = room.Turns.Last();
+                resultDto.LastTurnTime = lastTurn.Time;
+                resultDto.LastTurnNum = lastTurn.Num;
             }
-            else
-            {
-                if (minutes > 1)
-                {
-                    return $"{minutes} Minutes";
-                }
-                else
-                {
-                    return $"{minutes} Minute";
-                }
-            }
+            IResultModel resultModel = ConvertToResultModel(resultDto);
+            return resultModel;
         }
 
         public IRoomModel UpdateWithLastTurn(IRoomModel room)

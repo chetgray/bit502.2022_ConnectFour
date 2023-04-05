@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -44,8 +44,7 @@ namespace ConnectFour.App
                         JoinMultiPlayerGame();
                         break;
                     case "4":
-                        RoomBLL rBLL = new RoomBLL();
-                        DisplayResults(rBLL.GetAllFinished());
+                        DisplayAllResults();
                         break;
                     case "5":
                         isChoosing = false;
@@ -202,6 +201,10 @@ namespace ConnectFour.App
                 );
             }
             Console.ResetColor();
+            Console.WriteLine("\n");
+            WriteResultTable(
+                new List<IResultModel> { RoomBLL.ConvertToResultModel(roomModel) }
+            );
             Console.Write("\n     Press any key to return to the Main Menu.");
             Console.ReadKey(intercept: true);
         }
@@ -367,144 +370,163 @@ namespace ConnectFour.App
             return sb.ToString();
         }
 
-        private static void DisplayResults(List<IResultModel> results)
+        private static void DisplayAllResults()
         {
+            RoomBLL rBLL = new RoomBLL();
+            List<IResultModel> results = rBLL.GetAllFinished();
             Console.Clear();
             if (results.Count == 0)
             {
                 Console.WriteLine("No game results");
                 return;
             }
-            string[,] ResultTable = new string[results.Count + 1, 7];
-            ResultTable[0, 0] = "Room ID";
-            ResultTable[0, 1] = "Started At";
-            ResultTable[0, 2] = "Duration";
-            ResultTable[0, 3] = "Player 1";
-            ResultTable[0, 4] = "Player 2";
-            ResultTable[0, 5] = "Winner";
-            ResultTable[0, 6] = "Number of Moves";
-            int amountOfResults = results.Count();
-
-            for (int i = 1; i <= amountOfResults; i++)
-            {
-                int resultCode = (int)results[i - 1].ResultCode;
-                ResultTable[i, 0] = results[i - 1].RoomId.ToString();
-                ResultTable[i, 1] = results[i - 1].CreationTime.ToString("MM/dd/yyyy hh:mm tt");
-                ResultTable[i, 2] = results[i - 1].Duration;
-                ResultTable[i, 3] = results[i - 1].Players[0];
-                ResultTable[i, 4] = results[i - 1].Players[1];
-                if (results[i - 1].WinnerName.Length > 15)
-                {
-                    ResultTable[i, 5] = $"{results[i - 1].WinnerName.Substring(0, 15)}...";
-                }
-                else
-                {
-                    ResultTable[i, 5] = results[i - 1].WinnerName;
-                }
-                ResultTable[i, 6] = results[i - 1].LastTurnNum;
-            }
-
-            int rows = ResultTable.GetLength(0);
-            int columns = ResultTable.GetLength(1);
-            int[] widths = new int[columns];
-
-            for (int i = 0; i < columns; i++)
-            {
-                widths[i] = ResultTable[0, i].Length;
-
-                for (int j = 0; j < rows; j++)
-                {
-                    if (ResultTable[j, i].Length > widths[i])
-                    {
-                        widths[i] = ResultTable[j, i].Length;
-                    }
-                }
-            }
-
-            StringBuilder sb = new StringBuilder();
-
-            for (int i = 0; i < rows; i++)
-            {
-                if (i == 1)
-                {
-                    sb.Append(" ╔═");
-                    for (int j = 0; j < widths.Count(); j++)
-                    {
-                        sb.Append(new string('═', widths[j]));
-                        if (j < widths.Count() - 1)
-                        {
-                            sb.Append("═╦═");
-                        }
-                        else
-                        {
-                            sb.Append("═╗");
-                        }
-                    }
-                    Console.WriteLine(sb.ToString());
-                }
-                else if (i > 1)
-                {
-                    sb.Clear();
-                    sb.Append(" ╠═");
-                    for (int j = 0; j < widths.Count(); j++)
-                    {
-                        sb.Append(new string('═', widths[j]));
-                        if (j < widths.Count() - 1)
-                        {
-                            sb.Append("═╬═");
-                        }
-                        else
-                        {
-                            sb.Append("═╣");
-                        }
-                    }
-                    Console.WriteLine(sb.ToString());
-                }
-
-                sb.Clear();
-                string border = (i > 0) ? border = " ║ " : border = "   ";
-                for (int j = 0; j < columns; j++)
-                {
-                    sb.Append(border);
-                    int columnWidth = widths[j];
-                    int stringLength = ResultTable[i, j].Length;
-                    int spacingBeforeAndAfter = columnWidth - stringLength;
-                    if (spacingBeforeAndAfter % 2 == 0)
-                    {
-                        sb.Append(' ', spacingBeforeAndAfter / 2);
-                        sb.Append(ResultTable[i, j]);
-                        sb.Append(' ', spacingBeforeAndAfter / 2);
-                    }
-                    else
-                    {
-                        sb.Append(" ");
-                        sb.Append(' ', spacingBeforeAndAfter / 2);
-                        sb.Append(ResultTable[i, j]);
-                        sb.Append(' ', spacingBeforeAndAfter / 2);
-                    }
-                }
-                sb.Append(border);
-                Console.WriteLine(sb.ToString());
-                sb.Clear();
-            }
-            sb.Clear();
-            sb.Append(" ╚═");
-            for (int j = 0; j < widths.Count(); j++)
-            {
-                sb.Append(new string('═', widths[j]));
-                if (j < widths.Count() - 1)
-                {
-                    sb.Append("═╩═");
-                }
-                else
-                {
-                    sb.Append("═╝");
-                }
-            }
-            Console.WriteLine(sb.ToString());
+            WriteResultTable(results);
             Console.WriteLine("Press any key to return to main menu...");
             Console.ReadKey();
             Console.Clear();
+        }
+
+        private static void WriteResultTable(List<IResultModel> results)
+        {
+            // initialize table array with headers
+            string[,] resultTable = new string[results.Count + 1, 7];
+            resultTable[0, 0] = "Room ID";
+            resultTable[0, 1] = "Started At";
+            resultTable[0, 2] = "Duration";
+            resultTable[0, 3] = "Player 1";
+            resultTable[0, 4] = "Player 2";
+            resultTable[0, 5] = "Winner";
+            resultTable[0, 6] = "Number of Moves";
+
+            // initialize column widths to header widths
+            int[] columnWidths = new int[resultTable.GetLength(1)];
+            for (int c = 0; c < columnWidths.Length; c++)
+            {
+                columnWidths[c] = resultTable[0, c].Length;
+            }
+
+            // fill table array with data
+            const int maxPlayerNameLength = 15;
+            for (int r = 1; r <= results.Count; r++)
+            {
+                resultTable[r, 0] = results[r - 1].RoomId.ToString();
+                resultTable[r, 1] = results[r - 1].CreationTime.ToString("MM/dd/yyyy hh:mm tt");
+                resultTable[r, 2] = results[r - 1].Duration.ToTruncatedString(2);
+                resultTable[r, 3] =
+                    results[r - 1].Players[0].Length <= maxPlayerNameLength
+                        ? results[r - 1].Players[0]
+                        : $"{results[r - 1].Players[0].Substring(0, maxPlayerNameLength - 3)}...";
+                resultTable[r, 4] =
+                    results[r - 1].Players[1].Length <= maxPlayerNameLength
+                        ? results[r - 1].Players[1]
+                        : $"{results[r - 1].Players[1].Substring(0, maxPlayerNameLength - 3)}...";
+                resultTable[r, 5] =
+                    results[r - 1].WinnerName.Length <= maxPlayerNameLength
+                        ? results[r - 1].WinnerName
+                        : $"{results[r - 1].WinnerName.Substring(0, maxPlayerNameLength - 3)}...";
+                resultTable[r, 6] = results[r - 1].LastTurnNum;
+                // update column widths if necessary
+                for (int c = 0; c < resultTable.GetLength(1); c++)
+                {
+                    if (columnWidths[c] < resultTable[r, c].Length)
+                    {
+                        columnWidths[c] = resultTable[r, c].Length;
+                    }
+                }
+            }
+
+            StringBuilder rowBuilder = new StringBuilder();
+            for (int r = 0; r < resultTable.GetLength(0); r++)
+            {
+                if (r >= 1)
+                {
+                    // write row top border
+                    (string leftBorder, string middleBorder, string rightBorder) =
+                        (r == 1) ? (" ╔═", "═╦═", "═╗") : (" ╠═", "═╬═", "═╣");
+                    WriteBorder('═', leftBorder, middleBorder, rightBorder);
+                }
+                // write row (header or body)
+                string vertcalBorder = (r > 0) ? " ║ " : "   ";
+                for (int c = 0; c < columnWidths.Length; c++)
+                {
+                    rowBuilder.Append(vertcalBorder);
+                    // center resultTable[r, c] within columnWidths[c]
+                    rowBuilder.Append(
+                        resultTable[r, c]
+                            .PadRight((columnWidths[c] + resultTable[r, c].Length) / 2)
+                            .PadLeft(columnWidths[c])
+                    );
+                }
+                rowBuilder.Append(vertcalBorder);
+                Console.WriteLine(rowBuilder.ToString());
+                rowBuilder.Clear();
+            }
+            // write table bottom border
+            WriteBorder('═', " ╚═", "═╩═", "═╝");
+
+            void WriteBorder(
+                char horizontalBorder,
+                string leftBorder,
+                string middleBorder,
+                string rightBorder
+            )
+            {
+                StringBuilder borderBuilder = new StringBuilder();
+                borderBuilder.Append(leftBorder);
+                for (int c = 0; c < columnWidths.Length; c++)
+                {
+                    borderBuilder.Append(new string(horizontalBorder, columnWidths[c]));
+                    if (c < columnWidths.Length - 1)
+                    {
+                        borderBuilder.Append(middleBorder);
+                    }
+                }
+                borderBuilder.Append(rightBorder);
+                Console.WriteLine(borderBuilder.ToString());
+            }
+        }
+
+        /// <summary>
+        /// Converts the value of the this <see cref="TimeSpan"/> object to a truncated string
+        /// representation.
+        /// </summary>
+        /// <param name="unitCount">
+        /// The number of units to include in the string representation.
+        /// </param>
+        /// <returns>
+        /// A truncated string representation of this <see cref="TimeSpan"/> object, with only
+        /// the largest <paramref name="unitCount"/> number of units included.
+        /// </returns>
+        /// <exception cref="ArgumentOutOfRangeException">
+        /// Thrown when <paramref name="unitCount"/> is less than 1.
+        /// </exception>
+        internal static string ToTruncatedString(this TimeSpan timeSpan, int unitCount)
+        {
+            if (unitCount < 1)
+            {
+                throw new ArgumentOutOfRangeException(nameof(unitCount));
+            }
+            StringBuilder sb = new StringBuilder();
+            if (timeSpan.TotalDays >= 1)
+            {
+                sb.Append(timeSpan.Days).Append("d").Append(unitCount > 1 ? " " : "");
+                unitCount--;
+            }
+            if (unitCount > 0 && timeSpan.TotalHours >= 1)
+            {
+                sb.Append(timeSpan.Hours).Append("h").Append(unitCount > 1 ? " " : "");
+                unitCount--;
+            }
+            if (unitCount > 0 && timeSpan.TotalMinutes >= 1)
+            {
+                sb.Append(timeSpan.Minutes).Append("m").Append(unitCount > 1 ? " " : "");
+                unitCount--;
+            }
+            if (unitCount > 0)
+            {
+                sb.Append(timeSpan.Seconds).Append("s");
+            }
+            return sb.ToString();
         }
 
         private static void DisplayBoard(IRoomModel room)

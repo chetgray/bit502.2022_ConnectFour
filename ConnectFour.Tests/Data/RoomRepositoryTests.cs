@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Data;
+using System.Linq;
 
 using ConnectFour.Data.DTOs;
 using ConnectFour.Data.Repositories;
@@ -13,6 +15,25 @@ namespace ConnectFour.Tests.Data
     [TestClass]
     public class RoomRepositoryTests
     {
+        // ConvertTableToResultDtos
+        [TestMethod]
+        public void ConvertTableToResultDtos_TableHasNullsInTurnColumns_DtoHasNullsInTurnFields()
+        {
+            // Arrange
+            DataTable table = CreateResultTable();
+            table.Rows.Add(1, DateTime.Now, 1, "Player One", 1, DBNull.Value, DBNull.Value);
+            table.Rows.Add(1, DateTime.Now, 1, "Player Two", 2, DBNull.Value, DBNull.Value);
+
+            // Act
+            IList<ResultDTO> resultDtos = RoomRepository
+                .ConvertTableToResultDtos(table)
+                .ToList();
+
+            // Assert
+            Assert.IsNull(resultDtos[0].LastTurnTime);
+            Assert.IsNull(resultDtos[0].LastTurnNum);
+        }
+
         [TestMethod]
         public void GetRoomById_DoesntExist_ReturnsNull()
         {
@@ -74,6 +95,19 @@ namespace ConnectFour.Tests.Data
             Assert.AreEqual(creationTime, actual.CreationTime);
             Assert.AreEqual(currentTurnNumber, actual.CurrentTurnNumber);
             Assert.AreEqual(resultCode, actual.ResultCode);
+        }
+
+        private static DataTable CreateResultTable()
+        {
+            DataTable results = new DataTable();
+            results.Columns.Add("RoomId", typeof(int));
+            results.Columns.Add("RoomCreationTime", typeof(DateTime));
+            results.Columns.Add("RoomResultCode", typeof(int));
+            results.Columns.Add("PlayerName", typeof(string));
+            results.Columns.Add("PlayerNum", typeof(int));
+            results.Columns.Add("TurnTime", typeof(DateTime));
+            results.Columns.Add("TurnNum", typeof(int));
+            return results;
         }
 
         private static DataTable CreateRoomTable()
