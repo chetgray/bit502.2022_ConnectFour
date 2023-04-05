@@ -162,7 +162,6 @@ namespace ConnectFour.App
                     return;
                 }
                 Console.Write($"\n     {room.Message}\n");
-                Console.ResetColor();
                 if (room.LocalPlayerNum == room.CurrentPlayerNum)
                 {
                     Console.Write("\n     --> ");
@@ -203,7 +202,6 @@ namespace ConnectFour.App
                     roomModel.Players[(int)roomModel.ResultCode - 1].Color
                 );
             }
-            Console.ResetColor();
             Console.WriteLine("\n");
             WriteResultTable(
                 new List<IResultModel> { RoomBLL.ConvertToResultModel(roomModel) }
@@ -236,7 +234,6 @@ namespace ConnectFour.App
                 Console.WriteLine("What is the Room Id you would like to join?");
                 Console.Write("--> ");
                 WriteInColor($"\n\n{room.Message}", ConsoleColor.Red);
-                Console.ResetColor();
                 string userInput = GetUserInput(inputLineWidth, inputLineFromTopLine);
                 if (userInput == null)
                 {
@@ -315,7 +312,6 @@ namespace ConnectFour.App
                 Console.Write("What is your name?\n");
                 Console.Write("--> ");
                 WriteInColor($"\n\n{message}", ConsoleColor.Red);
-                Console.ResetColor();
                 _localPlayerName = GetUserInput(inputLineWidth, inputLineFromTopLine);
                 if (_localPlayerName != null && string.IsNullOrWhiteSpace(_localPlayerName))
                 {
@@ -569,33 +565,28 @@ namespace ConnectFour.App
                 }
             }
 
-            Console.ForegroundColor = ConsoleColor.DarkBlue;
-            Console.WriteLine("\n    ╔═════╦═════╦═════╦═════╦═════╦═════╦═════╗");
+            WriteInColor("\n    ╔═════╦═════╦═════╦═════╦═════╦═════╦═════╗\n", ConsoleColor.DarkBlue);
 
             for (int r = 0; r < room.Board.GetLength(0); r++)
             {
                 Console.Write("    ");
                 for (int c = 0; c < room.Board.GetLength(1); c++)
                 {
-                    Console.Write("║");
+                    WriteInColor("║", ConsoleColor.DarkBlue);
                     if (room.Board[r, c] == 1)
                     {
-                        Console.ForegroundColor = room.Players[0].Color;
-                        Console.Write(p1Piece);
+                        WriteInColor(p1Piece, room.Players[0].Color);
                     }
                     else if (room.Board[r, c] == 2)
                     {
-                        Console.ForegroundColor = room.Players[1].Color;
-                        Console.Write(p2Piece);
+                        WriteInColor(p2Piece, room.Players[1].Color);
                     }
                     else
                     {
                         Console.Write(noPiece);
                     }
-                    Console.ForegroundColor = ConsoleColor.DarkBlue;
                 }
-                Console.Write("║");
-                Console.ResetColor();
+                WriteInColor("║", ConsoleColor.DarkBlue);
                 switch (r)
                 {
                     case 1:
@@ -603,17 +594,13 @@ namespace ConnectFour.App
                         break;
 
                     case 2:
-                        Console.Write("    Player 1: ");
-                        Console.ForegroundColor = room.Players[0].Color;
-                        Console.Write(room.Players[0].Name);
-                        Console.ResetColor();
+                        Console.Write($"    Player 1: ");
+                        WriteInColor(room.Players[0].Name, room.Players[0].Color);
                         break;
 
                     case 3:
-                        Console.Write("    Player 2: ");
-                        Console.ForegroundColor = room.Players[1].Color;
-                        Console.Write(room.Players[1].Name);
-                        Console.ResetColor();
+                        Console.Write($"    Player 2: ");
+                        WriteInColor(room.Players[1].Name, room.Players[1].Color);
                         break;
 
                     case 4:
@@ -633,15 +620,12 @@ namespace ConnectFour.App
 
                         if (room.CurrentTurnNum % 2 == 0)
                         {
-                            Console.ForegroundColor = room.Players[1].Color;
-                            Console.Write(room.Players[1].Name);
+                            WriteInColor(room.Players[1].Name, room.Players[1].Color);
                         }
                         else
                         {
-                            Console.ForegroundColor = room.Players[0].Color;
-                            Console.Write(room.Players[0].Name);
+                            WriteInColor(room.Players[0].Name, room.Players[0].Color);
                         }
-                        Console.ForegroundColor = ConsoleColor.DarkBlue;
                         break;
 
                     default:
@@ -650,13 +634,10 @@ namespace ConnectFour.App
 
                 if (r != 5)
                 {
-                    Console.ForegroundColor = ConsoleColor.DarkBlue;
-                    Console.WriteLine("\n    ╠═════╬═════╬═════╬═════╬═════╬═════╬═════╣");
+                    WriteInColor("\n    ╠═════╬═════╬═════╬═════╬═════╬═════╬═════╣\n", ConsoleColor.DarkBlue);
                 }
             }
-
-            Console.WriteLine("\n    ╚═════╩═════╩═════╩═════╩═════╩═════╩═════╝");
-            Console.ResetColor();
+            WriteInColor("\n    ╚═════╩═════╩═════╩═════╩═════╩═════╩═════╝\n", ConsoleColor.DarkBlue);
             Console.WriteLine("       1     2     3     4     5     6     7");
         }
 
@@ -668,13 +649,13 @@ namespace ConnectFour.App
             WriteInColor("NNE", ConsoleColor.DarkCyan);
             WriteInColor("C", ConsoleColor.DarkRed);
             WriteInColor("T4\n\n", ConsoleColor.DarkCyan);
-            Console.ResetColor();
         }
 
         private static void WriteInColor(string text, ConsoleColor color)
         {
             Console.ForegroundColor = color;
             Console.Write(text);
+            Console.ResetColor();
         }
     }
 }
