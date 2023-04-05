@@ -411,7 +411,7 @@ namespace ConnectFour.App
             {
                 resultTable[r, 0] = results[r - 1].RoomId.ToString();
                 resultTable[r, 1] = results[r - 1].CreationTime.ToString("MM/dd/yyyy hh:mm tt");
-                resultTable[r, 2] = results[r - 1].Duration.ToTruncatedString(1);
+                resultTable[r, 2] = results[r - 1].Duration.ToTruncatedString(2);
                 resultTable[r, 3] =
                     results[r - 1].Players[0].Length <= maxPlayerNameLength
                         ? results[r - 1].Players[0]
@@ -509,25 +509,22 @@ namespace ConnectFour.App
             StringBuilder sb = new StringBuilder();
             if (timeSpan.TotalDays >= 1)
             {
-                sb.Append(timeSpan.Days)
-                    .Append(" Day")
-                    .Append(timeSpan.Days == 1 ? "" : "s")
-                    .Append(unitCount > 1 ? " " : "");
+                sb.Append(timeSpan.Days).Append("d").Append(unitCount > 1 ? " " : "");
                 unitCount--;
             }
-            if (timeSpan.TotalHours >= 1 && unitCount > 0)
+            if (unitCount > 0 && timeSpan.TotalHours >= 1)
             {
-                sb.Append(timeSpan.Hours)
-                    .Append(" Hour")
-                    .Append(timeSpan.Hours == 1 ? "" : "s")
-                    .Append(unitCount > 1 ? " " : "");
+                sb.Append(timeSpan.Hours).Append("h").Append(unitCount > 1 ? " " : "");
+                unitCount--;
+            }
+            if (unitCount > 0 && timeSpan.TotalMinutes >= 1)
+            {
+                sb.Append(timeSpan.Minutes).Append("m").Append(unitCount > 1 ? " " : "");
                 unitCount--;
             }
             if (unitCount > 0)
             {
-                sb.Append(timeSpan.Minutes)
-                    .Append(" Minute")
-                    .Append(timeSpan.Minutes == 1 ? "" : "s");
+                sb.Append(timeSpan.Seconds).Append("s");
             }
             return sb.ToString();
         }
