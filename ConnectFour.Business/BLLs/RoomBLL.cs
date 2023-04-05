@@ -63,7 +63,7 @@ namespace ConnectFour.Business.BLLs
                 return room;
             }
 
-            TurnModel turn = new TurnModel
+            ITurnModel turn = new TurnModel
             {
                 ColNum = colNum,
                 RowNum = rowNum,
@@ -122,7 +122,7 @@ namespace ConnectFour.Business.BLLs
             return models;
         }
 
-        internal static ResultModel ConvertToResultModel(ResultDTO dto)
+        internal static IResultModel ConvertToResultModel(ResultDTO dto)
         {
             string[] playerNames = new string[dto.Players.Count];
             foreach (KeyValuePair<int, string> playerNumName in dto.Players)
@@ -133,7 +133,7 @@ namespace ConnectFour.Business.BLLs
                 dto.LastTurnTime != null
                     ? (DateTime)dto.LastTurnTime - dto.CreationTime
                     : DateTime.Now - dto.CreationTime;
-            ResultModel model = new ResultModel
+            IResultModel model = new ResultModel
             {
                 RoomId = dto.RoomId,
                 CreationTime = dto.CreationTime,
@@ -250,7 +250,7 @@ namespace ConnectFour.Business.BLLs
         public IRoomModel GetRoomById(int roomId)
         {
             RoomDTO dto = _repository.GetRoomById(roomId);
-            RoomModel room = ConvertToModel(dto);
+            IRoomModel room = ConvertToModel(dto);
             if (room == null)
             {
                 return null;
@@ -297,13 +297,13 @@ namespace ConnectFour.Business.BLLs
             throw new NotImplementedException();
         }
 
-        internal RoomModel ConvertToModel(RoomDTO dto)
+        internal IRoomModel ConvertToModel(RoomDTO dto)
         {
             if (dto == null)
             {
                 return null;
             }
-            RoomModel model = new RoomModel()
+            IRoomModel model = new RoomModel()
             {
                 Id = dto.Id,
                 CreationTime = dto.CreationTime,

@@ -10,7 +10,7 @@ namespace ConnectFour.Business.Models.Interfaces
         int CurrentTurnNum { get; set; }
         int? ResultCode { get; set; }
 
-        IPlayerModel[] Players { get; }
+        IPlayerModel[] Players { get; set; }
         List<ITurnModel> Turns { get; }
 
         /// <summary>

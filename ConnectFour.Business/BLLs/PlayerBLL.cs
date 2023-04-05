@@ -74,7 +74,7 @@ namespace ConnectFour.Business.BLLs
             {
                 return null;
             }
-            PlayerModel model = new PlayerModel
+            IPlayerModel model = new PlayerModel
             {
                 Id = dto.Id,
                 Name = dto.Name,

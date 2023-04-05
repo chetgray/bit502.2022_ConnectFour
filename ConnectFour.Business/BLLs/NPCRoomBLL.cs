@@ -62,12 +62,12 @@ namespace ConnectFour.Business.BLLs
             return validPlays;
         }
 
-        public TurnModel RandyTakesATurn(IRoomModel room)
+        public ITurnModel RandyTakesATurn(IRoomModel room)
         {
             List<(int, int)> validPlays = GetValidPlays(room);
             Random random = new Random();
             (int rowNum, int colNum) = validPlays[random.Next(0, validPlays.Count)];
-            TurnModel turn = new TurnModel
+            ITurnModel turn = new TurnModel
             {
                 ColNum = colNum,
                 RowNum = rowNum,

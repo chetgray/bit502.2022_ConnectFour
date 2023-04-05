@@ -380,7 +380,7 @@ namespace ConnectFour.App
 
         private static void DisplayAllResults()
         {
-            RoomBLL roomBll = new RoomBLL();
+            IRoomBLL roomBll = new RoomBLL();
             List<IResultModel> results = roomBll.GetAllFinished();
             Console.Clear();
             if (results.Count == 0)

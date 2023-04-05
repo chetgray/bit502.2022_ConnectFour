@@ -51,7 +51,7 @@ namespace ConnectFour.Business.BLLs
             {
                 return null;
             }
-            TurnModel model = new TurnModel
+            ITurnModel model = new TurnModel
             {
                 Id = dto.Id,
                 Time = dto.Time,

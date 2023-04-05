@@ -229,7 +229,7 @@ namespace ConnectFour.Tests.Business
             TimeSpan expected = DateTime.Now - creationTime;
 
             // Act
-            ResultModel model = RoomBLL.ConvertToResultModel(dto);
+            IResultModel model = RoomBLL.ConvertToResultModel(dto);
             TimeSpan actual = model.Duration;
 
             // Assert

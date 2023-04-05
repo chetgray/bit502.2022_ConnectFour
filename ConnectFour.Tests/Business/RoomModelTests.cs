@@ -1,7 +1,7 @@
 ﻿using System;
 
 using ConnectFour.Business.Models;
-
+using ConnectFour.Business.Models.Interfaces;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace ConnectFour.Tests.Business
@@ -13,7 +13,7 @@ namespace ConnectFour.Tests.Business
         public void CheckForWin_FourInARowInterruptedByOpponent_WontWin()
         {
             // Arrange
-            RoomModel room = new RoomModel()
+            IRoomModel room = new RoomModel()
             {
                 Board = new int[,]
                 { //                        index / RowNum
@@ -27,7 +27,7 @@ namespace ConnectFour.Tests.Business
                     //1, 2, 3, 4, 5, 6, 7 - ColNum
                 }
             };
-            TurnModel turn = new TurnModel
+            ITurnModel turn = new TurnModel
             {
                 Num = 1,
                 RowNum = 6,
@@ -66,13 +66,13 @@ namespace ConnectFour.Tests.Business
         {
             // Arrange
             const int runStartRowNum = 6;
-            TurnModel turn = new TurnModel
+            ITurnModel turn = new TurnModel
             {
                 Num = 1,
                 RowNum = runStartRowNum - positionWithinRun,
                 ColNum = runStartColNum + positionWithinRun
             };
-            RoomModel room = new RoomModel();
+            IRoomModel room = new RoomModel();
             // Set up run, skipping the turn cell
             for (
                 int r = runStartRowNum - 1, c = runStartColNum - 1;
@@ -119,13 +119,13 @@ namespace ConnectFour.Tests.Business
         {
             // Arrange
             const int runStartRowNum = 1;
-            TurnModel turn = new TurnModel
+            ITurnModel turn = new TurnModel
             {
                 Num = 1,
                 RowNum = runStartRowNum + positionWithinRun,
                 ColNum = runStartColNum + positionWithinRun
             };
-            RoomModel room = new RoomModel();
+            IRoomModel room = new RoomModel();
             // Set up run, skipping the turn cell
             for (
                 int r = runStartRowNum - 1, c = runStartColNum - 1;
@@ -172,13 +172,13 @@ namespace ConnectFour.Tests.Business
         {
             // Arrange
             int rowNum = 6 - positionWithinRun;
-            TurnModel turn = new TurnModel
+            ITurnModel turn = new TurnModel
             {
                 Num = 1,
                 RowNum = rowNum,
                 ColNum = runStartColNum + positionWithinRun
             };
-            RoomModel room = new RoomModel();
+            IRoomModel room = new RoomModel();
             // Set up run, skipping the turn cell
             for (int c = runStartColNum - 1; c < runStartColNum + 4 - 1; c++)
             {
@@ -201,7 +201,7 @@ namespace ConnectFour.Tests.Business
         public void CheckForWin_FourthPieceUp_WillWin()
         {
             // Arrange
-            RoomModel room = new RoomModel()
+            IRoomModel room = new RoomModel()
             {
                 Board = new int[,]
                 { //                        index / RowNum
@@ -215,7 +215,7 @@ namespace ConnectFour.Tests.Business
                     //1, 2, 3, 4, 5, 6, 7 - ColNum
                 }
             };
-            TurnModel turn = new TurnModel
+            ITurnModel turn = new TurnModel
             {
                 Num = 1,
                 RowNum = 3,
@@ -233,7 +233,7 @@ namespace ConnectFour.Tests.Business
         public void CheckForWin_PieceCompletesOpponentsFourInARow_WontWin()
         {
             // Arrange
-            RoomModel room = new RoomModel()
+            IRoomModel room = new RoomModel()
             {
                 Board = new int[,]
                 { //                        index / RowNum
@@ -247,7 +247,7 @@ namespace ConnectFour.Tests.Business
                     //1, 2, 3, 4, 5, 6, 7 - ColNum
                 }
             };
-            TurnModel turn = new TurnModel
+            ITurnModel turn = new TurnModel
             {
                 Num = 1,
                 RowNum = 6,
@@ -272,9 +272,9 @@ namespace ConnectFour.Tests.Business
         )
         {
             // Arrange
-            RoomModel room = new RoomModel();
+            IRoomModel room = new RoomModel();
             room.Board[rowNum - 1, colNum - 1] = existingPieceNum;
-            TurnModel turn = new TurnModel
+            ITurnModel turn = new TurnModel
             {
                 Num = newPieceNum,
                 RowNum = rowNum,
@@ -295,7 +295,7 @@ namespace ConnectFour.Tests.Business
         public void GetNextRowInCol_OutOfRange_ThrowsArgumentException(int colNum)
         {
             // Arrange
-            RoomModel room = new RoomModel();
+            IRoomModel room = new RoomModel();
 
             // Act & Assert
             Assert.ThrowsException<ArgumentException>(
@@ -309,7 +309,7 @@ namespace ConnectFour.Tests.Business
         {
             // Arrange
             const int colNum = 1;
-            RoomModel room = new RoomModel()
+            IRoomModel room = new RoomModel()
             {
                 Board = new int[,]
                 { //                        index / RowNum
@@ -346,7 +346,7 @@ namespace ConnectFour.Tests.Business
         {
             // Arrange
             const int colNum = 1;
-            RoomModel room = new RoomModel()
+            IRoomModel room = new RoomModel()
             {
                 Board = new int[,]
                 { //                        index / RowNum

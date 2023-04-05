@@ -73,7 +73,7 @@ namespace ConnectFour.Tests.Business
             NPCRoomBLL bll = new NPCRoomBLL(repository, playerBll, turnBll);
 
             // Act
-            TurnModel turn = bll.RandyTakesATurn(room);
+            ITurnModel turn = bll.RandyTakesATurn(room);
 
             // Assert
             Assert.AreEqual(turn.ColNum, colNum);
