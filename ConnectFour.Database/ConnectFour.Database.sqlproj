@@ -73,6 +73,7 @@
     <Build Include="StoredProcedures\spA_Room_UpdateRoomResultCode.sql" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="ConnectFour.Database.publish.xml" />
+    <None Include="ConnectFour.Database.local.publish.xml" />
+    <None Include="ConnectFour.Database.release.publish.xml" />
   </ItemGroup>
 </Project>
