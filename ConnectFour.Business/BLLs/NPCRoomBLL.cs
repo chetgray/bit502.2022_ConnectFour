@@ -61,7 +61,13 @@ namespace ConnectFour.Business.BLLs
 
             return validPlays;
         }
-
+        /// <summary>
+        /// Random Randy takes a random turn, checking only if it's a valid play.
+        /// </summary>
+        /// <param name="room"></param>
+        /// <returns>
+        /// A <see cref="TurnModel"/> with the AI's play.
+        /// </returns>
         public ITurnModel RandyTakesATurn(IRoomModel room)
         {
             List<(int, int)> validPlays = GetValidPlays(room);
