@@ -141,7 +141,7 @@ namespace ConnectFour.Business.BLLs
                 Players = playerNames,
                 ResultCode = dto.ResultCode,
                 WinnerName = DetermineWinner(dto.ResultCode, dto.Players),
-                LastTurnNum = dto.LastTurnNum.ToString()
+                LastTurnNum = dto.LastTurnNum
             };
             return model;
         }

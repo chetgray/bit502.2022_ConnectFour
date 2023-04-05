@@ -428,7 +428,7 @@ namespace ConnectFour.App
                     results[r - 1].WinnerName.Length <= maxPlayerNameLength
                         ? results[r - 1].WinnerName
                         : $"{results[r - 1].WinnerName.Substring(0, maxPlayerNameLength - 3)}...";
-                resultTable[r, 6] = results[r - 1].LastTurnNum;
+                resultTable[r, 6] = results[r - 1].LastTurnNum.ToString();
                 // update column widths if necessary
                 for (int c = 0; c < resultTable.GetLength(1); c++)
                 {
