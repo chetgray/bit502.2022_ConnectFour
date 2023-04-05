@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 using ConnectFour.Business.BLLs;
@@ -217,6 +218,76 @@ namespace ConnectFour.Tests.Business
             Assert.AreEqual("Please choose a column between 1 - 7", result.Message);
             Assert.AreEqual(2, result.CurrentTurnNum);
             Assert.AreEqual(2, result.CurrentPlayerNum);
+        }
+
+        [TestMethod]
+        public void ConvertToResultModel_DtoHasNullTurnFields_ModelHasDurationUntilNow()
+        {
+            // Arrange
+            DateTime creationTime = DateTime.Now.AddDays(-1);
+            ResultDTO dto = new ResultDTO { CreationTime = creationTime };
+            TimeSpan expected = DateTime.Now - creationTime;
+
+            // Act
+            ResultModel model = RoomBLL.ConvertToResultModel(dto);
+            TimeSpan actual = model.Duration;
+
+            // Assert
+            // Within 0.5 second tolerance
+            Assert.IsTrue(Math.Abs(expected.TotalSeconds - actual.TotalSeconds) < 0.5);
+        }
+
+        [TestMethod]
+        public void ConvertToResultModel_RoomAndResultHaveSamePlayerNames()
+        {
+            // Arrange
+            IPlayerModel[] players = new IPlayerModel[]
+            {
+                new PlayerModel { Num = 1, Name = "Player One" },
+                new PlayerModel { Num = 2, Name = "Player Two" },
+            };
+            IRoomModel room = new RoomModel
+            {
+                Id = 1,
+                Players = players,
+                Turns = new List<ITurnModel> { new TurnModel() },
+            };
+
+            // Act
+            IResultModel result = RoomBLL.ConvertToResultModel(room);
+
+            // Assert
+            Assert.AreEqual(players.Length, result.Players.Length);
+            for (int i = 0; i < players.Length; i++)
+            {
+                Assert.AreEqual(players[i].Name, result.Players[i]);
+            }
+        }
+
+        [TestMethod]
+        public void ConvertToResultModel_RoomHasNoTurns_ResultHasDurationUntilNow()
+        {
+            // Arrange
+            DateTime creationTime = DateTime.Now.AddDays(-1);
+            IRoomModel room = new RoomModel
+            {
+                Id = 1,
+                Players = new IPlayerModel[]
+                {
+                    new PlayerModel { Num = 1, Name = "Player One" },
+                    new PlayerModel { Num = 2, Name = "Player Two" },
+                },
+                CreationTime = creationTime,
+            };
+            TimeSpan expected = DateTime.Now - creationTime;
+
+            // Act
+            IResultModel result = RoomBLL.ConvertToResultModel(room);
+            TimeSpan actual = result.Duration;
+
+            // Assert
+            // Within 0.5 second tolerance
+            Assert.IsTrue(Math.Abs(expected.TotalSeconds - actual.TotalSeconds) < 0.5);
         }
 
         [TestMethod]
