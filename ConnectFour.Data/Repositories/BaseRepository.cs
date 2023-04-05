@@ -12,12 +12,10 @@ namespace ConnectFour.Data.Repositories
         /// <summary>
         /// Creates a repository instance with a default <see cref="DAL"/> backend.
         /// </summary>
-        public BaseRepository()
+        protected BaseRepository()
         {
             _dal = new DAL(
-                ConfigurationManager.ConnectionStrings[
-                    "ConnectFourData"
-                ].ConnectionString
+                ConfigurationManager.ConnectionStrings["ConnectFourData"].ConnectionString
             );
         }
 
@@ -25,7 +23,7 @@ namespace ConnectFour.Data.Repositories
         /// Creates a repository instance with the passed <paramref name="dal"/> as the backend.
         /// </summary>
         /// <param name="dal">The <see cref="IDAL"/> to use as the backend.</param>
-        public BaseRepository(IDAL dal)
+        protected BaseRepository(IDAL dal)
         {
             _dal = dal ?? throw new ArgumentNullException(nameof(dal));
         }

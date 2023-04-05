@@ -15,8 +15,8 @@ namespace ConnectFour.Business.BLLs
     public class RoomBLL : IRoomBLL
     {
         protected readonly IRoomRepository _repository;
-        protected readonly IPlayerBLL _playerBLL;
-        protected readonly ITurnBLL _turnBLL;
+        protected readonly IPlayerBLL _playerBll;
+        protected readonly ITurnBLL _turnBll;
 
         /// <summary>
         /// Creates a <see cref="RoomBLL"/> instance with a default <see cref="RoomRepository"/>
@@ -25,22 +25,22 @@ namespace ConnectFour.Business.BLLs
         public RoomBLL()
         {
             _repository = new RoomRepository();
-            _playerBLL = new PlayerBLL();
-            _turnBLL = new TurnBLL();
+            _playerBll = new PlayerBLL();
+            _turnBll = new TurnBLL();
         }
 
         /// <summary>
         /// Creates a <see cref="RoomBLL"/> instance with the passed <paramref name="repository"/>,
-        /// <paramref name="playerBLL"/>, and <paramref name="turnBLL"/> as the backend.
+        /// <paramref name="playerBll"/>, and <paramref name="turnBll"/> as the backend.
         /// </summary>
         /// <param name="repository">The <see cref="IRoomRepository"/> to use in the backend.</param>
-        /// <param name="playerBLL">The <see cref="IPlayerBLL"/> to use in the backend.</param>
-        /// <param name="turnBLL">The <see cref="ITurnBLL"/> to use in the backend.</param>
-        public RoomBLL(IRoomRepository repository, IPlayerBLL playerBLL, ITurnBLL turnBLL)
+        /// <param name="playerBll">The <see cref="IPlayerBLL"/> to use in the backend.</param>
+        /// <param name="turnBll">The <see cref="ITurnBLL"/> to use in the backend.</param>
+        public RoomBLL(IRoomRepository repository, IPlayerBLL playerBll, ITurnBLL turnBll)
         {
             _repository = repository ?? throw new ArgumentNullException(nameof(repository));
-            _playerBLL = playerBLL ?? throw new ArgumentNullException(nameof(playerBLL));
-            _turnBLL = turnBLL ?? throw new ArgumentNullException(nameof(turnBLL));
+            _playerBll = playerBll ?? throw new ArgumentNullException(nameof(playerBll));
+            _turnBll = turnBll ?? throw new ArgumentNullException(nameof(turnBll));
         }
 
         public IRoomModel TryAddTurnToRoom(int colNum, IRoomModel room)
@@ -85,7 +85,7 @@ namespace ConnectFour.Business.BLLs
             {
                 UpdateRoomResultCode((int)room.Id, (int)room.ResultCode);
             }
-            _turnBLL.AddTurnToRoom(turn, (int)room.Id);
+            _turnBll.AddTurnToRoom(turn, (int)room.Id);
             return room;
         }
 
@@ -113,13 +113,13 @@ namespace ConnectFour.Business.BLLs
 
         public List<IResultModel> GetAllFinished()
         {
-            List<IResultModel> resultModels = new List<IResultModel>();
-            List<ResultDTO> resultDTOs = _repository.GetAllFinished();
-            for (int i = 0; i < resultDTOs.Count; i++)
+            List<IResultModel> models = new List<IResultModel>();
+            List<ResultDTO> dtos = _repository.GetAllFinished();
+            for (int i = 0; i < dtos.Count; i++)
             {
-                resultModels.Add(ConvertToResultModel(resultDTOs[i]));
+                models.Add(ConvertToResultModel(dtos[i]));
             }
-            return resultModels;
+            return models;
         }
 
         internal static ResultModel ConvertToResultModel(ResultDTO dto)
@@ -133,7 +133,7 @@ namespace ConnectFour.Business.BLLs
                 dto.LastTurnTime != null
                     ? (DateTime)dto.LastTurnTime - dto.CreationTime
                     : DateTime.Now - dto.CreationTime;
-            ResultModel resultModel = new ResultModel
+            ResultModel model = new ResultModel
             {
                 RoomId = dto.RoomId,
                 CreationTime = dto.CreationTime,
@@ -143,7 +143,7 @@ namespace ConnectFour.Business.BLLs
                 WinnerName = DetermineWinner(dto.ResultCode, dto.Players),
                 LastTurnNum = dto.LastTurnNum.ToString()
             };
-            return resultModel;
+            return model;
         }
 
         public static IResultModel ConvertToResultModel(IRoomModel room)
@@ -171,7 +171,7 @@ namespace ConnectFour.Business.BLLs
 
         public IRoomModel UpdateWithLastTurn(IRoomModel room)
         {
-            ITurnModel lastTurn = _turnBLL.GetLastTurnInRoom((int)room.Id);
+            ITurnModel lastTurn = _turnBll.GetLastTurnInRoom((int)room.Id);
 
             if (lastTurn == null && room.LocalPlayerNum == 1)
             {
@@ -201,20 +201,15 @@ namespace ConnectFour.Business.BLLs
 
         private static string DetermineWinner(int? resultCode, Dictionary<int, string> players)
         {
-            string winnerName = string.Empty;
             if (resultCode > 0 && resultCode < 3)
             {
-                winnerName = $"{players[(int)resultCode]}";
+                return $"{players[(int)resultCode]}";
             }
             else if (resultCode == 0)
             {
-                winnerName = "DRAW";
+                return "DRAW";
             }
-            else
-            {
-                winnerName = "NULL";
-            }
-            return winnerName;
+            return "NULL";
         }
 
         public virtual IRoomModel AddPlayerToRoom(string localPlayerName, int roomId)
@@ -246,7 +241,7 @@ namespace ConnectFour.Business.BLLs
                 roomModel.Message = $"Successfully joined room against {opponentName}";
             }
             playerModel.Num = playerNum;
-            playerModel = _playerBLL.AddPlayerToRoom(playerModel, (int)roomModel.Id);
+            playerModel = _playerBll.AddPlayerToRoom(playerModel, (int)roomModel.Id);
             roomModel.LocalPlayerNum = playerNum;
             roomModel.Players[playerModel.Num - 1] = playerModel;
             return roomModel;
@@ -260,7 +255,7 @@ namespace ConnectFour.Business.BLLs
             {
                 return null;
             }
-            room.Players = _playerBLL.GetPlayersInRoom(roomId);
+            room.Players = _playerBll.GetPlayersInRoom(roomId);
             room.Vacancy = room.Players.Contains(null);
 
             return room;
@@ -308,12 +303,14 @@ namespace ConnectFour.Business.BLLs
             {
                 return null;
             }
-            RoomModel rM = new RoomModel();
-            rM.Id = dto.Id;
-            rM.CreationTime = dto.CreationTime;
-            rM.CurrentTurnNum = dto.CurrentTurnNumber;
-            rM.ResultCode = dto.ResultCode;
-            return rM;
+            RoomModel model = new RoomModel()
+            {
+                Id = dto.Id,
+                CreationTime = dto.CreationTime,
+                CurrentTurnNum = dto.CurrentTurnNumber,
+                ResultCode = dto.ResultCode
+            };
+            return model;
         }
     }
 }

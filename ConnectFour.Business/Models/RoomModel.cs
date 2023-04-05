@@ -20,10 +20,7 @@ namespace ConnectFour.Business.Models
 
         public string Message { get; set; }
 
-        public int CurrentPlayerNum
-        {
-            get { return GetPlayerNum(CurrentTurnNum); }
-        }
+        public int CurrentPlayerNum => GetPlayerNum(CurrentTurnNum);
 
         public int GetPlayerNum(int turnNum)
         {

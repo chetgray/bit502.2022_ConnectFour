@@ -40,8 +40,10 @@ namespace ConnectFour.Data.Repositories
 
         public RoomDTO GetRoomById(int roomId)
         {
-            Dictionary<string, object> paramDictionary = new Dictionary<string, object>();
-            paramDictionary.Add("@RoomId", roomId);
+            Dictionary<string, object> paramDictionary = new Dictionary<string, object>
+            {
+                { "@RoomId", roomId }
+            };
             DataTable dataTable = _dal.GetTableFromStoredProcedure(
                 "dbo.spA_Room_GetRoomById",
                 paramDictionary
@@ -55,35 +57,25 @@ namespace ConnectFour.Data.Repositories
 
         public void UpdateRoomResultCode(int roomId, int resultCode)
         {
-            Dictionary<string, object> paramDictionary = new Dictionary<string, object>();
-            paramDictionary.Add("@RoomId", roomId);
-            paramDictionary.Add("@RoomResultCode", resultCode);
+            Dictionary<string, object> paramDictionary = new Dictionary<string, object>
+            {
+                { "@RoomId", roomId },
+                { "@RoomResultCode", resultCode }
+            };
 
             _dal.ExecuteStoredProcedure("dbo.spA_Room_UpdateRoomResultCode", paramDictionary);
         }
 
         internal RoomDTO ConvertToDto(DataRow row)
         {
-            RoomDTO roomDTO = new RoomDTO();
-            if (row.IsNull("RoomId"))
+            RoomDTO roomDto = new RoomDTO()
             {
-                roomDTO.Id = null;
-            }
-            else
-            {
-                roomDTO.Id = (int?)(row["RoomId"]);
-            }
-            roomDTO.CreationTime = (DateTime)row["RoomCreationTime"];
-            roomDTO.CurrentTurnNumber = (int)row["RoomCurrentTurnNum"];
-            if (row.IsNull("RoomResultCode"))
-            {
-                roomDTO.ResultCode = null;
-            }
-            else
-            {
-                roomDTO.ResultCode = (int?)row["RoomResultCode"];
-            }
-            return roomDTO;
+                Id = row.IsNull("RoomId") ? null : (int?)(row["RoomId"]),
+                CreationTime = (DateTime)row["RoomCreationTime"],
+                CurrentTurnNumber = (int)row["RoomCurrentTurnNum"],
+                ResultCode = row.IsNull("RoomResultCode") ? null : (int?)row["RoomResultCode"]
+            };
+            return roomDto;
         }
 
         internal static IEnumerable<ResultDTO> ConvertTableToResultDtos(DataTable table)

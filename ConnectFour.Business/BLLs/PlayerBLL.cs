@@ -12,7 +12,7 @@ namespace ConnectFour.Business.BLLs
 {
     public class PlayerBLL : IPlayerBLL
     {
-        private IPlayerRepository _repository;
+        private readonly IPlayerRepository _repository;
 
         /// <summary>
         /// Creates a <see cref="PlayerBLL"/> instance with a default <see cref="PlayerRepository"/>
@@ -33,12 +33,12 @@ namespace ConnectFour.Business.BLLs
             _repository = repository ?? throw new ArgumentNullException(nameof(repository));
         }
 
-        public IPlayerModel AddPlayerToRoom(IPlayerModel model, int roomId)
+        public IPlayerModel AddPlayerToRoom(IPlayerModel playerModel, int roomId)
         {
-            PlayerDTO dto = ConvertToDto(model);
-            dto.RoomId = roomId;
-            dto = _repository.AddPlayerToRoom(dto);
-            return ConvertToModel(dto);
+            PlayerDTO playerDto = ConvertToDto(playerModel);
+            playerDto.RoomId = roomId;
+            playerDto = _repository.AddPlayerToRoom(playerDto);
+            return ConvertToModel(playerDto);
         }
 
         public IPlayerModel[] GetPlayersInRoom(int roomId)
@@ -47,13 +47,15 @@ namespace ConnectFour.Business.BLLs
             return ConvertManyToModels(dtos).ToArray();
         }
 
-        internal PlayerDTO ConvertToDto(IPlayerModel playerModel)
+        internal PlayerDTO ConvertToDto(IPlayerModel model)
         {
-            PlayerDTO pDTO = new PlayerDTO();
-            pDTO.Id = playerModel.Id;
-            pDTO.Name = playerModel.Name;
-            pDTO.Num = playerModel.Num;
-            return pDTO;
+            PlayerDTO dto = new PlayerDTO()
+            {
+                Id = model.Id,
+                Name = model.Name,
+                Num = model.Num
+            };
+            return dto;
         }
 
         internal List<IPlayerModel> ConvertManyToModels(IEnumerable<PlayerDTO> dtos)
@@ -72,13 +74,15 @@ namespace ConnectFour.Business.BLLs
             {
                 return null;
             }
-            PlayerModel pM = new PlayerModel();
-            pM.Id = dto.Id;
-            pM.Name = dto.Name;
-            pM.Num = dto.Num;
-            pM.Symbol = dto.Name.Substring(0, 1).ToUpper();
-            pM.Color = (pM.Num == 1) ? ConsoleColor.Red : ConsoleColor.Yellow;
-            return pM;
+            PlayerModel model = new PlayerModel
+            {
+                Id = dto.Id,
+                Name = dto.Name,
+                Num = dto.Num,
+                Symbol = dto.Name.Substring(0, 1).ToUpper(),
+                Color = (dto.Num == 1) ? ConsoleColor.Red : ConsoleColor.Yellow
+            };
+            return model;
         }
     }
 }

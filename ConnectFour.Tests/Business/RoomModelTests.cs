@@ -65,7 +65,7 @@ namespace ConnectFour.Tests.Business
         )
         {
             // Arrange
-            int runStartRowNum = 6;
+            const int runStartRowNum = 6;
             TurnModel turn = new TurnModel
             {
                 Num = 1,
@@ -118,7 +118,7 @@ namespace ConnectFour.Tests.Business
         )
         {
             // Arrange
-            int runStartRowNum = 1;
+            const int runStartRowNum = 1;
             TurnModel turn = new TurnModel
             {
                 Num = 1,
@@ -308,7 +308,7 @@ namespace ConnectFour.Tests.Business
         public void GetNextRowInCol_ColumnFull_ThrowsArgumentException()
         {
             // Arrange
-            int colNum = 1;
+            const int colNum = 1;
             RoomModel room = new RoomModel()
             {
                 Board = new int[,]
@@ -345,7 +345,7 @@ namespace ConnectFour.Tests.Business
         public void GetNextRowInCol_ColumnNotFull_ReturnsNextCol(int fullRowCount)
         {
             // Arrange
-            int colNum = 1;
+            const int colNum = 1;
             RoomModel room = new RoomModel()
             {
                 Board = new int[,]

@@ -25,8 +25,6 @@ namespace ConnectFour.Tests.TestDoubles
             throw new System.NotImplementedException();
         }
 
-        public void UpdateRoomResultCode(int roomId, int resultCode)
-        {
-        }
+        public void UpdateRoomResultCode(int roomId, int resultCode) { }
     }
 }

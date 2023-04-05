@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
+
 using ConnectFour.Business.BLLs.Interfaces;
 using ConnectFour.Business.Models;
 using ConnectFour.Business.Models.Interfaces;
@@ -15,20 +15,18 @@ namespace ConnectFour.Business.BLLs
         /// Creates an <see cref="NPCRoomBLL"/> instance with a default <see cref="RoomRepository"/>
         /// backend.
         /// </summary>
-        public NPCRoomBLL()
-        {
-        }
+        public NPCRoomBLL() { }
 
         /// <summary>
         /// Creates an <see cref="NPCRoomBLL"/> instance with the passed <paramref name="repository"/>,
-        /// <paramref name="playerBLL"/>, and <paramref name="turnBLL"/> as the backend.
+        /// <paramref name="playerBll"/>, and <paramref name="turnBll"/> as the backend.
         /// </summary>
         /// <param name="repository">The <see cref="IRoomRepository"/> to use in the backend.</param>
-        /// <param name="playerBLL">The <see cref="IPlayerBLL"/> to use in the backend.</param>
-        /// <param name="turnBLL">The <see cref="ITurnBLL"/> to use in the backend.</param>
-        public NPCRoomBLL(IRoomRepository repository, IPlayerBLL playerBLL, ITurnBLL turnBLL) : base(repository, playerBLL, turnBLL)
-        {
-        }
+        /// <param name="playerBll">The <see cref="IPlayerBLL"/> to use in the backend.</param>
+        /// <param name="turnBll">The <see cref="ITurnBLL"/> to use in the backend.</param>
+        public NPCRoomBLL(IRoomRepository repository, IPlayerBLL playerBll, ITurnBLL turnBll)
+            : base(repository, playerBll, turnBll) { }
+
         public override IRoomModel LetThemPlay(IRoomModel room)
         {
             ITurnModel turn = RandyTakesATurn(room);
@@ -68,11 +66,11 @@ namespace ConnectFour.Business.BLLs
         {
             List<(int, int)> validPlays = GetValidPlays(room);
             Random random = new Random();
-            (int rowNum, int colNum) play = validPlays.ElementAt(random.Next(0, validPlays.Count));
+            (int rowNum, int colNum) = validPlays[random.Next(0, validPlays.Count)];
             TurnModel turn = new TurnModel
             {
-                ColNum = play.colNum,
-                RowNum = play.rowNum,
+                ColNum = colNum,
+                RowNum = rowNum,
                 Num = room.CurrentTurnNum
             };
 

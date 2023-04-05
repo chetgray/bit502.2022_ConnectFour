@@ -12,6 +12,6 @@ AS
 	SELECT	Player.Id		AS PlayerId,
 			Player.[Name]   AS PlayerName,
 			Player.Num		AS PlayerNum,
-			Player.RoomID	AS PlayerRoomId
+			Player.RoomId	AS PlayerRoomId
 
 	FROM Player WHERE Player.Id = @PlayerId

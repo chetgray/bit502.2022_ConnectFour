@@ -49,7 +49,7 @@ namespace ConnectFour.Data.Repositories
 
         private static TurnDTO ConvertToDto(DataRow row)
         {
-            TurnDTO turnDTO = new TurnDTO
+            TurnDTO turnDto = new TurnDTO
             {
                 Id = (int?)(row["TurnId"]),
                 RoomId = (int)row["TurnRoomId"],
@@ -59,7 +59,7 @@ namespace ConnectFour.Data.Repositories
                 ColNum = (int)row["TurnColNum"]
             };
 
-            return turnDTO;
+            return turnDto;
         }
     }
 }
