@@ -172,7 +172,7 @@ namespace ConnectFour.App
                     catch (FormatException)
                     {
                         room.Message =
-                            "Please enter an integer for the column you would like to choose.";
+                            "Please enter a number for the column you would like to choose.";
                         continue;
                     }
 
