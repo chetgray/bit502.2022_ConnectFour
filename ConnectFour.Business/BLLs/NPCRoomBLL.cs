@@ -1,5 +1,6 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
+using System.Linq;
 
 using ConnectFour.Business.BLLs.Interfaces;
 using ConnectFour.Business.Models;
@@ -29,7 +30,7 @@ namespace ConnectFour.Business.BLLs
 
         public override IRoomModel WaitForOpponentToPlay(IRoomModel room)
         {
-            ITurnModel turn = RandyTakesATurn(room);
+            ITurnModel turn = OpheliaTakesATurn(room);
             room = AddTurnToRoom(turn, room);
             room.Message = "Where would you like to place a piece?";
             return room;
@@ -37,7 +38,7 @@ namespace ConnectFour.Business.BLLs
 
         public override IRoomModel AddPlayerToRoom(string localPlayerName, int roomId)
         {
-            IRoomModel room = base.AddPlayerToRoom("Randy", roomId);
+            IRoomModel room = base.AddPlayerToRoom("Ophelia", roomId);
             room = base.AddPlayerToRoom(localPlayerName, roomId);
             return room;
         }
@@ -61,6 +62,7 @@ namespace ConnectFour.Business.BLLs
 
             return validPlays;
         }
+
         /// <summary>
         /// Random Randy takes a random turn, checking only if it's a valid play.
         /// </summary>
@@ -81,6 +83,72 @@ namespace ConnectFour.Business.BLLs
             };
 
             return turn;
+        }
+
+        /// <summary>
+        /// Opportunistic Ophelia takes a turn. She will try to win, but if she can't, she will
+        /// try to block the player from winning. If she can't do either of those things, she
+        /// will play randomly.
+        /// </summary>
+        /// <param name="room"></param>
+        /// <returns>
+        /// A <see cref="TurnModel"/> with the AI's play.
+        /// </returns>
+        public TurnModel OpheliaTakesATurn(IRoomModel room)
+        {
+            Random random = new Random();
+            List<(int, int)> validPlays = GetValidPlays(room);
+
+            // Try to win
+            List<TurnModel> winningTurns = new List<TurnModel>();
+            foreach ((int, int) play in validPlays)
+            {
+                TurnModel turn = new TurnModel
+                {
+                    ColNum = play.Item2,
+                    RowNum = play.Item1,
+                    Num = room.CurrentTurnNum
+                };
+                if (room.WillTurnWin(turn))
+                {
+                    winningTurns.Add(turn);
+                }
+            }
+            if (winningTurns.Any())
+            {
+                return winningTurns[random.Next(0, winningTurns.Count)];
+            }
+
+            // Try to block the player from winning
+            List<TurnModel> blockingTurns = new List<TurnModel>();
+            foreach ((int, int) play in validPlays)
+            {
+                TurnModel turn = new TurnModel
+                {
+                    ColNum = play.Item2,
+                    RowNum = play.Item1,
+                    Num = room.CurrentTurnNum + 1
+                };
+                if (room.WillTurnWin(turn))
+                {
+                    turn.Num = room.CurrentTurnNum;
+                    blockingTurns.Add(turn);
+                }
+            }
+            if (blockingTurns.Any())
+            {
+                return blockingTurns[random.Next(0, blockingTurns.Count)];
+            }
+
+            // Play randomly
+            (int rowNum, int colNum) = validPlays[random.Next(0, validPlays.Count)];
+            TurnModel randomTurn = new TurnModel
+            {
+                ColNum = colNum,
+                RowNum = rowNum,
+                Num = room.CurrentTurnNum
+            };
+            return randomTurn;
         }
     }
 }
