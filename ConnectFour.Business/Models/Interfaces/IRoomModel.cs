@@ -5,6 +5,8 @@ namespace ConnectFour.Business.Models.Interfaces
 {
     public interface IRoomModel
     {
+        int? Id { get; set; }
+
         /// <summary>
         /// Gets or sets the representation of the board grid's current state.
         /// </summary>
@@ -15,7 +17,6 @@ namespace ConnectFour.Business.Models.Interfaces
         DateTime CreationTime { get; set; }
         int CurrentPlayerNum { get; }
         int CurrentTurnNum { get; set; }
-        int? Id { get; set; }
         int LocalPlayerNum { get; set; }
         string Message { get; set; }
         IPlayerModel[] Players { get; set; }

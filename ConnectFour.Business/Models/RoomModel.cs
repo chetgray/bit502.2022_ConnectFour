@@ -7,11 +7,12 @@ namespace ConnectFour.Business.Models
 {
     public class RoomModel : IRoomModel
     {
+        public int? Id { get; set; }
+
         public int[,] Board { get; set; } = new int[6, 7];
         public DateTime CreationTime { get; set; } = DateTime.Now;
         public int CurrentPlayerNum => DeterminePlayerNum(CurrentTurnNum);
         public int CurrentTurnNum { get; set; }
-        public int? Id { get; set; }
         public int LocalPlayerNum { get; set; }
         public string Message { get; set; }
         public IPlayerModel[] Players { get; set; } = new IPlayerModel[2];
