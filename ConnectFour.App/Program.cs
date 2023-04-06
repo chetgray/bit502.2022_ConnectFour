@@ -9,6 +9,8 @@ using ConnectFour.Business.BLLs.Interfaces;
 using ConnectFour.Business.Models;
 using ConnectFour.Business.Models.Interfaces;
 
+using static ConnectFour.App.ProgramHelpers;
+
 namespace ConnectFour.App
 {
     internal static class Program
@@ -60,87 +62,26 @@ namespace ConnectFour.App
             }
         }
 
-        private static void HandleHostingGame()
+        private static void GameEnd(IRoomModel roomModel)
         {
-            IPlayerModel localPlayer = new PlayerModel();
-            bool isWaiting = true;
-            string opponentName = string.Empty;
-
-            if (_localPlayerName?.Length == 0)
+            if (roomModel.ResultCode == 0)
             {
-                _localPlayerName = GetPlayerName();
-                if (_localPlayerName == null)
-                {
-                    _localPlayerName = string.Empty;
-                    return;
-                }
-            }
-            Console.Clear();
-            WriteTitle();
-
-            IRoomBLL roomBll = new RoomBLL();
-            IRoomModel room = roomBll.AddPlayerToRoom(_localPlayerName, roomBll.AddNewRoom());
-            int localPlayerNum = room.LocalPlayerNum;
-
-            if (room.Players[0] == null)
-            {
-                localPlayer = room.Players[1];
+                WriteInColor("\n     DRAW!!!", ConsoleColor.Blue);
             }
             else
             {
-                localPlayer = room.Players[0];
+                WriteInColor(
+                    $"\n     {roomModel.Players[(int)roomModel.ResultCode - 1].Name} Wins! "
+                        + $"Last move was in Column {roomModel.Turns.Last().ColNum}.",
+                    roomModel.Players[(int)roomModel.ResultCode - 1].Color
+                );
             }
-
-            Console.WriteLine($"       Room ID: {room.Id}");
-            Console.WriteLine("\nWaiting for opponent...");
-            Console.WriteLine("\nPress escape to return to the main menu.");
-
-            while (isWaiting)
-            {
-                Thread.Sleep(1000);
-                room = roomBll.GetRoomById((int)room.Id);
-                room.LocalPlayerNum = localPlayerNum;
-
-                if (!room.Vacancy)
-                {
-                    isWaiting = false;
-                    Console.Clear();
-                    WriteTitle();
-                    Console.WriteLine($"       Room ID: {room.Id}");
-
-                    if (localPlayer.Num == 1)
-                    {
-                        opponentName = room.Players[1].Name;
-                    }
-                    else
-                    {
-                        opponentName = room.Players[0].Name;
-                    }
-
-                    Console.WriteLine($"\n{opponentName} has joined!");
-                    Console.WriteLine("\nPress any key to continue to the game.");
-                    Console.ReadKey();
-
-                    GamePlayLoop(room, roomBll);
-                    Console.Clear();
-                }
-
-                if (Console.KeyAvailable)
-                {
-                    if (Console.ReadKey().Key == ConsoleKey.Escape)
-                    {
-                        room.ResultCode = -1;
-                        Console.Clear();
-                        WriteTitle();
-                        Console.WriteLine(
-                            "The room has been closed. Returning to the main menu."
-                        );
-                        Thread.Sleep(2000);
-                        Console.Clear();
-                        isWaiting = false;
-                    }
-                }
-            }
+            Console.WriteLine("\n");
+            WriteResultTable(
+                new List<IResultModel> { RoomBLL.ConvertToResultModel(roomModel) }
+            );
+            Console.Write("\n     Press any key to return to the Main Menu.");
+            Console.ReadKey(intercept: true);
         }
 
         private static void GamePlayLoop(IRoomModel room, IRoomBLL roomBll)
@@ -183,114 +124,6 @@ namespace ConnectFour.App
                     room = roomBll.WaitForOpponentToPlay(room);
                 }
             }
-        }
-
-        private static void GameEnd(IRoomModel roomModel)
-        {
-            if (roomModel.ResultCode == 0)
-            {
-                WriteInColor("\n     DRAW!!!", ConsoleColor.Blue);
-            }
-            else
-            {
-                WriteInColor(
-                    $"\n     {roomModel.Players[(int)roomModel.ResultCode - 1].Name} Wins! "
-                        + $"Last move was in Column {roomModel.Turns.Last().ColNum}.",
-                    roomModel.Players[(int)roomModel.ResultCode - 1].Color
-                );
-            }
-            Console.WriteLine("\n");
-            WriteResultTable(
-                new List<IResultModel> { RoomBLL.ConvertToResultModel(roomModel) }
-            );
-            Console.Write("\n     Press any key to return to the Main Menu.");
-            Console.ReadKey(intercept: true);
-        }
-
-        private static void HandleJoiningGame()
-        {
-            IRoomModel room = new RoomModel();
-            //initializes variables for the line that the user will be writing at with these two ints
-            const int inputLineFromTopLine = 3;
-            const int inputLineWidth = 4;
-            bool isJoining = true;
-            if (_localPlayerName?.Length == 0)
-            {
-                _localPlayerName = GetPlayerName();
-                if (_localPlayerName == null)
-                {
-                    _localPlayerName = string.Empty;
-                    return;
-                }
-            }
-            IRoomBLL roomBll = new RoomBLL();
-            while (isJoining)
-            {
-                Console.Clear();
-                WriteTitle();
-                Console.WriteLine("What is the Room Id you would like to join?");
-                Console.Write("--> ");
-                WriteInColor($"\n\n{room.Message}", ConsoleColor.Red);
-                string userInput = GetUserInput(inputLineWidth, inputLineFromTopLine);
-                if (userInput == null)
-                {
-                    return;
-                }
-                int roomId;
-                try
-                {
-                    roomId = int.Parse(userInput);
-                }
-                catch (FormatException)
-                {
-                    room.Message =
-                        "Please enter an integer ID. To quit trying to join a room press the escape(Esc) key.";
-                    continue;
-                }
-                try
-                {
-                    room = roomBll.AddPlayerToRoom(_localPlayerName, roomId);
-                    isJoining = false;
-                }
-                catch (ArgumentException e)
-                {
-                    room.Message =
-                        e.Message + " To quit trying to join a room press the escape(Esc) key.";
-                }
-            }
-            Console.Clear();
-            WriteTitle();
-            Console.WriteLine(room.Message);
-            Console.Write("Press any key to continue . . . ");
-            Console.ReadKey(intercept: false);
-            GamePlayLoop(room, roomBll);
-        }
-
-        private static void HandleNpcGame()
-        {
-            if (_localPlayerName?.Length == 0)
-            {
-                _localPlayerName = GetPlayerName();
-                if (_localPlayerName == null)
-                {
-                    _localPlayerName = string.Empty;
-                    return;
-                }
-            }
-            Console.Clear();
-            WriteTitle();
-
-            IRoomBLL roomBll = new NPCRoomBLL();
-            IRoomModel room = roomBll.AddPlayerToRoom(_localPlayerName, roomBll.AddNewRoom());
-            string opponentName =
-                (room.LocalPlayerNum == 1) ? room.Players[1].Name : room.Players[0].Name;
-
-            Console.WriteLine($"       Room ID: {room.Id}");
-            Console.WriteLine($"\n{opponentName} has joined!");
-            Console.WriteLine("\nPress any key to continue to the game.");
-            Console.ReadKey();
-
-            GamePlayLoop(room, roomBll);
         }
 
         private static string GetPlayerName()
@@ -384,272 +217,173 @@ namespace ConnectFour.App
             Console.Clear();
         }
 
-        private static void WriteResultTable(List<IResultModel> results)
+        private static void HandleHostingGame()
         {
-            // initialize table array with headers
-            string[,] resultTable = new string[results.Count + 1, 7];
-            resultTable[0, 0] = "Room ID";
-            resultTable[0, 1] = "Started At";
-            resultTable[0, 2] = "Duration";
-            resultTable[0, 3] = "Player 1";
-            resultTable[0, 4] = "Player 2";
-            resultTable[0, 5] = "Winner";
-            resultTable[0, 6] = "Number of Moves";
+            IPlayerModel localPlayer = new PlayerModel();
+            bool isWaiting = true;
+            string opponentName = string.Empty;
 
-            // initialize column widths to header widths
-            int[] columnWidths = new int[resultTable.GetLength(1)];
-            for (int c = 0; c < columnWidths.Length; c++)
+            if (_localPlayerName?.Length == 0)
             {
-                columnWidths[c] = resultTable[0, c].Length;
+                _localPlayerName = GetPlayerName();
+                if (_localPlayerName == null)
+                {
+                    _localPlayerName = string.Empty;
+                    return;
+                }
+            }
+            Console.Clear();
+            WriteTitle();
+
+            IRoomBLL roomBll = new RoomBLL();
+            IRoomModel room = roomBll.AddPlayerToRoom(_localPlayerName, roomBll.AddNewRoom());
+            int localPlayerNum = room.LocalPlayerNum;
+
+            if (room.Players[0] == null)
+            {
+                localPlayer = room.Players[1];
+            }
+            else
+            {
+                localPlayer = room.Players[0];
             }
 
-            // fill table array with data
-            const int maxPlayerNameLength = 15;
-            for (int r = 1; r <= results.Count; r++)
+            Console.WriteLine($"       Room ID: {room.Id}");
+            Console.WriteLine("\nWaiting for opponent...");
+            Console.WriteLine("\nPress escape to return to the main menu.");
+
+            while (isWaiting)
             {
-                resultTable[r, 0] = results[r - 1].RoomId.ToString();
-                resultTable[r, 1] = results[r - 1].CreationTime.ToString("MM/dd/yyyy hh:mm tt");
-                resultTable[r, 2] = results[r - 1].Duration.ToTruncatedString(2);
-                resultTable[r, 3] =
-                    results[r - 1].Players[0].Length <= maxPlayerNameLength
-                        ? results[r - 1].Players[0]
-                        : $"{results[r - 1].Players[0].Substring(0, maxPlayerNameLength - 3)}...";
-                resultTable[r, 4] =
-                    results[r - 1].Players[1].Length <= maxPlayerNameLength
-                        ? results[r - 1].Players[1]
-                        : $"{results[r - 1].Players[1].Substring(0, maxPlayerNameLength - 3)}...";
-                resultTable[r, 5] =
-                    results[r - 1].WinnerName.Length <= maxPlayerNameLength
-                        ? results[r - 1].WinnerName
-                        : $"{results[r - 1].WinnerName.Substring(0, maxPlayerNameLength - 3)}...";
-                resultTable[r, 6] = results[r - 1].LastTurnNum.ToString();
-                // update column widths if necessary
-                for (int c = 0; c < resultTable.GetLength(1); c++)
+                Thread.Sleep(1000);
+                room = roomBll.GetRoomById((int)room.Id);
+                room.LocalPlayerNum = localPlayerNum;
+
+                if (!room.Vacancy)
                 {
-                    if (columnWidths[c] < resultTable[r, c].Length)
+                    isWaiting = false;
+                    Console.Clear();
+                    WriteTitle();
+                    Console.WriteLine($"       Room ID: {room.Id}");
+
+                    if (localPlayer.Num == 1)
                     {
-                        columnWidths[c] = resultTable[r, c].Length;
-                    }
-                }
-            }
-
-            StringBuilder rowBuilder = new StringBuilder();
-            for (int r = 0; r < resultTable.GetLength(0); r++)
-            {
-                if (r >= 1)
-                {
-                    // write row top border
-                    (string leftBorder, string middleBorder, string rightBorder) =
-                        (r == 1) ? (" ╔═", "═╦═", "═╗") : (" ╠═", "═╬═", "═╣");
-                    WriteBorder('═', leftBorder, middleBorder, rightBorder);
-                }
-                // write row (header or body)
-                string vertcalBorder = (r > 0) ? " ║ " : "   ";
-                for (int c = 0; c < columnWidths.Length; c++)
-                {
-                    rowBuilder.Append(vertcalBorder);
-                    // center resultTable[r, c] within columnWidths[c]
-                    rowBuilder.Append(
-                        resultTable[r, c]
-                            .PadRight((columnWidths[c] + resultTable[r, c].Length) / 2)
-                            .PadLeft(columnWidths[c])
-                    );
-                }
-                rowBuilder.Append(vertcalBorder);
-                Console.WriteLine(rowBuilder.ToString());
-                rowBuilder.Clear();
-            }
-            // write table bottom border
-            WriteBorder('═', " ╚═", "═╩═", "═╝");
-
-            void WriteBorder(
-                char horizontalBorder,
-                string leftBorder,
-                string middleBorder,
-                string rightBorder
-            )
-            {
-                StringBuilder borderBuilder = new StringBuilder();
-                borderBuilder.Append(leftBorder);
-                for (int c = 0; c < columnWidths.Length; c++)
-                {
-                    borderBuilder.Append(new string(horizontalBorder, columnWidths[c]));
-                    if (c < columnWidths.Length - 1)
-                    {
-                        borderBuilder.Append(middleBorder);
-                    }
-                }
-                borderBuilder.Append(rightBorder);
-                Console.WriteLine(borderBuilder.ToString());
-            }
-        }
-
-        /// <summary>
-        /// Converts the value of the this <see cref="TimeSpan"/> object to a truncated string
-        /// representation.
-        /// </summary>
-        /// <param name="unitCount">
-        /// The number of units to include in the string representation.
-        /// </param>
-        /// <returns>
-        /// A truncated string representation of this <see cref="TimeSpan"/> object, with only
-        /// the largest <paramref name="unitCount"/> number of units included.
-        /// </returns>
-        /// <exception cref="ArgumentOutOfRangeException">
-        /// Thrown when <paramref name="unitCount"/> is less than 1.
-        /// </exception>
-        internal static string ToTruncatedString(this TimeSpan timeSpan, int unitCount)
-        {
-            if (unitCount < 1)
-            {
-                throw new ArgumentOutOfRangeException(nameof(unitCount));
-            }
-            StringBuilder sb = new StringBuilder();
-            if (timeSpan.TotalDays >= 1)
-            {
-                sb.Append(timeSpan.Days).Append("d").Append(unitCount > 1 ? " " : "");
-                unitCount--;
-            }
-            if (unitCount > 0 && timeSpan.TotalHours >= 1)
-            {
-                sb.Append(timeSpan.Hours).Append("h").Append(unitCount > 1 ? " " : "");
-                unitCount--;
-            }
-            if (unitCount > 0 && timeSpan.TotalMinutes >= 1)
-            {
-                sb.Append(timeSpan.Minutes).Append("m").Append(unitCount > 1 ? " " : "");
-                unitCount--;
-            }
-            if (unitCount > 0)
-            {
-                sb.Append(timeSpan.Seconds).Append("s");
-            }
-            return sb.ToString();
-        }
-
-        private static void WriteBoard(IRoomModel room)
-        {
-            const string noPiece = "     ";
-            string p1Piece = $"░ {room.Players[0].Symbol} ░";
-            string p2Piece = $"░ {room.Players[1].Symbol} ░";
-
-            if (p1Piece == p2Piece)
-            {
-                p1Piece = "░ 1 ░";
-                p2Piece = "░ 2 ░";
-            }
-
-            for (int r = 0; r < room.Board.GetLength(0); r++)
-            {
-                for (int c = 0; c < room.Board.GetLength(1); c++)
-                {
-                    room.Board[r, c] = 0;
-                }
-            }
-
-            for (int t = 0; t < room.Turns.Count; t++)
-            {
-                if (room.Turns[t].Num % 2 == 0)
-                {
-                    room.Board[room.Turns[t].RowNum - 1, room.Turns[t].ColNum - 1] = 2;
-                }
-                else if (room.Turns[t].Num % 2 != 0)
-                {
-                    room.Board[room.Turns[t].RowNum - 1, room.Turns[t].ColNum - 1] = 1;
-                }
-            }
-
-            WriteInColor("\n    ╔═════╦═════╦═════╦═════╦═════╦═════╦═════╗\n", ConsoleColor.DarkBlue);
-
-            for (int r = 0; r < room.Board.GetLength(0); r++)
-            {
-                Console.Write("    ");
-                for (int c = 0; c < room.Board.GetLength(1); c++)
-                {
-                    WriteInColor("║", ConsoleColor.DarkBlue);
-                    if (room.Board[r, c] == 1)
-                    {
-                        WriteInColor(p1Piece, room.Players[0].Color);
-                    }
-                    else if (room.Board[r, c] == 2)
-                    {
-                        WriteInColor(p2Piece, room.Players[1].Color);
+                        opponentName = room.Players[1].Name;
                     }
                     else
                     {
-                        Console.Write(noPiece);
+                        opponentName = room.Players[0].Name;
+                    }
+
+                    Console.WriteLine($"\n{opponentName} has joined!");
+                    Console.WriteLine("\nPress any key to continue to the game.");
+                    Console.ReadKey();
+
+                    GamePlayLoop(room, roomBll);
+                    Console.Clear();
+                }
+
+                if (Console.KeyAvailable)
+                {
+                    if (Console.ReadKey().Key == ConsoleKey.Escape)
+                    {
+                        room.ResultCode = -1;
+                        Console.Clear();
+                        WriteTitle();
+                        Console.WriteLine(
+                            "The room has been closed. Returning to the main menu."
+                        );
+                        Thread.Sleep(2000);
+                        Console.Clear();
+                        isWaiting = false;
                     }
                 }
-                WriteInColor("║", ConsoleColor.DarkBlue);
-                switch (r)
+            }
+        }
+
+        private static void HandleJoiningGame()
+        {
+            IRoomModel room = new RoomModel();
+            //initializes variables for the line that the user will be writing at with these two ints
+            const int inputLineFromTopLine = 3;
+            const int inputLineWidth = 4;
+            bool isJoining = true;
+            if (_localPlayerName?.Length == 0)
+            {
+                _localPlayerName = GetPlayerName();
+                if (_localPlayerName == null)
                 {
-                    case 1:
-                        Console.Write($"    Room ID: {room.Id}");
-                        break;
-
-                    case 2:
-                        Console.Write($"    Player 1: ");
-                        WriteInColor(room.Players[0].Name, room.Players[0].Color);
-                        break;
-
-                    case 3:
-                        Console.Write($"    Player 2: ");
-                        WriteInColor(room.Players[1].Name, room.Players[1].Color);
-                        break;
-
-                    case 4:
-                        Console.Write("    Last play: ");
-                        if (room.Turns.Count != 0)
-                        {
-                            Console.Write(room.Turns.Last().ColNum);
-                        }
-                        else
-                        {
-                            Console.Write("N/A");
-                        }
-                        break;
-
-                    case 5:
-                        Console.Write("    Current turn: ");
-
-                        if (room.CurrentTurnNum % 2 == 0)
-                        {
-                            WriteInColor(room.Players[1].Name, room.Players[1].Color);
-                        }
-                        else
-                        {
-                            WriteInColor(room.Players[0].Name, room.Players[0].Color);
-                        }
-                        break;
-
-                    default:
-                        break;
-                }
-
-                if (r != 5)
-                {
-                    WriteInColor("\n    ╠═════╬═════╬═════╬═════╬═════╬═════╬═════╣\n", ConsoleColor.DarkBlue);
+                    _localPlayerName = string.Empty;
+                    return;
                 }
             }
-            WriteInColor("\n    ╚═════╩═════╩═════╩═════╩═════╩═════╩═════╝\n", ConsoleColor.DarkBlue);
-            Console.WriteLine("       1     2     3     4     5     6     7");
+            IRoomBLL roomBll = new RoomBLL();
+            while (isJoining)
+            {
+                Console.Clear();
+                WriteTitle();
+                Console.WriteLine("What is the Room Id you would like to join?");
+                Console.Write("--> ");
+                WriteInColor($"\n\n{room.Message}", ConsoleColor.Red);
+                string userInput = GetUserInput(inputLineWidth, inputLineFromTopLine);
+                if (userInput == null)
+                {
+                    return;
+                }
+                int roomId;
+                try
+                {
+                    roomId = int.Parse(userInput);
+                }
+                catch (FormatException)
+                {
+                    room.Message =
+                        "Please enter an integer ID. To quit trying to join a room press the escape(Esc) key.";
+                    continue;
+                }
+                try
+                {
+                    room = roomBll.AddPlayerToRoom(_localPlayerName, roomId);
+                    isJoining = false;
+                }
+                catch (ArgumentException e)
+                {
+                    room.Message =
+                        e.Message + " To quit trying to join a room press the escape(Esc) key.";
+                }
+            }
+            Console.Clear();
+            WriteTitle();
+            Console.WriteLine(room.Message);
+            Console.Write("Press any key to continue . . . ");
+            Console.ReadKey(intercept: false);
+            GamePlayLoop(room, roomBll);
         }
 
-        private static void WriteTitle()
+        private static void HandleNpcGame()
         {
-            Console.Write("         ");
-            WriteInColor("C", ConsoleColor.DarkRed);
-            WriteInColor("O", ConsoleColor.DarkYellow);
-            WriteInColor("NNE", ConsoleColor.DarkCyan);
-            WriteInColor("C", ConsoleColor.DarkRed);
-            WriteInColor("T4\n\n", ConsoleColor.DarkCyan);
-        }
+            if (_localPlayerName?.Length == 0)
+            {
+                _localPlayerName = GetPlayerName();
+                if (_localPlayerName == null)
+                {
+                    _localPlayerName = string.Empty;
+                    return;
+                }
+            }
+            Console.Clear();
+            WriteTitle();
 
-        private static void WriteInColor(string text, ConsoleColor color)
-        {
-            Console.ForegroundColor = color;
-            Console.Write(text);
-            Console.ResetColor();
+            IRoomBLL roomBll = new NPCRoomBLL();
+            IRoomModel room = roomBll.AddPlayerToRoom(_localPlayerName, roomBll.AddNewRoom());
+            string opponentName =
+                (room.LocalPlayerNum == 1) ? room.Players[1].Name : room.Players[0].Name;
+
+            Console.WriteLine($"       Room ID: {room.Id}");
+            Console.WriteLine($"\n{opponentName} has joined!");
+            Console.WriteLine("\nPress any key to continue to the game.");
+            Console.ReadKey();
+
+            GamePlayLoop(room, roomBll);
         }
     }
 }

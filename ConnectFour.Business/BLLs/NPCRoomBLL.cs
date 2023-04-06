@@ -28,14 +28,6 @@ namespace ConnectFour.Business.BLLs
         public NPCRoomBLL(IRoomRepository repository, IPlayerBLL playerBll, ITurnBLL turnBll)
             : base(repository, playerBll, turnBll) { }
 
-        public override IRoomModel WaitForOpponentToPlay(IRoomModel room)
-        {
-            ITurnModel turn = OpheliaTakesATurn(room);
-            room = AddTurnToRoom(turn, room);
-            room.Message = "Where would you like to place a piece?";
-            return room;
-        }
-
         public override IRoomModel AddPlayerToRoom(string localPlayerName, int roomId)
         {
             IRoomModel room = base.AddPlayerToRoom("Ophelia", roomId);
@@ -61,28 +53,6 @@ namespace ConnectFour.Business.BLLs
             }
 
             return validPlays;
-        }
-
-        /// <summary>
-        /// Random Randy takes a random turn, checking only if it's a valid play.
-        /// </summary>
-        /// <param name="room"></param>
-        /// <returns>
-        /// A <see cref="TurnModel"/> with the AI's play.
-        /// </returns>
-        public ITurnModel RandyTakesATurn(IRoomModel room)
-        {
-            List<(int, int)> validPlays = GetValidPlays(room);
-            Random random = new Random();
-            (int rowNum, int colNum) = validPlays[random.Next(0, validPlays.Count)];
-            ITurnModel turn = new TurnModel
-            {
-                ColNum = colNum,
-                RowNum = rowNum,
-                Num = room.CurrentTurnNum
-            };
-
-            return turn;
         }
 
         /// <summary>
@@ -149,6 +119,36 @@ namespace ConnectFour.Business.BLLs
                 Num = room.CurrentTurnNum
             };
             return randomTurn;
+        }
+
+        /// <summary>
+        /// Random Randy takes a random turn, checking only if it's a valid play.
+        /// </summary>
+        /// <param name="room"></param>
+        /// <returns>
+        /// A <see cref="TurnModel"/> with the AI's play.
+        /// </returns>
+        public ITurnModel RandyTakesATurn(IRoomModel room)
+        {
+            List<(int, int)> validPlays = GetValidPlays(room);
+            Random random = new Random();
+            (int rowNum, int colNum) = validPlays[random.Next(0, validPlays.Count)];
+            ITurnModel turn = new TurnModel
+            {
+                ColNum = colNum,
+                RowNum = rowNum,
+                Num = room.CurrentTurnNum
+            };
+
+            return turn;
+        }
+
+        public override IRoomModel WaitForOpponentToPlay(IRoomModel room)
+        {
+            ITurnModel turn = OpheliaTakesATurn(room);
+            room = AddTurnToRoom(turn, room);
+            room.Message = "Where would you like to place a piece?";
+            return room;
         }
     }
 }

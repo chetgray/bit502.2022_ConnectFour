@@ -4,8 +4,7 @@ namespace ConnectFour.Business.BLLs.Interfaces
 {
     public interface ITurnBLL
     {
-        ITurnModel GetLatestTurnInRoom(int roomId);
-
         void AddTurnToRoom(ITurnModel turn, int roomId);
+        ITurnModel GetLatestTurnInRoom(int roomId);
     }
 }

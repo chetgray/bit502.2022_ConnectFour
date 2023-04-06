@@ -66,18 +66,6 @@ namespace ConnectFour.Data.Repositories
             _dal.ExecuteStoredProcedure("dbo.spA_Room_UpdateRoomResultCode", paramDictionary);
         }
 
-        internal RoomDTO ConvertToDto(DataRow row)
-        {
-            RoomDTO roomDto = new RoomDTO()
-            {
-                Id = row.IsNull("RoomId") ? null : (int?)(row["RoomId"]),
-                CreationTime = (DateTime)row["RoomCreationTime"],
-                CurrentTurnNumber = (int)row["RoomCurrentTurnNum"],
-                ResultCode = row.IsNull("RoomResultCode") ? null : (int?)row["RoomResultCode"]
-            };
-            return roomDto;
-        }
-
         internal static IEnumerable<ResultDTO> ConvertTableToResultDtos(DataTable table)
         {
             Dictionary<int, ResultDTO> resultDtos = new Dictionary<int, ResultDTO>();
@@ -109,6 +97,18 @@ namespace ConnectFour.Data.Repositories
             }
 
             return resultDtos.Values;
+        }
+
+        internal RoomDTO ConvertToDto(DataRow row)
+        {
+            RoomDTO roomDto = new RoomDTO()
+            {
+                Id = row.IsNull("RoomId") ? null : (int?)(row["RoomId"]),
+                CreationTime = (DateTime)row["RoomCreationTime"],
+                CurrentTurnNumber = (int)row["RoomCurrentTurnNum"],
+                ResultCode = row.IsNull("RoomResultCode") ? null : (int?)row["RoomResultCode"]
+            };
+            return roomDto;
         }
     }
 }

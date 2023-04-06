@@ -8,12 +8,7 @@ namespace ConnectFour.Business.BLLs.Interfaces
     {
         int AddNewRoom();
         IRoomModel AddPlayerToRoom(string localPlayerName, int roomId);
-
-        IRoomModel TryAddTurnToRoom(int colNum, IRoomModel room);
-
         List<IResultModel> GetAllFinished();
-
-        IRoomModel UpdateWithLatestTurn(IRoomModel roomModel);
 
         /// <summary>
         /// Gets a <see cref="IRoomModel"/> by its <paramref name="roomId"/>.
@@ -26,7 +21,8 @@ namespace ConnectFour.Business.BLLs.Interfaces
         /// langword="null"/> if no room with that ID exists.
         /// </returns>
         IRoomModel GetRoomById(int roomId);
-
+        IRoomModel TryAddTurnToRoom(int colNum, IRoomModel room);
+        IRoomModel UpdateWithLatestTurn(IRoomModel roomModel);
         IRoomModel WaitForOpponentToPlay(IRoomModel roomModel);
     }
 }
