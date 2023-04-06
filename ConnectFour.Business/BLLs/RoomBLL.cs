@@ -14,8 +14,8 @@ namespace ConnectFour.Business.BLLs
 {
     public class RoomBLL : IRoomBLL
     {
-        protected readonly IRoomRepository _repository;
         protected readonly IPlayerBLL _playerBll;
+        protected readonly IRoomRepository _repository;
         protected readonly ITurnBLL _turnBll;
 
         /// <summary>
@@ -43,109 +43,6 @@ namespace ConnectFour.Business.BLLs
             _turnBll = turnBll ?? throw new ArgumentNullException(nameof(turnBll));
         }
 
-        public IRoomModel TryAddTurnToRoom(int colNum, IRoomModel room)
-        {
-            if (room.CurrentPlayerNum != room.LocalPlayerNum)
-            {
-                room.Message =
-                    $"It's Not Your Turn! Waiting on {room.Players[room.CurrentPlayerNum - 1].Name} to place a piece.";
-                return room;
-            }
-
-            int rowNum;
-            try
-            {
-                rowNum = room.GetNextRowInCol(colNum);
-            }
-            catch (ArgumentException e)
-            {
-                room.Message = e.Message;
-                return room;
-            }
-
-            ITurnModel turn = new TurnModel
-            {
-                ColNum = colNum,
-                RowNum = rowNum,
-                Num = room.CurrentTurnNum
-            };
-
-            room = AddTurnToRoom(turn, room);
-            room.Message =
-                $"Waiting on {room.Players[room.CurrentPlayerNum - 1].Name} to place a piece.";
-            return room;
-        }
-
-        protected IRoomModel AddTurnToRoom(ITurnModel turn, IRoomModel room)
-        {
-            room.Turns.Add(turn);
-            room.CurrentTurnNum++;
-            room.ResultCode = DetermineResultCode(room, turn);
-            if (room.ResultCode != null)
-            {
-                SetRoomResultCode((int)room.Id, (int)room.ResultCode);
-            }
-            _turnBll.AddTurnToRoom(turn, (int)room.Id);
-            return room;
-        }
-
-        private static int? DetermineResultCode(IRoomModel room, ITurnModel turn)
-        {
-            if (turn == null)
-            {
-                return null;
-            }
-            if (room.WillTurnWin(turn))
-            {
-                return room.DeterminePlayerNum(turn.Num);
-            }
-            else if (room.Turns.Count >= room.Board.GetLength(0) * room.Board.GetLength(1))
-            {
-                return 0;
-            }
-            return null;
-        }
-
-        public int AddNewRoom()
-        {
-            return _repository.AddNewRoom();
-        }
-
-        public List<IResultModel> GetAllFinished()
-        {
-            List<IResultModel> models = new List<IResultModel>();
-            List<ResultDTO> dtos = _repository.GetAllFinishedResults();
-            for (int i = 0; i < dtos.Count; i++)
-            {
-                models.Add(ConvertToResultModel(dtos[i]));
-            }
-            return models;
-        }
-
-        internal static IResultModel ConvertToResultModel(ResultDTO dto)
-        {
-            string[] playerNames = new string[dto.Players.Count];
-            foreach (KeyValuePair<int, string> playerNumName in dto.Players)
-            {
-                playerNames[playerNumName.Key - 1] = playerNumName.Value;
-            }
-            TimeSpan durationTimeSpan =
-                dto.LastTurnTime != null
-                    ? (DateTime)dto.LastTurnTime - dto.CreationTime
-                    : DateTime.Now - dto.CreationTime;
-            IResultModel model = new ResultModel
-            {
-                RoomId = dto.RoomId,
-                CreationTime = dto.CreationTime,
-                Duration = durationTimeSpan,
-                Players = playerNames,
-                ResultCode = dto.ResultCode,
-                WinnerName = DetermineWinner(dto.ResultCode, dto.Players),
-                LastTurnNum = dto.LastTurnNum
-            };
-            return model;
-        }
-
         public static IResultModel ConvertToResultModel(IRoomModel room)
         {
             Dictionary<int, string> playerNameDictionary = room.Players.ToDictionary(
@@ -169,47 +66,9 @@ namespace ConnectFour.Business.BLLs
             return resultModel;
         }
 
-        public IRoomModel UpdateWithLatestTurn(IRoomModel room)
+        public int AddNewRoom()
         {
-            ITurnModel lastTurn = _turnBll.GetLatestTurnInRoom((int)room.Id);
-
-            if (lastTurn == null && room.LocalPlayerNum == 1)
-            {
-                room.Message = "Where would you like to place a piece?";
-                return room;
-            }
-            if (lastTurn?.Num == room.CurrentTurnNum)
-            {
-                room.Turns.Add(lastTurn);
-                room.CurrentTurnNum++;
-            }
-            if (room.CurrentPlayerNum != room.LocalPlayerNum)
-            {
-                room.Message =
-                    $"Waiting on {room.Players[room.CurrentPlayerNum - 1].Name} to place a piece.";
-                return room;
-            }
-
-            room.ResultCode = DetermineResultCode(room, lastTurn);
-            if (room.ResultCode == null)
-            {
-                room.Message = "Where would you like to place a piece?";
-            }
-
-            return room;
-        }
-
-        private static string DetermineWinner(int? resultCode, Dictionary<int, string> players)
-        {
-            if (resultCode > 0 && resultCode < 3)
-            {
-                return $"{players[(int)resultCode]}";
-            }
-            else if (resultCode == 0)
-            {
-                return "DRAW";
-            }
-            return "NULL";
+            return _repository.AddNewRoom();
         }
 
         public virtual IRoomModel AddPlayerToRoom(string localPlayerName, int roomId)
@@ -247,6 +106,17 @@ namespace ConnectFour.Business.BLLs
             return roomModel;
         }
 
+        public List<IResultModel> GetAllFinished()
+        {
+            List<IResultModel> models = new List<IResultModel>();
+            List<ResultDTO> dtos = _repository.GetAllFinishedResults();
+            for (int i = 0; i < dtos.Count; i++)
+            {
+                models.Add(ConvertToResultModel(dtos[i]));
+            }
+            return models;
+        }
+
         public IRoomModel GetRoomById(int roomId)
         {
             RoomDTO dto = _repository.GetRoomById(roomId);
@@ -257,6 +127,69 @@ namespace ConnectFour.Business.BLLs
             }
             room.Players = _playerBll.GetPlayersInRoom(roomId);
             room.Vacancy = room.Players.Contains(null);
+
+            return room;
+        }
+
+        public IRoomModel TryAddTurnToRoom(int colNum, IRoomModel room)
+        {
+            if (room.CurrentPlayerNum != room.LocalPlayerNum)
+            {
+                room.Message =
+                    $"It's Not Your Turn! Waiting on {room.Players[room.CurrentPlayerNum - 1].Name} to place a piece.";
+                return room;
+            }
+
+            int rowNum;
+            try
+            {
+                rowNum = room.GetNextRowInCol(colNum);
+            }
+            catch (ArgumentException e)
+            {
+                room.Message = e.Message;
+                return room;
+            }
+
+            ITurnModel turn = new TurnModel
+            {
+                ColNum = colNum,
+                RowNum = rowNum,
+                Num = room.CurrentTurnNum
+            };
+
+            room = AddTurnToRoom(turn, room);
+            room.Message =
+                $"Waiting on {room.Players[room.CurrentPlayerNum - 1].Name} to place a piece.";
+            return room;
+        }
+
+        public IRoomModel UpdateWithLatestTurn(IRoomModel room)
+        {
+            ITurnModel lastTurn = _turnBll.GetLatestTurnInRoom((int)room.Id);
+
+            if (lastTurn == null && room.LocalPlayerNum == 1)
+            {
+                room.Message = "Where would you like to place a piece?";
+                return room;
+            }
+            if (lastTurn?.Num == room.CurrentTurnNum)
+            {
+                room.Turns.Add(lastTurn);
+                room.CurrentTurnNum++;
+            }
+            if (room.CurrentPlayerNum != room.LocalPlayerNum)
+            {
+                room.Message =
+                    $"Waiting on {room.Players[room.CurrentPlayerNum - 1].Name} to place a piece.";
+                return room;
+            }
+
+            room.ResultCode = DetermineResultCode(room, lastTurn);
+            if (room.ResultCode == null)
+            {
+                room.Message = "Where would you like to place a piece?";
+            }
 
             return room;
         }
@@ -287,9 +220,28 @@ namespace ConnectFour.Business.BLLs
             return roomModel;
         }
 
-        private void SetRoomResultCode(int roomId, int resultCode)
+        internal static IResultModel ConvertToResultModel(ResultDTO dto)
         {
-            _repository.SetRoomResultCode(roomId, resultCode);
+            string[] playerNames = new string[dto.Players.Count];
+            foreach (KeyValuePair<int, string> playerNumName in dto.Players)
+            {
+                playerNames[playerNumName.Key - 1] = playerNumName.Value;
+            }
+            TimeSpan durationTimeSpan =
+                dto.LastTurnTime != null
+                    ? (DateTime)dto.LastTurnTime - dto.CreationTime
+                    : DateTime.Now - dto.CreationTime;
+            IResultModel model = new ResultModel
+            {
+                RoomId = dto.RoomId,
+                CreationTime = dto.CreationTime,
+                Duration = durationTimeSpan,
+                Players = playerNames,
+                ResultCode = dto.ResultCode,
+                WinnerName = DetermineWinner(dto.ResultCode, dto.Players),
+                LastTurnNum = dto.LastTurnNum
+            };
+            return model;
         }
 
         internal RoomDTO ConvertToDto(IRoomModel model)
@@ -311,6 +263,54 @@ namespace ConnectFour.Business.BLLs
                 ResultCode = dto.ResultCode
             };
             return model;
+        }
+
+        protected IRoomModel AddTurnToRoom(ITurnModel turn, IRoomModel room)
+        {
+            room.Turns.Add(turn);
+            room.CurrentTurnNum++;
+            room.ResultCode = DetermineResultCode(room, turn);
+            if (room.ResultCode != null)
+            {
+                SetRoomResultCode((int)room.Id, (int)room.ResultCode);
+            }
+            _turnBll.AddTurnToRoom(turn, (int)room.Id);
+            return room;
+        }
+
+        private static int? DetermineResultCode(IRoomModel room, ITurnModel turn)
+        {
+            if (turn == null)
+            {
+                return null;
+            }
+            if (room.WillTurnWin(turn))
+            {
+                return room.DeterminePlayerNum(turn.Num);
+            }
+            else if (room.Turns.Count >= room.Board.GetLength(0) * room.Board.GetLength(1))
+            {
+                return 0;
+            }
+            return null;
+        }
+
+        private static string DetermineWinner(int? resultCode, Dictionary<int, string> players)
+        {
+            if (resultCode > 0 && resultCode < 3)
+            {
+                return $"{players[(int)resultCode]}";
+            }
+            else if (resultCode == 0)
+            {
+                return "DRAW";
+            }
+            return "NULL";
+        }
+
+        private void SetRoomResultCode(int roomId, int resultCode)
+        {
+            _repository.SetRoomResultCode(roomId, resultCode);
         }
     }
 }

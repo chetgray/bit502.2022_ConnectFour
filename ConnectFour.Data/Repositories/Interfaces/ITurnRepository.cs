@@ -4,7 +4,7 @@ namespace ConnectFour.Data.Repositories.Interfaces
 {
     public interface ITurnRepository
     {
-        TurnDTO GetLatestTurnInRoom(int roomId);
         void AddTurnToRoom(TurnDTO dto);
+        TurnDTO GetLatestTurnInRoom(int roomId);
     }
 }

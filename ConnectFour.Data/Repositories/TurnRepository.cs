@@ -16,6 +16,20 @@ namespace ConnectFour.Data.Repositories
         /// <inheritdoc/>
         public TurnRepository(IDAL dal) : base(dal) { }
 
+        public void AddTurnToRoom(TurnDTO dto)
+        {
+            Dictionary<string, object> paramDictionary = new Dictionary<string, object>
+            {
+                { "@TurnRoomId", dto.RoomId },
+                { "@TurnTime", dto.Time },
+                { "@TurnRowNum", dto.RowNum },
+                { "@TurnColNum", dto.ColNum },
+                { "@TurnNum", dto.Num }
+            };
+
+            _dal.ExecuteStoredProcedure("dbo.spA_Turn_AddTurnToRoom", paramDictionary);
+        }
+
         public TurnDTO GetLatestTurnInRoom(int roomId)
         {
             Dictionary<string, object> paramDictionary = new Dictionary<string, object>
@@ -31,20 +45,6 @@ namespace ConnectFour.Data.Repositories
                 return null;
             }
             return ConvertToDto(dataTable.Rows[0]);
-        }
-
-        public void AddTurnToRoom(TurnDTO dto)
-        {
-            Dictionary<string, object> paramDictionary = new Dictionary<string, object>
-            {
-                { "@TurnRoomId", dto.RoomId },
-                { "@TurnTime", dto.Time },
-                { "@TurnRowNum", dto.RowNum },
-                { "@TurnColNum", dto.ColNum },
-                { "@TurnNum", dto.Num }
-            };
-
-            _dal.ExecuteStoredProcedure("dbo.spA_Turn_AddTurnToRoom", paramDictionary);
         }
 
         private static TurnDTO ConvertToDto(DataRow row)

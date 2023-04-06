@@ -7,27 +7,47 @@ namespace ConnectFour.Business.Models
 {
     public class RoomModel : IRoomModel
     {
-        public int? Id { get; set; }
-        public DateTime CreationTime { get; set; } = DateTime.Now;
-        public int CurrentTurnNum { get; set; }
-        public int? ResultCode { get; set; }
-
-        public IPlayerModel[] Players { get; set; } = new IPlayerModel[2];
-        public List<ITurnModel> Turns { get; set; } = new List<ITurnModel>();
-
         public int[,] Board { get; set; } = new int[6, 7];
-        public bool Vacancy { get; set; }
-
-        public string Message { get; set; }
-
+        public DateTime CreationTime { get; set; } = DateTime.Now;
         public int CurrentPlayerNum => DeterminePlayerNum(CurrentTurnNum);
+        public int CurrentTurnNum { get; set; }
+        public int? Id { get; set; }
+        public int LocalPlayerNum { get; set; }
+        public string Message { get; set; }
+        public IPlayerModel[] Players { get; set; } = new IPlayerModel[2];
+        public int? ResultCode { get; set; }
+        public List<ITurnModel> Turns { get; set; } = new List<ITurnModel>();
+        public bool Vacancy { get; set; }
 
         public int DeterminePlayerNum(int turnNum)
         {
             return ((turnNum - 1) % Players.Length) + 1;
         }
 
-        public int LocalPlayerNum { get; set; }
+        public int GetNextRowInCol(int colNum)
+        {
+            if (colNum < 1 || colNum > Board.GetLength(1))
+            {
+                throw new ArgumentException(
+                    $"Please choose a column between 1 - {Board.GetLength(1)}"
+                );
+            }
+            int turnsInColumnCount = 0;
+            foreach (ITurnModel turn in Turns)
+            {
+                if (turn.ColNum == colNum)
+                {
+                    turnsInColumnCount++;
+                }
+            }
+            int rowNum = Board.GetLength(0) - turnsInColumnCount;
+            if (rowNum < 1)
+            {
+                throw new ArgumentException($"Column {colNum} is Full!");
+            }
+
+            return rowNum;
+        }
 
         public bool WillTurnWin(ITurnModel turn)
         {
@@ -78,31 +98,6 @@ namespace ConnectFour.Business.Models
             }
 
             return false;
-        }
-
-        public int GetNextRowInCol(int colNum)
-        {
-            if (colNum < 1 || colNum > Board.GetLength(1))
-            {
-                throw new ArgumentException(
-                    $"Please choose a column between 1 - {Board.GetLength(1)}"
-                );
-            }
-            int turnsInColumnCount = 0;
-            foreach (ITurnModel turn in Turns)
-            {
-                if (turn.ColNum == colNum)
-                {
-                    turnsInColumnCount++;
-                }
-            }
-            int rowNum = Board.GetLength(0) - turnsInColumnCount;
-            if (rowNum < 1)
-            {
-                throw new ArgumentException($"Column {colNum} is Full!");
-            }
-
-            return rowNum;
         }
     }
 }

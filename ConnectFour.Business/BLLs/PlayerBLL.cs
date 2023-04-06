@@ -47,6 +47,16 @@ namespace ConnectFour.Business.BLLs
             return ConvertManyToModels(dtos).ToArray();
         }
 
+        internal List<IPlayerModel> ConvertManyToModels(IEnumerable<PlayerDTO> dtos)
+        {
+            List<IPlayerModel> models = new List<IPlayerModel>();
+            foreach (PlayerDTO dto in dtos)
+            {
+                models.Add(ConvertToModel(dto));
+            }
+            return models;
+        }
+
         internal PlayerDTO ConvertToDto(IPlayerModel model)
         {
             PlayerDTO dto = new PlayerDTO()
@@ -56,16 +66,6 @@ namespace ConnectFour.Business.BLLs
                 Num = model.Num
             };
             return dto;
-        }
-
-        internal List<IPlayerModel> ConvertManyToModels(IEnumerable<PlayerDTO> dtos)
-        {
-            List<IPlayerModel> models = new List<IPlayerModel>();
-            foreach (PlayerDTO dto in dtos)
-            {
-                models.Add(ConvertToModel(dto));
-            }
-            return models;
         }
 
         internal IPlayerModel ConvertToModel(PlayerDTO dto)

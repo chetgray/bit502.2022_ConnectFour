@@ -9,7 +9,6 @@ namespace ConnectFour.Data.Repositories.Interfaces
         int AddNewRoom();
         List<ResultDTO> GetAllFinishedResults();
         RoomDTO GetRoomById(int roomId);
-
         void SetRoomResultCode(int roomId, int resultCode);
     }
 }

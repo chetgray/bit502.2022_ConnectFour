@@ -17,6 +17,32 @@ namespace ConnectFour.Tests.Business
     [TestClass]
     public class RoomBLLTests
     {
+        [TestMethod]
+        public void AddPlayerToRoom_BothSeatsOpen_NewPlayerTakesASeat()
+        {
+            // Arrange
+            const string newPlayerName = "New Player";
+            IRoomRepository repository = new RoomRepositoryStub
+            {
+                TestDto = new RoomDTO { Id = 1 }
+            };
+            IPlayerBLL playerBll = new PlayerBLLStub
+            {
+                TestModel = new PlayerModel { Name = newPlayerName, Num = 2 },
+                TestModels = (new IPlayerModel[] { null, null })
+            };
+            ITurnBLL turnBll = new TurnBLLStub();
+            IRoomBLL bll = new RoomBLL(repository, playerBll, turnBll);
+
+            // Act
+            IRoomModel resultRoom = bll.AddPlayerToRoom(newPlayerName, 1);
+
+            // Assert
+            Assert.AreEqual(2, resultRoom.Players.Length);
+            Assert.IsTrue(resultRoom.Vacancy);
+            Assert.IsNotNull(resultRoom.Players.Where(p => p.Name == newPlayerName));
+        }
+
         [DataRow(0)]
         [DataRow(1)]
         [DataRow(2)]
@@ -87,32 +113,6 @@ namespace ConnectFour.Tests.Business
         }
 
         [TestMethod]
-        public void AddPlayerToRoom_BothSeatsOpen_NewPlayerTakesASeat()
-        {
-            // Arrange
-            const string newPlayerName = "New Player";
-            IRoomRepository repository = new RoomRepositoryStub
-            {
-                TestDto = new RoomDTO { Id = 1 }
-            };
-            IPlayerBLL playerBll = new PlayerBLLStub
-            {
-                TestModel = new PlayerModel { Name = newPlayerName, Num = 2 },
-                TestModels = (new IPlayerModel[] { null, null })
-            };
-            ITurnBLL turnBll = new TurnBLLStub();
-            IRoomBLL bll = new RoomBLL(repository, playerBll, turnBll);
-
-            // Act
-            IRoomModel resultRoom = bll.AddPlayerToRoom(newPlayerName, 1);
-
-            // Assert
-            Assert.AreEqual(2, resultRoom.Players.Length);
-            Assert.IsTrue(resultRoom.Vacancy);
-            Assert.IsNotNull(resultRoom.Players.Where(p => p.Name == newPlayerName));
-        }
-
-        [TestMethod]
         public void AddPlayerToRoom_SeatOneFullSeatTwoOpen_NewPlayerTakesSeatOne()
         {
             // Arrange
@@ -172,52 +172,6 @@ namespace ConnectFour.Tests.Business
             // Assert
             Assert.AreEqual(2, resultRoom.Players.Length);
             Assert.AreEqual(newPlayerName, resultRoom.Players[0].Name);
-        }
-
-        [DataRow(0)]
-        [DataRow(8)]
-        [TestMethod]
-        public void TryAddTurnToRoom_ReponseIsNotInRange_ReturnRoomWithErrorMessage(
-            int ColumnChoice
-        )
-        {
-            // Arrange
-            IRoomRepository repository = new RoomRepositoryStub();
-            IPlayerBLL playerBll = new PlayerBLLStub();
-            ITurnBLL turnBll = new TurnBLLStub();
-            IRoomBLL bll = new RoomBLL(repository, playerBll, turnBll);
-            IRoomModel room = new RoomModel
-            {
-                Id = 0,
-                CurrentTurnNum = 2,
-                LocalPlayerNum = 2,
-                Players = new PlayerModel[]
-                {
-                    new PlayerModel
-                    {
-                        Id = 0,
-                        Name = "testOne",
-                        Num = 1,
-                        Color = ConsoleColor.Red,
-                        Symbol = "1"
-                    },
-                    new PlayerModel
-                    {
-                        Id = 1,
-                        Name = "testTwo",
-                        Num = 2,
-                        Color = ConsoleColor.Yellow,
-                        Symbol = "2"
-                    }
-                }
-            };
-
-            // Act
-            IRoomModel result = bll.TryAddTurnToRoom(ColumnChoice, room);
-            // Assert
-            Assert.AreEqual("Please choose a column between 1 - 7", result.Message);
-            Assert.AreEqual(2, result.CurrentTurnNum);
-            Assert.AreEqual(2, result.CurrentPlayerNum);
         }
 
         [TestMethod]
@@ -288,102 +242,6 @@ namespace ConnectFour.Tests.Business
             // Assert
             // Within 0.5 second tolerance
             Assert.IsTrue(Math.Abs(expected.TotalSeconds - actual.TotalSeconds) < 0.5);
-        }
-
-        [TestMethod]
-        public void UpdateWithLatestTurn_RoomCurrentTurnNumOne_NewTurnRecievedIsNull()
-        {
-            // Arrange
-            IRoomRepository repository = new RoomRepositoryStub();
-            IPlayerBLL playerBll = new PlayerBLLStub();
-            ITurnBLL turnBll = new TurnBLLStub { TestModel = null };
-            IRoomBLL bll = new RoomBLL(repository, playerBll, turnBll);
-            IRoomModel room = new RoomModel
-            {
-                Id = 0,
-                CurrentTurnNum = 1,
-                LocalPlayerNum = 1,
-                Players = new PlayerModel[]
-                {
-                    new PlayerModel
-                    {
-                        Id = 0,
-                        Name = "testOne",
-                        Num = 1,
-                        Symbol = "1"
-                    },
-                    new PlayerModel
-                    {
-                        Id = 1,
-                        Name = "testTwo",
-                        Num = 2,
-                        Symbol = "2"
-                    }
-                }
-            };
-
-            // Act
-            IRoomModel result = bll.UpdateWithLatestTurn(room);
-            // Assert
-            Assert.AreEqual(1, result.CurrentPlayerNum);
-        }
-
-        [TestMethod]
-        public void UpdateWithLatestTurn_TurnBLLProvidesNewTurn_RoomContainsNewTurnData()
-        {
-            // Arrange
-            IRoomRepository repository = new RoomRepositoryStub();
-            IPlayerBLL playerBll = new PlayerBLLStub();
-            DateTime currentTime = DateTime.Now;
-            ITurnModel turnModel = new TurnModel
-            {
-                Id = 0,
-                Time = currentTime,
-                RowNum = 6,
-                ColNum = 1,
-                Num = 1
-            };
-            ITurnBLL turnBll = new TurnBLLStub { TestModel = turnModel };
-            IRoomBLL bll = new RoomBLL(repository, playerBll, turnBll);
-            IRoomModel room = new RoomModel
-            {
-                Id = 0,
-                CurrentTurnNum = 1,
-                LocalPlayerNum = 2,
-                Players = new PlayerModel[]
-                {
-                    new PlayerModel
-                    {
-                        Id = 0,
-                        Name = "testOne",
-                        Num = 1,
-                        Color = ConsoleColor.Red,
-                        Symbol = "1"
-                    },
-                    new PlayerModel
-                    {
-                        Id = 1,
-                        Name = "testTwo",
-                        Num = 2,
-                        Color = ConsoleColor.Yellow,
-                        Symbol = "2"
-                    }
-                }
-            };
-
-            // Act
-            IRoomModel result = bll.UpdateWithLatestTurn(room);
-
-            // Assert
-            Assert.IsTrue(
-                result.Turns.Exists(
-                    turn =>
-                        turn.Num == turnModel.Num
-                        && turn.Time == turnModel.Time
-                        && turn.RowNum == turnModel.RowNum
-                        && turn.ColNum == turnModel.ColNum
-                )
-            );
         }
 
         [TestMethod]
@@ -489,6 +347,148 @@ namespace ConnectFour.Tests.Business
 
             // Assert
             Assert.IsTrue(result.Vacancy);
+        }
+
+        [DataRow(0)]
+        [DataRow(8)]
+        [TestMethod]
+        public void TryAddTurnToRoom_ReponseIsNotInRange_ReturnRoomWithErrorMessage(
+            int ColumnChoice
+        )
+        {
+            // Arrange
+            IRoomRepository repository = new RoomRepositoryStub();
+            IPlayerBLL playerBll = new PlayerBLLStub();
+            ITurnBLL turnBll = new TurnBLLStub();
+            IRoomBLL bll = new RoomBLL(repository, playerBll, turnBll);
+            IRoomModel room = new RoomModel
+            {
+                Id = 0,
+                CurrentTurnNum = 2,
+                LocalPlayerNum = 2,
+                Players = new PlayerModel[]
+                {
+                    new PlayerModel
+                    {
+                        Id = 0,
+                        Name = "testOne",
+                        Num = 1,
+                        Color = ConsoleColor.Red,
+                        Symbol = "1"
+                    },
+                    new PlayerModel
+                    {
+                        Id = 1,
+                        Name = "testTwo",
+                        Num = 2,
+                        Color = ConsoleColor.Yellow,
+                        Symbol = "2"
+                    }
+                }
+            };
+
+            // Act
+            IRoomModel result = bll.TryAddTurnToRoom(ColumnChoice, room);
+            // Assert
+            Assert.AreEqual("Please choose a column between 1 - 7", result.Message);
+            Assert.AreEqual(2, result.CurrentTurnNum);
+            Assert.AreEqual(2, result.CurrentPlayerNum);
+        }
+
+        [TestMethod]
+        public void UpdateWithLatestTurn_RoomCurrentTurnNumOne_NewTurnRecievedIsNull()
+        {
+            // Arrange
+            IRoomRepository repository = new RoomRepositoryStub();
+            IPlayerBLL playerBll = new PlayerBLLStub();
+            ITurnBLL turnBll = new TurnBLLStub { TestModel = null };
+            IRoomBLL bll = new RoomBLL(repository, playerBll, turnBll);
+            IRoomModel room = new RoomModel
+            {
+                Id = 0,
+                CurrentTurnNum = 1,
+                LocalPlayerNum = 1,
+                Players = new PlayerModel[]
+                {
+                    new PlayerModel
+                    {
+                        Id = 0,
+                        Name = "testOne",
+                        Num = 1,
+                        Symbol = "1"
+                    },
+                    new PlayerModel
+                    {
+                        Id = 1,
+                        Name = "testTwo",
+                        Num = 2,
+                        Symbol = "2"
+                    }
+                }
+            };
+
+            // Act
+            IRoomModel result = bll.UpdateWithLatestTurn(room);
+            // Assert
+            Assert.AreEqual(1, result.CurrentPlayerNum);
+        }
+
+        [TestMethod]
+        public void UpdateWithLatestTurn_TurnBLLProvidesNewTurn_RoomContainsNewTurnData()
+        {
+            // Arrange
+            IRoomRepository repository = new RoomRepositoryStub();
+            IPlayerBLL playerBll = new PlayerBLLStub();
+            DateTime currentTime = DateTime.Now;
+            ITurnModel turnModel = new TurnModel
+            {
+                Id = 0,
+                Time = currentTime,
+                RowNum = 6,
+                ColNum = 1,
+                Num = 1
+            };
+            ITurnBLL turnBll = new TurnBLLStub { TestModel = turnModel };
+            IRoomBLL bll = new RoomBLL(repository, playerBll, turnBll);
+            IRoomModel room = new RoomModel
+            {
+                Id = 0,
+                CurrentTurnNum = 1,
+                LocalPlayerNum = 2,
+                Players = new PlayerModel[]
+                {
+                    new PlayerModel
+                    {
+                        Id = 0,
+                        Name = "testOne",
+                        Num = 1,
+                        Color = ConsoleColor.Red,
+                        Symbol = "1"
+                    },
+                    new PlayerModel
+                    {
+                        Id = 1,
+                        Name = "testTwo",
+                        Num = 2,
+                        Color = ConsoleColor.Yellow,
+                        Symbol = "2"
+                    }
+                }
+            };
+
+            // Act
+            IRoomModel result = bll.UpdateWithLatestTurn(room);
+
+            // Assert
+            Assert.IsTrue(
+                result.Turns.Exists(
+                    turn =>
+                        turn.Num == turnModel.Num
+                        && turn.Time == turnModel.Time
+                        && turn.RowNum == turnModel.RowNum
+                        && turn.ColNum == turnModel.ColNum
+                )
+            );
         }
 
         [TestMethod]

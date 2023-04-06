@@ -32,17 +32,30 @@ namespace ConnectFour.Business.BLLs
             _repository = repository ?? throw new ArgumentNullException(nameof(repository));
         }
 
+        public void AddTurnToRoom(ITurnModel model, int roomId)
+        {
+            TurnDTO dto = ConvertToDto(model);
+            dto.RoomId = roomId;
+            _repository.AddTurnToRoom(dto);
+        }
+
         public ITurnModel GetLatestTurnInRoom(int roomId)
         {
             TurnDTO dto = _repository.GetLatestTurnInRoom(roomId);
             return ConvertToModel(dto);
         }
 
-        public void AddTurnToRoom(ITurnModel model, int roomId)
+        private TurnDTO ConvertToDto(ITurnModel model)
         {
-            TurnDTO dto = ConvertToDto(model);
-            dto.RoomId = roomId;
-            _repository.AddTurnToRoom(dto);
+            TurnDTO dto = new TurnDTO
+            {
+                Id = model.Id,
+                Time = model.Time,
+                RowNum = model.RowNum,
+                ColNum = model.ColNum,
+                Num = model.Num
+            };
+            return dto;
         }
 
         private ITurnModel ConvertToModel(TurnDTO dto)
@@ -60,19 +73,6 @@ namespace ConnectFour.Business.BLLs
                 Num = dto.Num
             };
             return model;
-        }
-
-        private TurnDTO ConvertToDto(ITurnModel model)
-        {
-            TurnDTO dto = new TurnDTO
-            {
-                Id = model.Id,
-                Time = model.Time,
-                RowNum = model.RowNum,
-                ColNum = model.ColNum,
-                Num = model.Num
-            };
-            return dto;
         }
     }
 }
