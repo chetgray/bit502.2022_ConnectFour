@@ -54,7 +54,7 @@
     <Compile Include="Business\NPCRoomBLLTests.cs" />
     <Compile Include="Business\RoomBLLTests.cs" />
     <Compile Include="Business\PlayerBLLTests.cs" />
-    <Compile Include="Business\RoomModelTests.cs" />
+    <Compile Include="Business\RooBLLHelpersTests.cs" />
     <Compile Include="Data\RoomRepositoryTests.cs" />
     <Compile Include="Data\PlayerRepositoryTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

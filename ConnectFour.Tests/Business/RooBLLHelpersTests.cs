@@ -1,5 +1,6 @@
 ﻿using System;
 
+using ConnectFour.Business.BLLs;
 using ConnectFour.Business.Models;
 using ConnectFour.Business.Models.Interfaces;
 
@@ -8,7 +9,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 namespace ConnectFour.Tests.Business
 {
     [TestClass]
-    public class RoomModelTests
+    public class RooBLLHelpersTests
     {
         [TestMethod]
         public void GetNextRowInCol_ColumnFull_ThrowsArgumentException()
