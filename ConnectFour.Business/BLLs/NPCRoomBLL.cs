@@ -30,7 +30,7 @@ namespace ConnectFour.Business.BLLs
 
         public override IRoomModel WaitForOpponentToPlay(IRoomModel room)
         {
-            ITurnModel turn = RandyTakesATurn(room);
+            ITurnModel turn = OpheliaTakesATurn(room);
             room = AddTurnToRoom(turn, room);
             room.Message = "Where would you like to place a piece?";
             return room;
@@ -38,7 +38,7 @@ namespace ConnectFour.Business.BLLs
 
         public override IRoomModel AddPlayerToRoom(string localPlayerName, int roomId)
         {
-            IRoomModel room = base.AddPlayerToRoom("Randy", roomId);
+            IRoomModel room = base.AddPlayerToRoom("Ophelia", roomId);
             room = base.AddPlayerToRoom(localPlayerName, roomId);
             return room;
         }
