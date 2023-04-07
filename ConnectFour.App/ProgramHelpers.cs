@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
+using ConnectFour.Business.BLLs;
 using ConnectFour.Business.Models.Interfaces;
 
 namespace ConnectFour.App
@@ -73,11 +74,11 @@ namespace ConnectFour.App
 
             for (int t = 0; t < room.Turns.Count; t++)
             {
-                if (room.Turns[t].Num % 2 == 0)
+                if (room.DeterminePlayerNum(room.Turns[t].Num) == 2)
                 {
                     room.Board[room.Turns[t].RowNum - 1, room.Turns[t].ColNum - 1] = 2;
                 }
-                else if (room.Turns[t].Num % 2 != 0)
+                else if (room.DeterminePlayerNum(room.Turns[t].Num) == 1)
                 {
                     room.Board[room.Turns[t].RowNum - 1, room.Turns[t].ColNum - 1] = 1;
                 }
@@ -139,7 +140,7 @@ namespace ConnectFour.App
                     case 5:
                         Console.Write("    Current turn: ");
 
-                        if (room.CurrentTurnNum % 2 == 0)
+                        if (room.GetCurrentPlayerNum() == 2)
                         {
                             WriteInColor(room.Players[1].Name, room.Players[1].Color);
                         }

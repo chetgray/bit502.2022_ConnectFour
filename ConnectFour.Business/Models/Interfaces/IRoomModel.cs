@@ -15,7 +15,6 @@ namespace ConnectFour.Business.Models.Interfaces
         /// </value>
         int[,] Board { get; set; }
         DateTime CreationTime { get; set; }
-        int CurrentPlayerNum { get; }
         int CurrentTurnNum { get; set; }
         int LocalPlayerNum { get; set; }
         string Message { get; set; }
@@ -23,7 +22,5 @@ namespace ConnectFour.Business.Models.Interfaces
         int? ResultCode { get; set; }
         List<ITurnModel> Turns { get; }
         bool Vacancy { get; set; }
-
-        int DeterminePlayerNum(int turnNum);
     }
 }

@@ -213,7 +213,7 @@ namespace ConnectFour.Tests.Business
             IRoomModel result = bll.WaitForOpponentToPlay(room);
 
             // Assert
-            Assert.AreEqual(2, result.CurrentPlayerNum);
+            Assert.AreEqual(2, result.GetCurrentPlayerNum());
         }
 
         [TestMethod]
@@ -276,7 +276,7 @@ namespace ConnectFour.Tests.Business
             IRoomModel result = bll.WaitForOpponentToPlay(room);
 
             // Assert
-            Assert.AreEqual(1, result.CurrentPlayerNum);
+            Assert.AreEqual(1, result.GetCurrentPlayerNum());
         }
 
         private static List<ITurnModel> GenerateTurnsFromBoard(int[,] board)

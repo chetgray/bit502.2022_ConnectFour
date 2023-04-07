@@ -4,8 +4,18 @@ using ConnectFour.Business.Models.Interfaces;
 
 namespace ConnectFour.Business.BLLs
 {
-    internal static class RoomBLLHelpers
+    public static class RoomBLLHelpers
     {
+        public static int DeterminePlayerNum(this IRoomModel room, int turnNum)
+        {
+            return ((turnNum - 1) % room.Players.Length) + 1;
+        }
+
+        public static int GetCurrentPlayerNum(this IRoomModel room)
+        {
+            return room.DeterminePlayerNum(room.CurrentTurnNum);
+        }
+
         /// <summary>
         /// Gets the next row in the given column.
         /// </summary>

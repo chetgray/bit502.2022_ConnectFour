@@ -100,7 +100,7 @@ namespace ConnectFour.App
                     return;
                 }
                 Console.Write($"\n     {room.Message}\n");
-                if (room.LocalPlayerNum == room.CurrentPlayerNum)
+                if (room.LocalPlayerNum == room.GetCurrentPlayerNum())
                 {
                     Console.Write("\n     --> ");
                     string response = Console.ReadLine();
@@ -119,7 +119,7 @@ namespace ConnectFour.App
 
                     room = roomBll.TryAddTurnToRoom(colNum, room);
                 }
-                else if (room.LocalPlayerNum != room.CurrentPlayerNum)
+                else if (room.LocalPlayerNum != room.GetCurrentPlayerNum())
                 {
                     room = roomBll.WaitForOpponentToPlay(room);
                 }

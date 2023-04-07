@@ -392,7 +392,7 @@ namespace ConnectFour.Tests.Business
             // Assert
             Assert.AreEqual("Please choose a column between 1 - 7", result.Message);
             Assert.AreEqual(2, result.CurrentTurnNum);
-            Assert.AreEqual(2, result.CurrentPlayerNum);
+            Assert.AreEqual(2, result.GetCurrentPlayerNum());
         }
 
         [TestMethod]
@@ -430,7 +430,7 @@ namespace ConnectFour.Tests.Business
             // Act
             IRoomModel result = bll.UpdateWithLatestTurn(room);
             // Assert
-            Assert.AreEqual(1, result.CurrentPlayerNum);
+            Assert.AreEqual(1, result.GetCurrentPlayerNum());
         }
 
         [TestMethod]
@@ -540,7 +540,7 @@ namespace ConnectFour.Tests.Business
             IRoomModel result = bll.WaitForOpponentToPlay(room);
 
             // Assert
-            Assert.AreEqual(2, result.CurrentPlayerNum);
+            Assert.AreEqual(2, result.GetCurrentPlayerNum());
         }
     }
 }
