@@ -9,7 +9,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 namespace ConnectFour.Tests.Business
 {
     [TestClass]
-    public class RooBLLHelpersTests
+    public class RoomBLLHelpersTests
     {
         [TestMethod]
         public void GetNextRowInCol_ColumnFull_ThrowsArgumentException()
