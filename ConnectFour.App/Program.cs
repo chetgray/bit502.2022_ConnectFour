@@ -265,14 +265,7 @@ namespace ConnectFour.App
                     WriteTitle();
                     Console.WriteLine($"       Room ID: {room.Id}");
 
-                    if (localPlayer.Num == 1)
-                    {
-                        opponentName = room.Players[1].Name;
-                    }
-                    else
-                    {
-                        opponentName = room.Players[0].Name;
-                    }
+                    opponentName = room.Players[2 - localPlayer.Num].Name;
 
                     Console.WriteLine($"\n{opponentName} has joined!");
                     Console.WriteLine("\nPress any key to continue to the game.");
@@ -375,8 +368,7 @@ namespace ConnectFour.App
 
             IRoomBLL roomBll = new NPCRoomBLL();
             IRoomModel room = roomBll.AddPlayerToRoom(_localPlayerName, roomBll.AddNewRoom());
-            string opponentName =
-                (room.LocalPlayerNum == 1) ? room.Players[1].Name : room.Players[0].Name;
+            string opponentName = room.Players[2 - room.LocalPlayerNum].Name;
 
             Console.WriteLine($"       Room ID: {room.Id}");
             Console.WriteLine($"\n{opponentName} has joined!");

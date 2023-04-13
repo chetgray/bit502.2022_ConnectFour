@@ -54,34 +54,31 @@ namespace ConnectFour.App
 
         internal static void WriteBoard(IRoomModel room)
         {
-            const string noPiece = "     ";
-            string p1Piece = $"░ {room.Players[0].Symbol} ░";
-            string p2Piece = $"░ {room.Players[1].Symbol} ░";
-
-            if (p1Piece == p2Piece)
+            string[] pieces = new string[]
             {
-                p1Piece = "░ 1 ░";
-                p2Piece = "░ 2 ░";
+                "     ",
+                $"░ {room.Players[0].Symbol} ░",
+                $"░ {room.Players[1].Symbol} ░",
+            };
+            if (pieces[1] == pieces[2])
+            {
+                pieces[1] = "░ 1 ░";
+                pieces[2] = "░ 2 ░";
             }
-
-            for (int r = 0; r < room.Board.GetLength(0); r++)
+            ConsoleColor[] colors = new ConsoleColor[]
             {
-                for (int c = 0; c < room.Board.GetLength(1); c++)
-                {
-                    room.Board[r, c] = 0;
-                }
-            }
+                Console.ForegroundColor,
+                room.Players[0].Color,
+                room.Players[1].Color
+            };
 
-            for (int t = 0; t < room.Turns.Count; t++)
+            room.Board.Initialize();
+
+            foreach (ITurnModel turn in room.Turns)
             {
-                if (room.DeterminePlayerNum(room.Turns[t].Num) == 2)
-                {
-                    room.Board[room.Turns[t].RowNum - 1, room.Turns[t].ColNum - 1] = 2;
-                }
-                else if (room.DeterminePlayerNum(room.Turns[t].Num) == 1)
-                {
-                    room.Board[room.Turns[t].RowNum - 1, room.Turns[t].ColNum - 1] = 1;
-                }
+                room.Board[turn.RowNum - 1, turn.ColNum - 1] = room.DeterminePlayerNum(
+                    turn.Num
+                );
             }
 
             WriteInColor(
@@ -94,19 +91,9 @@ namespace ConnectFour.App
                 Console.Write("    ");
                 for (int c = 0; c < room.Board.GetLength(1); c++)
                 {
+                    int playerNum = room.Board[r, c];
                     WriteInColor("║", ConsoleColor.DarkBlue);
-                    if (room.Board[r, c] == 1)
-                    {
-                        WriteInColor(p1Piece, room.Players[0].Color);
-                    }
-                    else if (room.Board[r, c] == 2)
-                    {
-                        WriteInColor(p2Piece, room.Players[1].Color);
-                    }
-                    else
-                    {
-                        Console.Write(noPiece);
-                    }
+                    WriteInColor(pieces[playerNum], colors[playerNum]);
                 }
                 WriteInColor("║", ConsoleColor.DarkBlue);
                 switch (r)
@@ -140,14 +127,10 @@ namespace ConnectFour.App
                     case 5:
                         Console.Write("    Current turn: ");
 
-                        if (room.GetCurrentPlayerNum() == 2)
-                        {
-                            WriteInColor(room.Players[1].Name, room.Players[1].Color);
-                        }
-                        else
-                        {
-                            WriteInColor(room.Players[0].Name, room.Players[0].Color);
-                        }
+                        WriteInColor(
+                            room.Players[room.GetCurrentPlayerNum() - 1].Name,
+                            room.Players[room.GetCurrentPlayerNum() - 1].Color
+                        );
                         break;
 
                     default:
